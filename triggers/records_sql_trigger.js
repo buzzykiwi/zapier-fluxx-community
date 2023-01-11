@@ -14,7 +14,7 @@ const perform = async (z, bundle) => {
     const ret = response.data.records[FluxxAPI.fn.modelToSnake(options.model_type)];
     
     if (ret.length === 0) return {};
-    return {results:ret}; // try to make it line items
+    return ret; // {results:ret}; // try to make it line items?
   }
 
 };
@@ -25,7 +25,7 @@ module.exports = {
   display: {
     label: 'Triggers When New Records Are Found via an SQL-like Search.',
     description:
-      "Structure this like a SQL statement e.g. SELECT id, name FROM Organisation WHERE city = 'Auckland' ORDER BY name asc LIMIT 400",
+      "Structure this like a SQL statement e.g. SELECT id, name FROM Organization WHERE city = 'Auckland' ORDER BY name asc LIMIT 400",
     hidden: false,
     important: true,
   },
@@ -36,7 +36,7 @@ module.exports = {
         label: 'SQL input',
         type: 'text',
         helpText:
-          "e.g. SELECT id, name FROM Organisation WHERE city = 'Auckland' ORDER BY name asc",
+          "e.g. SELECT id, name FROM Organization WHERE city = 'Auckland' ORDER BY name asc LIMIT 400",
         required: false,
         list: false,
         altersDynamicFields: false,

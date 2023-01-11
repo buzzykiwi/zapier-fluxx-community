@@ -108,7 +108,7 @@ module.exports = {
       {
         computed: false,
         key: 'client_domain',
-        required: false,
+        required: true,
         label: 'Fluxx client domain',
         type: 'string',
         helpText:

@@ -616,6 +616,31 @@ module.exports.determine_mas = async function(model_type, field_list)
 }
 
 /**
+ * dynamic_fields_for_dynamic_model(z, bundle, model_type)
+ */
+let dynamic_fields_for_dynamic_model = module.exports.dynamic_fields_for_dynamic_model = async function (z, bundle, model_type)
+{
+  const options = {
+    url: `https://${bundle.authData.client_domain}/api/rest/v2/model_attribute/list`,
+    method: 'POST',
+    headers: c.STANDARD_HEADERS(bundle),
+    params: {},
+    body: {
+      cols: z.JSON.stringify(['id', 'name', 'attribute_type', 'multi_allowed']),
+      sort_attribute: 'name',
+      sort_order: 'asc',
+      filter: z.JSON.stringify({
+        model_attribute: {
+          model_type: modelToCamel(model_type),
+        },
+      }),
+    },
+  };
+  let response = await paginated_fetch(z, bundle, options, "model_attribute", 0); // limit 0 means no limit
+  return response.data.records.model_attribute;
+}
+
+/**
  * fields_for_model
  * returns an array suitable as a dropdown with all the fields for a given model
  * model_type: the model whose fields will be returned
@@ -646,7 +671,7 @@ let fields_for_model = module.exports.fields_for_model = async function(z, bundl
 
   // then the dynamic fields
   let response = await paginated_fetch(z, bundle, options, "model_attribute", 0); // limit 0 means no limit
-  // z.console.log(z.JSON.stringify(response));
+
   response = response.data.records.model_attribute;
 
   const dropdown_list = [];
@@ -1169,7 +1194,7 @@ let fetch_core_and_machine_model_list = module.exports.fetch_core_and_machine_mo
 
 /**
  * getModelTypeDescription
- * Provides a hyperlink to the FLuxx documentation for a model_type as defined in bundle.inputData.model_type.
+ * Provides a hyperlink to the Fluxx documentation for a model_type as defined in bundle.inputData.model_type.
  */
 module.exports.getModelTypeDescription = function (z, bundle) {
   if (bundle.inputData.model_type === null || bundle.inputData.model_type === undefined || bundle.inputData.model_type.length == 0) {
@@ -1197,7 +1222,7 @@ module.exports.getModelTypeDescription = function (z, bundle) {
  * Provides a list of descriptions of input fields as help text in a form.
  * The list of fields has to be in the bundle.inputData.fields array.
  */
-module.exports.getReturnFieldDescriptions = function (z, bundle) {
+module.exports.getReturnFieldDescriptions = async function (z, bundle) {
   let descriptions = "";
   let fields = bundle.inputData.fields;
   let core_models = c.CORE_MODELS;
@@ -1211,6 +1236,8 @@ module.exports.getReturnFieldDescriptions = function (z, bundle) {
     bundle.inputData.model_type != '') {
 
     let model_type_snake = modelToCamel(bundle.inputData.model_type);
+    let dyn_fields = await dynamic_fields_for_dynamic_model(z, bundle, bundle.inputData.model_type);
+    
     fields.forEach( field => {
       let s = core_models[model_type_snake][field];
       if (s !== undefined) {
@@ -1218,14 +1245,37 @@ module.exports.getReturnFieldDescriptions = function (z, bundle) {
         if (s.data_type.match(/^[A-Z]/) && s.data_type != 'CDT') {
           link = `[${s.data_type}](https://${bundle.authData.client_domain}/api/rest/v2/${s.data_type}/doc)`
         }
-        descriptions = descriptions + `**Core field: ${field}**` + "\n\n- " + s.description + "\n\n";
+        descriptions += `**Core field: ${field}**` + "\n\n- " + s.description + "\n\n";
         if (s.plural == "plural" && s.type != 'column') {
-          descriptions = descriptions + "- returns a **list**\n\n";
+          descriptions += "- returns a **list**\n\n";
         }
-        descriptions = `${descriptions}- type: ${s.type} (${ (link === false ? s.data_type: link)})` + "\n\n";
+        descriptions += `- type: ${s.type} (${ (link === false ? s.data_type: link)})` + "\n\n";
+      } else {
+        let dyn_field = dyn_fields.find(f => f.name == field);
+        if (dyn_field !== undefined) {
+          if (dyn_field.multi_allowed == 1) {
+            descriptions = descriptions + `**Dynamic field: ${field}**` + "\n\n";
+            descriptions += "- multi-value list\n\n";
+            descriptions += "To add or remove items to/from the selection, please use the following format in the Value List for this item:\n\n";
+            descriptions += "    #remove_all\n";
+            descriptions += "    #remove#level 1#level 2\n";
+            descriptions += "    #remove_id#123\n";
+            descriptions += "    #add#level 1#level 2\n";
+            descriptions += "    #add/50#level 1#level 2\n";
+            descriptions += "    #add_id/50#123\n";
+            descriptions += "\n";
+            descriptions += "- The '#' can be changed to a different delimiter on any line, so long as it is consistent on that line\n";
+            descriptions += "- If used, the IDs for *remove_id* and *add_id* are Model Attribute Value ids.\n";
+            descriptions += "- The numbers after '#add/' and '#add_id/' are percentages.\n";
+            descriptions += "- If you add a value that already exists for a field, the percentage will be updated if different; otherwise, the add is ignored.\n";
+            descriptions += "Removes are processed before adds.\n\n";            
+          } else {
+            descriptions += `**Dynamic field: ${field}**` + "\n\n- " + dyn_field.attribute_type + "\n\n";
+          }
+        }
       }
     });
-  
+    
     return {
       key: 'field_descriptions',
       label: 'Field Descriptions',
@@ -1237,7 +1287,7 @@ module.exports.getReturnFieldDescriptions = function (z, bundle) {
     key: 'field_descriptions',
     label: 'Field Descriptions',
     type: 'copy',
-    helpText: '*field descriptions for core fields appear here as soon as any core fields are selected*',
+    helpText: '*field descriptions appear here after you select at least one field*',
   };
 }
 

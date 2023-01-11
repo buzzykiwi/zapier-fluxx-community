@@ -33,7 +33,16 @@ const perform = async (z, bundle) => {
   // (form-data doesn't play nicely with z.request)
   
   //formData.append('file', request(bundle.inputData.file));
-  formData.append('content', request(bundle.inputData.file), {filename: bundle.inputData.file_name} );
+  let file_request = request(bundle.inputData.file,function (error, response, body) {
+    if (error !== null) {
+      throw error;
+    }
+    if (!(response.statusCode >= 200 && response.statusCode < 300)) {
+      throw `HTTP response code ${response.statusCode} (error) while retrieving file`;
+    }
+    return body;
+  });
+  formData.append('content', file_request, {filename: bundle.inputData.file_name} );
 
   let options = {
     url: `https://${bundle.authData.client_domain}/api/rest/v2/model_document`,

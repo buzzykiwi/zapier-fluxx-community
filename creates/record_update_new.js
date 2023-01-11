@@ -38,7 +38,6 @@ const perform = async (z, bundle) => {
     mav_fields
   );
   
-  z.console.log(`all_fields_and_update_values: ${z.JSON.stringify(all_fields_and_update_values)}`);
   var final_return;
   if (
     inputData.id === undefined ||
@@ -61,7 +60,6 @@ const perform = async (z, bundle) => {
   
   // handle Model Attribute Values (multi-value controls) separately.
   if (Array.isArray(mav_fields) && mav_fields.length > 0) {
-    z.console.log(`mav_fields: ${mav_fields}`);
     
     // grab current MACs for record, restricted to only those relating to the mav_fields.
     // this is an array of object returns from a Fluxx query, with keys:
@@ -69,7 +67,6 @@ const perform = async (z, bundle) => {
     let existing_macs = await existing_macs_for_record(z, bundle, inputData.id, structured_mas, mav_fields);
     
     for (var mav_field of mav_fields) {
-      z.console.log(`entering process: model_type: ${inputData.model_type}, field_name: ${mav_field}, operations: ${all_fields_and_update_values[mav_field]}`);
       await processMAVOperationsForRecordField({
         z: z, 
         bundle: bundle, 
@@ -241,6 +238,7 @@ const getInputFieldsForUpdateCreate = async (z, bundle) => {
     placeholder: 'Select a field to assign a value to…',
     helpText:
       'Enter the list of fields you want to update (or create in a new record). Use one per box. The list of field options depends on which Model Type is chosen.',
+    altersDynamicFields: true,
   };
 };
 
@@ -350,7 +348,6 @@ async function processMAVOperationsForRecordField(opts)
       // id           123     add_id or remove_id keywords
     }
   });
-  console.log(`all operations (processed lines): ${z.JSON.stringify(processed_lines)}`);
   let did_remove_all = false;
   let processed_line;
   // call the operations in order
@@ -401,7 +398,6 @@ async function remove_all_macs_for_ma(z, bundle, o, structured_mas, existing_mac
 // there can only one MAC for a MAV.
 async function remove_mac(z, bundle, o, structured_mas, existing_macs, model_type, model_id, field_name, ma_id2)
 {
-  z.console.log(`Looking to delete mac represented by ${z.JSON.stringify(o)}`);
   let mav_id, ma_id;
   if (o.path !== undefined) {
     // call something to get the id of the path from o.path
@@ -412,11 +408,8 @@ async function remove_mac(z, bundle, o, structured_mas, existing_macs, model_typ
     //	model_attribute_id, model_attribute_value_id, and	amount_value.
     mav_id = o.id;
   }
-  z.console.log(`have mav id to delete ${mav_id}`);
 
   let mav_index = existing_macs.findIndex(mac => mac.model_attribute_value_id == mav_id);
-  z.console.log(`mav_index ${mav_index}`);
-  z.console.log(`existing_macs ${z.JSON.stringify(existing_macs)}`);
   if (mav_index !== -1) {
     await remove_mac_with_id(z, bundle, existing_macs[mav_index].id);
     // now remove it from the existing_macs list
@@ -425,9 +418,6 @@ async function remove_mac(z, bundle, o, structured_mas, existing_macs, model_typ
 }
 async function remove_mac_with_id(z, bundle, mac_id)
 {
-  z.console.log(`Here is where we would DELETE a MAC, on mac id ${mac_id}`);
-  
-  // curl --globoff -X DELETE "https://wcf.preprod.fluxxlabs.com/api/rest/v2/model_attribute_choice/304978447" --header 'Authorization: Bearer <--token-->'
   const options = {
     url: `https://${bundle.authData.client_domain}/api/rest/v2/model_attribute_choice/${mac_id}`,
     method: 'DELETE',
@@ -436,7 +426,6 @@ async function remove_mac_with_id(z, bundle, mac_id)
     body: {
     },
   };
-  z.console.log(`About to delete a MAC`);
   var response = await z.request(options);
   response.throwForStatus();
   FluxxAPI.fn.handleFluxxAPIReturnErrors(response);
@@ -500,7 +489,6 @@ async function create_mac(z, bundle, model_id, ma_id, mav_id, percentage, user_i
       cols: z.JSON.stringify(["id"]),
     },
   };
-  z.console.log(`About to create a MAC: options ${z.JSON.stringify(options)}`);
   var response = await z.request(options);
   response.throwForStatus();
   FluxxAPI.fn.handleFluxxAPIReturnErrors(response);
@@ -598,6 +586,7 @@ module.exports = {
       },
       getInputFieldsForModelTypes,
       getInputFieldsForUpdateCreate,
+      FluxxAPI.fn.getReturnFieldDescriptions,
       {
         key: 'values',
         label: 'Value List',

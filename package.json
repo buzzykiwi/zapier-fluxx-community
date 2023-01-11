@@ -1,7 +1,7 @@
 {
-  "name": "fluxx",
+  "name": "zapier-fluxx-community",
   "version": "1.0.1",
-  "description": "Integrations to allow automated processing",
+  "description": "Third-party Zapier application for Fluxx",
   "main": "index.js",
   "scripts": {
     "test2": "mocha --recursive -t 10000",

@@ -32,7 +32,7 @@ module.exports = {
   display: {
     label: 'Search for a Single Fluxx Record',
     description:
-      "Structure this like a SQL statement e.g. SELECT id FROM User WHERE full_name = 'John Doe' ORDER BY last_name. The number of returned items is capped at 1, so use the ORDER BY to ensure the most relevant item is returned first.",
+      "Structure this like a SQL statement e.g. SELECT id FROM User WHERE full_name = 'John Doe' ORDER BY last_name LIMIT 1. The number of returned items is capped at 1, so use the ORDER BY to ensure the most relevant item is returned first.",
     hidden: false,
     important: true,
   },
@@ -43,7 +43,7 @@ module.exports = {
         label: 'SQL input',
         type: 'text',
         helpText:
-          "e.g. SELECT full_name FROM Users WHERE full_name = 'John Doe' ORDER BY id",
+          "e.g. SELECT full_name FROM Users WHERE full_name = 'John Doe' ORDER BY id desc LIMIT 1",
         required: false,
         list: false,
         altersDynamicFields: false,

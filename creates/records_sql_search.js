@@ -23,7 +23,7 @@ module.exports = {
   display: {
     label: 'Search for a List of Fluxx Records',
     description:
-      "Structure this like a SQL statement e.g. SELECT id, name FROM Organisation WHERE city = 'Auckland' ORDER BY name asc",
+      "Structure this like a SQL statement e.g. SELECT id, name FROM Organization WHERE city = 'Auckland' ORDER BY name asc LIMIT 10",
     hidden: false,
     important: true,
   },
@@ -34,7 +34,7 @@ module.exports = {
         label: 'SQL input',
         type: 'text',
         helpText:
-          "e.g. SELECT id, name FROM Organisation WHERE city = 'Auckland' ORDER BY name asc",
+          "e.g. SELECT id, name FROM Organization WHERE city = 'Auckland' ORDER BY name asc LIMIT 10",
         required: false,
         list: false,
         altersDynamicFields: false,

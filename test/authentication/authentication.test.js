@@ -22,7 +22,7 @@ describe('oauth2 app', () => {
       inputData: {
         // In production, Zapier passes along whatever code your API set in the query params when it redirects
         // the user's browser to the `redirect_uri`
-        client_domain: 'wcf.preprod.fluxxlabs.com',
+        client_domain: process.env.CLIENT_DOMAIN,
       },
       environment: {
         CLIENT_ID: process.env.CLIENT_ID,

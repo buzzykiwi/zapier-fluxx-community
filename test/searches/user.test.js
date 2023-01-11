@@ -21,7 +21,7 @@ describe('searches.find_user', () => {
       inputData: {
         name: "Stephen Brandon",
       },
-     };
+    };
 
     const results = await appTester(App.searches.find_user.operation.perform, bundle);
     expect(results).toBeDefined();

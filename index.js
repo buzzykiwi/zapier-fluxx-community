@@ -22,7 +22,6 @@ const getModelDocumentSubType = require("./triggers/model_document_sub_type");
 const recordsSqlTrigger = require("./triggers/records_sql_trigger");
 
 // Creates
-const searchModelAttributesCreate = require('./creates/search_model_attributes.js');
 const recordSqlSearch = require('./creates/record_sql_search.js');
 const recordsSqlSearch = require('./creates/records_sql_search.js');
 const updateFluxxRecordCreate = require('./creates/record_update_new.js');
@@ -59,7 +58,6 @@ module.exports = {
     [recordsSqlTrigger.key]: recordsSqlTrigger,
   },
   creates: {
-    [searchModelAttributesCreate.key]: searchModelAttributesCreate,
     [updateFluxxRecordCreate.key]: updateFluxxRecordCreate,
     [recordSqlSearch.key]: recordSqlSearch,
     [recordsSqlSearch.key]: recordsSqlSearch,

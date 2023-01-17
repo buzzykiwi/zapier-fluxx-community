@@ -33,7 +33,7 @@ const testMavs = require('./creates/test_mavs.js');
 const hydrators = require('./hydrators');
 
 // Searches
-const findUser = require("./searches/user");
+const searchUser = require("./searches/user");
 const searchRecord = require('./searches/record.js');
 
 const createTestSubInputs = require("./creates/test_sub_inputs");
@@ -67,7 +67,7 @@ module.exports = {
     [testMavs.key]: testMavs,
   },
   searches: {
-    [findUser.key]: findUser,
+    [searchUser.key]: searchUser,
     [searchRecord.key]: searchRecord,
   },
 };

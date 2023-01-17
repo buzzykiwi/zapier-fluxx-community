@@ -57,9 +57,10 @@ typings/
 # environment variables file
 .env
 .environment
+.env.bk
 
 # next.js build output
 .next
 
 .DS_Store
-
+prep.bash

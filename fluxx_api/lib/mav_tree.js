@@ -194,16 +194,16 @@ const structured_mas_and_mavs_for_model = module.exports.structured_mas_and_mavs
 }
 
 module.exports.which_fields_are_mavs = async function(z, bundle, model_type, structured_mas, field_list) {
-  // If no MAs give, look for them now and return them later.
+  // If no MAs given, look for them now and return them later.
   if (structured_mas === null) {
     [structured_mas, structured_mavs] = await structured_mas_and_mavs_for_model(z, bundle, model_type, field_list);
   }
   // Simple case: if there are no MAs for this model, return empty list.
   if (Array.isArray(structured_mas) && structured_mas.length == 0) {
-    return [structured_mas, []];
+    return [structured_mas, [], []];
   }
   if (!(Array.isArray(field_list))) {
-    return [structured_mas, []];
+    return [structured_mas, [], []];
   }
   // Otherwise, return a list of anything in the field_list that is also in the structured_mas list.
   var field_name;

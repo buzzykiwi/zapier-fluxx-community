@@ -9,6 +9,8 @@ describe('Create - record_update_new', () => {
   zapier.tools.env.inject();
 
   it('should create an object', async () => {
+
+// test updating an existing item
     const bundle = {
       authData: {
         client_domain: process.env.CLIENT_DOMAIN,
@@ -27,10 +29,22 @@ describe('Create - record_update_new', () => {
       },
     };
 
-    const result = await appTester(
-      App.creates['record_update_new'].operation.perform,
-      bundle
+    let result = await appTester(
+      App.creates['record_update_new'].operation.perform, bundle
     );
     result.should.not.be.an.Array();
+
+// test creating a new item
+    delete bundle.inputData.id;
+    bundle.inputData.fields     = ["amount_requested", "amount_recommended", "project_title", "type_1", "program_organization_id", "project_summary", "state"];
+    bundle.inputData.values     = [30000, 20000,"Test title","Quick Response Grant",261, "test summary", "draft"],
+    bundle.inputData.model_type = "GrantRequest";
+    bundle.inputData.cols       = ["id","amount_requested"];
+    bundle.inputData.user_id    = 608;
+    result = await appTester(
+      App.creates['record_update_new'].operation.perform, bundle
+    );
+    result.should.not.be.an.Array();
+    
   });
 });

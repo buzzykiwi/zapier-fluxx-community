@@ -22,12 +22,12 @@ const perform = async (z, bundle) => {
 module.exports = {
   // see here for a full list of available properties:
   // https://github.com/zapier/zapier-platform/blob/master/packages/schema/docs/build/schema.md#searchschema
-  key: 'find_user',
-  noun: 'User',
+  key: 'search_for_user',
+  noun: 'User Search',
 
   display: {
-    label: 'Find User',
-    description: 'Finds a user based on name.'
+    label: 'Search for User',
+    description: 'Search for a user based on name.'
   },
 
   operation: {
@@ -44,7 +44,7 @@ module.exports = {
     // returned records, and have obvious placeholder values that we can show to any user.
     sample: {
       id: 1,
-      name: 'Test'
+      full_name: 'John Doe',
     },
 
     // If fields are custom to each user (like spreadsheet columns), `outputFields` can create human labels
@@ -53,8 +53,8 @@ module.exports = {
     // Alternatively, a static field definition can be provided, to specify labels for the fields
     outputFields: [
       // these are placeholders to match the example `perform` above
-      // {key: 'id', label: 'Person ID'},
-      // {key: 'name', label: 'Person Name'}
+      {key: 'id', label: 'User ID'},
+      {key: 'full_name', label: 'User Full Name'}
     ]
   }
 };

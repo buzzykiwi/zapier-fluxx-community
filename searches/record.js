@@ -31,10 +31,10 @@ const perform = async (z, bundle) => {
 };
 
 module.exports = {
-  key: 'fetch_record',
-  noun: 'Fetch Request',
+  key: 'record',
+  noun: 'Search Request',
   display: {
-    label: 'Fetch Fluxx Record',
+    label: 'Search for Record',
     description:
       'Given an id, a model type and a list of fields to return, this action fetches the specified Fluxx Record and its fields.',
     hidden: false,

@@ -1,30 +1,26 @@
 'use_strict';
+const FluxxAPI = require('../fluxx_api');
 
 const perform = async (z, bundle) => {
-
-  const FluxxAPI = require('../fluxx_api');
 
   let p = FluxxAPI.fn.optionsForSelectClause(z, bundle.inputData.in);
   // p = {select: cols, from: model_type, where: filter, order_by: order_by, limit: limit};
   
   let options = FluxxAPI.fn.optionsForSqlSelect(z, bundle, p);
   if (options !== null && options !== undefined) {
-    /*
-    const response = await z.request(options);
-    response.throwForStatus();
-    FluxxAPI.fn.handleFluxxAPIReturnErrors(response);
-    */
+    if (bundle.inputData.show_mavs == 'true') {
+      options.params.show_mavs = 'true';
+    }
     
-    // to test out our pagination system
+    // pagination system
     const response = await FluxxAPI.fn.paginated_fetch(z, bundle, options, p.model_type, 1);
-    const ret = response.data.records[FluxxAPI.fn.modelToSnake(p.model_type)];
+    const ret = FluxxAPI.fn.processInitialResponse(z, p.cols, response, p.model_type);
     
     if (ret.length === 0) return {};
     return ret[0]; // the first one in the list
   }
 
 };
-
 
 module.exports = {
   key: 'record_sql_search',
@@ -43,7 +39,19 @@ module.exports = {
         label: 'SQL input',
         type: 'text',
         helpText:
-          "e.g. SELECT full_name FROM Users WHERE full_name = 'John Doe' ORDER BY id desc LIMIT 1",
+          "e.g. SELECT full_name FROM User WHERE full_name = 'John Doe' ORDER BY id desc LIMIT 1",
+        required: false,
+        list: false,
+        altersDynamicFields: true,
+      },
+      FluxxAPI.fn.sql_descriptions,
+      {
+        key: 'show_mavs',
+        label: 'Show MAVs',
+        type: 'string',
+        helpText:
+          'Do you want to get additional information about Multi Attribute Values in the request? If true, MAVs will return percentage value (if available) and hierarchy.',
+        choices: ['true', 'false'],
         required: false,
         list: false,
         altersDynamicFields: false,

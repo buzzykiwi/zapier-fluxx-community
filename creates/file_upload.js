@@ -173,7 +173,7 @@ module.exports = {
         // then the field in the returned item representing the ID - this is the value that will be saved.
         // then the field in the returned item representing the NAME (for display purposes)
         dynamic: 'user_list.id.full_name',
-        search: 'find_user.id',
+        search: 'search_for_user.id',
       }, // calls project.search (requires a trigger in the "dynamic" property)
       
     ],

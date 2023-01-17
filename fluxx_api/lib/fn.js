@@ -63,7 +63,7 @@ let modelToCamel = module.exports.modelToCamel = function(model)
 
 
 // OPERATORS REGEX
-module.exports.parseWhereClause = function(z, input, model_type)
+let parseWhereClause = module.exports.parseWhereClause = function(z, input, model_type)
 {
   let re = _internal.fluxx_operators_basic_regex();
 
@@ -167,7 +167,7 @@ module.exports.parseWhereClause = function(z, input, model_type)
           new_obj = new (_internal.RuleNode)();
           stack.currentConditions().push([new_text_item[0],"filter",new_obj]);
           stack.push(new_obj);
-          //new_obj.relationship_filter_model_type = this.modelToCamel(new_text_item[2]);
+          //new_obj.relationship_filter_model_type = modelToCamel(new_text_item[2]);
         } else {
           stack.currentConditions().push(new_text_item);
         }
@@ -178,11 +178,11 @@ module.exports.parseWhereClause = function(z, input, model_type)
     throw "Mismatched brackets in WHERE clause";
   }
   
-  no_elastic = c.NO_ELASTIC.includes(this.modelToCamel(model_type));
+  no_elastic = c.NO_ELASTIC.includes(modelToCamel(model_type));
   // Check to see if we have one of the four allowed constructions.
   // If we come across any errors, we throw.
   if (no_elastic) {
-    let ret = convertToNonElasticFilter(filter, model_type);
+    let ret = _internal.convertToNonElasticFilter(filter, model_type);
     // convert all operands to lower case
     convertAndOrNotToLower(ret.data);
     // return z.JSON.stringify(ret).replace("=","[]=");
@@ -191,7 +191,7 @@ module.exports.parseWhereClause = function(z, input, model_type)
 
   //filter
   convertAndOrNotToLower(filter.data);
-  return z.JSON.stringify(filter.data);
+  return filter.data;
 };
 
 // go through the entire filter and find all the value-operand-value triples.
@@ -212,7 +212,7 @@ function convertAndOrNotToLower(o) {
   }
 }
 
-module.exports.parseOrderByClause = function(z,order_by, model_type)
+let parseOrderByClause = module.exports.parseOrderByClause = function(z,order_by, model_type)
 {
   let pair, o;
   let pairs = [];
@@ -234,7 +234,7 @@ module.exports.parseOrderByClause = function(z,order_by, model_type)
     throw 'Unreadable Order By clause';
   }
 
-  no_elastic = c.NO_ELASTIC.includes(this.modelToCamel(model_type));
+  no_elastic = c.NO_ELASTIC.includes(modelToCamel(model_type));
 
   if (no_elastic) { // can only take one sort ordering pair
     if (pairs.length == 1) {
@@ -249,7 +249,7 @@ module.exports.parseOrderByClause = function(z,order_by, model_type)
       if (pairs.length == 1) {
         pairs = pairs[0]; // does not need to be array-in-array.
       }
-      ret['sort'] = z.JSON.stringify(pairs);
+      ret['sort'] = pairs;
       ret['style'] = "ELASTIC";
     }
   }
@@ -257,9 +257,9 @@ module.exports.parseOrderByClause = function(z,order_by, model_type)
 };
 
 // optionsForSelectClause
-module.exports.optionsForSelectClause = function(z, clause)
+let optionsForSelectClause = module.exports.optionsForSelectClause = function(z, clause)
 {
-  let re = new RegExp(String.raw`^SELECT +([a-z][\da-z_,. ]*) +FROM +(\w+) +WHERE +(.*?)( +ORDER *BY +([^ ].*?(?!LIMIT)))?( +LIMIT(.*))? *$`);
+  let re = new RegExp(String.raw`^SELECT +([a-z][\da-z_,. ]*) +FROM +(\w+) +WHERE +(.*?)( +ORDER *BY +([^ ].*?(?!LIMIT)))?( +LIMIT *(\d+))? *$`);
 
   // in Zapier, strings containing commas get sent to us as arrays which need a comma join.
   if (Array.isArray(clause)) {
@@ -276,8 +276,8 @@ module.exports.optionsForSelectClause = function(z, clause)
     return {
       cols: m[1].split(/ *, */), // from comma-separated string to Array
       model_type: model_type,
-      filter: this.parseWhereClause(z, m[3], model_type),
-      order_by: this.parseOrderByClause(z, m[5], model_type), // model_type needed as some models have different format for order_by
+      filter: parseWhereClause(z, m[3], model_type),
+      order_by: parseOrderByClause(z, m[5], model_type), // model_type needed as some models have different format for order_by
       limit: m[7],
     };
   }
@@ -310,10 +310,10 @@ module.exports.optionsForSelectClause = function(z, clause)
  *          }
  * Output: the record is edited in-place.
  */
-module.exports.restoreNullFieldsInResponse = function(field_list, record, field_key="fields")
+const restoreNullFieldsInResponse = module.exports.restoreNullFieldsInResponse = function(field_list, record, field_key="fields")
 {
   if (Array.isArray(record)) {
-    let r;
+    let r = {};
     record.forEach (r => {
       field_list.forEach(field => {
         if (!(field in r[field_key])) {
@@ -344,7 +344,7 @@ let isObj = module.exports.isObj = function(thing)
     thing !== null
 };
 
-module.exports.splitFieldListIntoColsAndRelations = function(field_list)
+let splitFieldListIntoColsAndRelations = module.exports.splitFieldListIntoColsAndRelations = function(field_list)
 {
 	const cols = [];
 	const rel = [];
@@ -413,17 +413,17 @@ module.exports.processInitialResponse = function(z, cols, response, model_type)
   let ordered_response;
   let item;
   if (isObj(data)) { // single response, in Object
-    ordered_response = this.processSingleItemResponse(data, model_type);
+    ordered_response = processSingleItemResponse(data, model_type);
   } else if (Array.isArray(data)) {
     ordered_response = [];
     data.forEach(item => {
-      ordered_response.push(this.processSingleItemResponse(item, model_type));
+      ordered_response.push(processSingleItemResponse(item, model_type));
     });
   } else throw 'Illegal response from Fluxx API call';
   
   // restoring nulls works for arrays of objects or just a single object
   // the ordered_response is edited in-place
-  this.restoreNullFieldsInResponse(cols, ordered_response, "fields");
+  restoreNullFieldsInResponse(cols, ordered_response, "fields");
   return ordered_response;
 };
 
@@ -444,7 +444,14 @@ module.exports.processInitialResponse = function(z, cols, response, model_type)
  *      {
  *        value: "Hierarchy / To / Selection / Leaf / Node 1",
  *        percent: 50,
- *        list: ["Hierarchy", "To", "Selection", "Leaf", "Node 1"],
+ *        list: ["Hierarchy", "To", "Selection", "Leaf", "Node 1"], // May not be accessible as Line Items
+ *        breadcrumbs_rev: {
+ *          5 => "Hierarchy",                                       // May be easier to access as Line Items,
+ *          4 => "To",                                              //  reversed, so [1] is the "end" leaf
+ *          3 => "Selection",
+ *          2 => "Leaf",
+ *          1 => "Node 1",
+ *        }
  *      }
  *    ],
  *    a_mav_field_without_enhanced_mavs_on: [
@@ -457,7 +464,7 @@ module.exports.processInitialResponse = function(z, cols, response, model_type)
  *  If the result was an Object (single item GET) with only an id returned, the
  *  record did not exist, so we just return a null.
  */
-module.exports.processSingleItemResponse = function(item, model_type)
+const processSingleItemResponse = module.exports.processSingleItemResponse = function(item, model_type)
 {
   const out = {}; // holds our output
   // top level holds only id and model_type
@@ -481,21 +488,36 @@ module.exports.processSingleItemResponse = function(item, model_type)
     } else if (Array.isArray(val) && val.length > 0 && Array.isArray(val[0])) {
       // show_mavs section
     	out.fields[key] = [];
+      let max_depth = 0;
+      // find the max depth of breadcrumbs for the set of results, so we can null-fill missing items
+    	val.forEach(element => {
+        (element.length > max_depth) && (max_depth = element.length);
+      });
     	val.forEach(element => {
     		// ignore 0-length arrays that sneak in
     		if (!(Array.isArray(element) && element.length === 0)) {
+    			let single_selection = {}; // one selection of the multi-select
+    			single_selection.breadcrumbs_rev = {};
 
     			// now within each (array) element there is 1 or more
     			// objects holding path segment info.
     			let percentage = -1;
     			let elements = [];
+          let i = max_depth;
+          if (element.length < max_depth) {
+            for (i; i > element.length; i--) {
+              single_selection.breadcrumbs_rev[i] = " ";
+            }
+          }
     			element.forEach(segment => {
+            single_selection.breadcrumbs_rev[i--] = segment.desc;
     				elements.push(segment.desc);
-    				if (segment.amount_value !== undefined) {
+    				if (segment.amount_value === undefined) {
+              percentage = null;
+            } else {
     					percentage = segment.amount_value;
     				}
     			});
-    			let single_selection = {}; // one selection of the multi-select
     			single_selection.value = elements.join(' / ');
     			single_selection.list = elements;
     			if (percentage != -1) {
@@ -520,7 +542,7 @@ module.exports.processSingleItemResponse = function(item, model_type)
 
 module.exports.optionsForSqlSelect = function(z, bundle, p)
 {
-  let parsed_cols = this.splitFieldListIntoColsAndRelations(p.cols);
+  let parsed_cols = splitFieldListIntoColsAndRelations(p.cols);
   let order_by = p.order_by;
   
   let options = {
@@ -529,7 +551,7 @@ module.exports.optionsForSqlSelect = function(z, bundle, p)
     headers: c.STANDARD_HEADERS(bundle),
     params: {},
     body: {
-      filter: p.filter, //z.JSON.stringify(p.filter),
+      filter: z.JSON.stringify(p.filter),
       cols: z.JSON.stringify(parsed_cols.cols),
       // we add sorting below
     },
@@ -540,7 +562,7 @@ module.exports.optionsForSqlSelect = function(z, bundle, p)
   } 
   if (order_by !== undefined && order_by !== null) {
     if (order_by.style == 'ELASTIC') {
-      options.body['sort'] = order_by.sort;
+      options.body['sort'] = z.JSON.stringify(order_by.sort);
     } else if (order_by.style == 'NO_ELASTIC') {
       options.body['sort_attribute'] = order_by.sort_attribute;
       options.body['sort_order'] = order_by.sort_order;
@@ -561,7 +583,7 @@ module.exports.optionsForSqlSelect = function(z, bundle, p)
  */
 module.exports.optionsForSingleItemFetch = function(z, bundle, p)
 {
-  let parsed_cols = this.splitFieldListIntoColsAndRelations(p.cols);
+  let parsed_cols = splitFieldListIntoColsAndRelations(p.cols);
   let options = {
     url: `https://${bundle.authData.client_domain}/api/rest/v2/${modelToSnake(p.model_type)}/${p.id}`,
     method: 'GET',
@@ -1399,3 +1421,29 @@ let paginated_fetch = module.exports.paginated_fetch = async (z, bundle, options
   
   return first_response !== null ? first_response : [];
 }
+
+module.exports.sql_descriptions = async (z, bundle) => {
+  let desc = "";
+  try {
+    let p = optionsForSelectClause(z, bundle.inputData.in);
+    // p = {select: cols, from: model_type, where: filter, order_by: order_by, limit: limit};
+    let parsed_cols = splitFieldListIntoColsAndRelations(p.cols);  
+
+    desc += `- Model Type: ${p.model_type}\n`; 
+    (Object.keys(parsed_cols.cols).length > 0)      && (desc += `- Cols: ${z.JSON.stringify(parsed_cols.cols)}\n`);
+    (Object.keys(parsed_cols.relation).length > 0)  && (desc += `- Relation: ${z.JSON.stringify(parsed_cols.relation)}\n`);
+    desc += `- Filter: ${_internal.unescapeSlashes(z.JSON.stringify(p.filter))}\n`;
+    (p.order_by !== undefined) && (p.order_by !== "") && (desc += `- Order By: ${z.JSON.stringify(p.order_by)}\n`);
+    (p.limit !== undefined)     && (desc += `- Limit: ${z.JSON.stringify(p.limit)}\n`);
+    
+    desc += `\nPlease check to ensure that the SQL parser has accurately represented your SQL statement. Common errors include forgetting to capitalise SELECT, FROM, WHERE, AND, OR, NOT, ORDER BY, LIMIT.`;
+  } catch (e) {
+    desc = e + z.JSON.stringify(e);
+  }
+  return {
+    key: 'help_text',
+    label: 'SQL Description',
+    type: 'copy',
+    helpText: desc,
+  };
+};

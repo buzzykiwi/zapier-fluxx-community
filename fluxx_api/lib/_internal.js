@@ -1,5 +1,6 @@
 'use_strict';
 var c = require('./const');
+var fn = require('./fn');
 
 var RuleNode = module.exports.RuleNode = function(type=null, conditions=[])
 {
@@ -156,7 +157,7 @@ var fluxx_operator_regex = module.exports.fluxx_operator_regex = function(detail
 
 var convertToNonElasticFilter = module.exports.convertToNonElasticFilter = function(input_filter, model_type)
 {
-  let model_type_snake = this.modelToSnake(model_type);
+  let model_type_snake = fn.modelToSnake(model_type);
   /*
     This returns a fully formed filter suitable for use for Elastic-enabled models.
     The question is how to convert or what to accept for non-elastic models, that need

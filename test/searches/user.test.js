@@ -10,7 +10,7 @@ const appTester = zapier.createAppTester(App);
 // read the `.env` file into the environment, if available
 zapier.tools.env.inject();
 
-describe('searches.find_user', () => {
+describe('searches.search_for_user', () => {
   it('should run', async () => {
     const bundle = { 
       authData: {
@@ -23,7 +23,7 @@ describe('searches.find_user', () => {
       },
     };
 
-    const results = await appTester(App.searches.find_user.operation.perform, bundle);
+    const results = await appTester(App.searches.search_for_user.operation.perform, bundle);
     expect(results).toBeDefined();
     // TODO: add more assertions
   });

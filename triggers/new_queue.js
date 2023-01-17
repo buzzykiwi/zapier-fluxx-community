@@ -70,7 +70,7 @@ module.exports = {
   key: 'new_queue',
   noun: 'Model in "Initial Review" state',
   display: {
-    label: 'Get Queue',
+    label: 'Trigger on Queued Records',
     description: 'Triggers when objects appear in a specified Fluxx API queue.',
     directions: 'Should be triggered on a cron (timed) basis',
     hidden: false,

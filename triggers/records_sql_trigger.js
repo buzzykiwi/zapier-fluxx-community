@@ -23,9 +23,9 @@ module.exports = {
   key: 'records_sql_trigger',
   noun: 'SQL Records Search',
   display: {
-    label: 'Triggers When New Records Are Found via an SQL-like Search.',
+    label: 'Trigger on New Records',
     description:
-      "Structure this like a SQL statement e.g. SELECT id, name FROM Organization WHERE city = 'Auckland' ORDER BY name asc LIMIT 400",
+      "Triggers when new records are found via an SQL-like search. e.g. SELECT id, name FROM Organization WHERE city = 'Auckland' ORDER BY name asc LIMIT 400\nResults are de-duped and will not trigger for the same item twice unless the Zap is stopped and re-started.",
     hidden: false,
     important: true,
   },

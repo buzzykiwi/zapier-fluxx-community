@@ -27,7 +27,7 @@ module.exports = {
   key: 'records_sql_search',
   noun: 'SQL Records Search',
   display: {
-    label: 'Search for a List of Fluxx Records with Line Item support',
+    label: 'Search for a List of Fluxx Records With Line Item Support',
     description:
       "Structure this like a SQL statement e.g. SELECT id, name FROM Organization WHERE city = 'Auckland' ORDER BY name asc LIMIT 10",
     hidden: false,

@@ -70,7 +70,7 @@ module.exports = {
   noun: 'File',
   display: {
     label: 'Download File',
-    description: 'Downloads a file.',
+    description: 'Triggers when a file is available by id (???).',
     directions: 'Should be triggered on a cron (timed) basis',
     hidden: false,
     important: false,

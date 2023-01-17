@@ -92,6 +92,8 @@ let parseWhereClause = module.exports.parseWhereClause = function(z, input, mode
   var new_text_item;
 
   let token = null, token_count = 0;
+  let new_node;
+  
   for (token of tokens) {
     token_count++;
     switch(true) {
@@ -132,9 +134,10 @@ let parseWhereClause = module.exports.parseWhereClause = function(z, input, mode
           stack.top().group_type = "NOT-AND";
         } else if (stack.top().group_type == "OR" || stack.top().group_type == "NOT-OR") { // ignore if it was already AND
           // bind to last node/condition in the array -- make a new AND node containing that item.
-          stack.currentConditions().push(new (_internal.RuleNode)("AND",stack.currentConditions().pop()));
+          new_node = new (_internal.RuleNode)("AND",[stack.currentConditions().pop()]);
+          stack.currentConditions().push(new_node);
           // {group_type:"AND", conditions:[stack.last().conditions.pop()]});
-          stack.push(stack.lastCondition());
+          stack.push(new_node);
           // any new items will go onto that new node with the AND and the previous item from the list
           extra_brackets_added++; // because we went up one level
         }
@@ -149,11 +152,11 @@ let parseWhereClause = module.exports.parseWhereClause = function(z, input, mode
           // bind to the entire last group, whether ands or ors.
           // Do this by replacing the entire current node with an OR, adding the previous node as the first item in the new node's conditions array. Then we add ourselves at the same level.
           if (stack.length() >= 2) {
-            stack.previousConditions().push(new (_internal.RuleNode)("OR",stack.previousConditions().pop()));
+            stack.previousConditions().push(new (_internal.RuleNode)("OR",[stack.previousConditions().pop()]));
             stack.pop(); // the last item is now invalid because we moved it
             stack.push(stack.lastCondition());
           } else {
-            filter.data = new (_internal.RuleNode)("OR",filter.data);
+            filter.data = new (_internal.RuleNode)("OR",[filter.data]);
             stack.pop();
             stack.push(filter.data);
           }

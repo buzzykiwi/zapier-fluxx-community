@@ -13,8 +13,8 @@ const getAccessToken = async (z, bundle) => {
     },
     params: {},
     body: {
-      'client_id': '{{process.env.CLIENT_ID}}',
-      'client_secret': '{{process.env.CLIENT_SECRET}}',
+      'client_id': '{{bundle.inputData.CLIENT_ID}}',
+      'client_secret': '{{bundle.inputData.CLIENT_SECRET}}',
       'grant_type': 'client_credentials'
     }
   };
@@ -48,8 +48,8 @@ const refreshAccessToken = async (z, bundle) => {
     params: {},
     body: {
         'grant_type': 'client_credentials',
-        'client_id': '{{process.env.CLIENT_ID}}',
-        'client_secret': '{{process.env.CLIENT_SECRET}}',
+        'client_id': '{{bundle.authData.CLIENT_ID}}',
+        'client_secret': '{{bundle.authData.CLIENT_SECRET}}',
     }
   };
   
@@ -95,7 +95,7 @@ module.exports = {
       authorizeUrl: {
         url: 'https://{{bundle.inputData.client_domain}}/oauth/authorize',
         params: {
-          client_id: '{{process.env.CLIENT_ID}}',
+          client_id: '{{bundle.inputData.CLIENT_ID}}',
           redirect_uri: '{{bundle.inputData.redirect_uri}}',
           response_type: 'code',
         },
@@ -115,6 +115,24 @@ module.exports = {
           "This is the domain name of the Fluxx installation.\ne.g. mysite.fluxx.io   (live site)\ne.g. mysite.preprod.fluxxlabs.com  (preprod)\n\nDon't include https:// or any leading or trailing slashes.",
         inputFormat: 'https://{{input}}/',
       },
+      {
+        computed: false,
+        key: 'CLIENT_ID',
+        required: true,
+        label: 'Fluxx Application Id',
+        type: 'string',
+        helpText:
+          "Create a application id and secret in Fluxx.",
+      },
+      {
+        computed: false,
+        key: 'CLIENT_SECRET',
+        required: true,
+        label: 'Fluxx Secret',
+        type: 'string',
+        helpText:
+          "Create a application id and client secret in Fluxx.",
+      }
     ],
     connectionLabel: '{{bundle.authData.client_domain}}',
   },

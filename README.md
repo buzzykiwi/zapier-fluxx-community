@@ -44,13 +44,13 @@ FCE is provided free of charge. You may use it in one of three ways:
 3. In a new browser tab, create a new Zap in Zapier
 4. For each Fluxx step in the Zap, choose "Fluxx Community Edition (X.Y.Z)"
 5. The first time you do this, you need to "Connect to a new account" to connect to your Fluxx instance.
-  1. Click on "Choose Account" then "Choose an Account", then "Connect a new account". A popup window appears, so ensure that popup windows are enabled for Zapier.com in your browser.
-  2. In Fluxx Client Domain, enter the full domain name of the Fluxx Preprod or Production site, e.g. **mydomain.preprod.fluxxlabs.com**
-  3. In Fluxx Application Id, copy and paste the Application Id you created in step 2
-  4. In Fluxx Secret, copy and paste the "Secret" you created in step 2
-  5. Click "Yes, Continue"
-  6. The browser redirects to your chosen Fluxx instance, https://[[server url]]/oauth/authorize?client_id=...
-  7. If the browser takes you to the Fluxx login page, complete the login then close the popup window and repeat from step 5.1 again.
+   1. Click on "Choose Account" then "Choose an Account", then "Connect a new account". A popup window appears, so ensure that popup windows are enabled for Zapier.com in your browser.
+   2. In Fluxx Client Domain, enter the full domain name of the Fluxx Preprod or Production site, e.g. **mydomain.preprod.fluxxlabs.com**
+   3. In Fluxx Application Id, copy and paste the Application Id you created in step 2
+   4. In Fluxx Secret, copy and paste the "Secret" you created in step 2
+   5. Click "Yes, Continue"
+   6. The browser redirects to your chosen Fluxx instance, https://[[server url]]/oauth/authorize?client_id=...
+   7. If the browser takes you to the Fluxx login page, complete the login then close the popup window and repeat from step 5i again.
 
 If the authentication succeeds, congratulations! You are now ready to start automating Fluxx actions.
 

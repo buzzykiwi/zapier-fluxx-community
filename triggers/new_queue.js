@@ -68,7 +68,7 @@ const perform = async (z, bundle) => {
 
 module.exports = {
   key: 'new_queue',
-  noun: 'Model in "Initial Review" state',
+  noun: 'Records in Fluxx API Queue',
   display: {
     label: 'Trigger on Queued Records',
     description: 'Triggers when objects appear in a specified Fluxx API queue.',

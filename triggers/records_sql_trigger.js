@@ -21,7 +21,7 @@ const perform = async (z, bundle) => {
 
 module.exports = {
   key: 'records_sql_trigger',
-  noun: 'SQL Records Search',
+  noun: 'SQL Records Search Results',
   display: {
     label: 'Trigger on New Records',
     description:
@@ -36,7 +36,7 @@ module.exports = {
         label: 'SQL input',
         type: 'text',
         helpText:
-          "e.g. SELECT id, name FROM Organization WHERE city = 'Auckland' ORDER BY name asc LIMIT 400",
+          "e.g. SELECT id, name FROM Organization WHERE city = 'Auckland' ORDER BY updated_at desc LIMIT 100",
         required: false,
         list: false,
         altersDynamicFields: false,

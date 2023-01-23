@@ -21,6 +21,7 @@ Fluxx Community Edition (FCE) is a Zapier integration that allows Zapier to conn
 - [Actions](#actions)
   * [File Download](#file-download)
   * [File Upload](#file-upload)
+  * [Search for a List of Fluxx Records With Line Item Support](#search-for-a-list-of-fluxx-records-with-line-item-support)
   
 
 ## Getting Started
@@ -87,8 +88,9 @@ FEC includes two Triggers: Trigger on Queued Records, and Trigger on New Records
 
 ### File Download
 
-* Input: the Id of the ModelDocument you want to download
-* Output: 
+* **Input**
+  * id: the Id of the ModelDocument you want to download
+* **Output** 
   * id
   * file (type: file, can be used as input in any Zap action that takes a file as input)
   * document_content_type
@@ -111,7 +113,7 @@ FEC includes two Triggers: Trigger on Queued Records, and Trigger on New Records
   * documentable_id
   * model_document_template_id.id
   * model_document_template_id.description
-* Notes:
+* **Notes**
   * The file output uses Zapier's dehydrate function, which temporarily hosts the file on a Zapier server
   * Occasionally, this action seems to truncate the file before passing it on. Please report this if it happens.
   * If you require any other fields, e.g. Dynamic Fields, you can retrieve these with the Action "Search for a Single Fluxx Record" or the Search "Search for Record". Both options allow you to specify arbitrary field names to retrieve, but neither will return the file contents itself.
@@ -120,7 +122,9 @@ FEC includes two Triggers: Trigger on Queued Records, and Trigger on New Records
 
 This action creates a new ModelDocument based on a document output from a previous Zap trigger or action (e.g. a mail attachment from an email received in Gmail or Exchange Mail, or from a previous Fluxx action), or from a URL. If you have a static file that you want to upload, you will need to upload it to a web site/service in order to get a URL for it.
 
-* Input:
+All files uploaded through this Action must be attached to a Model Type and Model Id, e.g. attached to GrantRequest with id 12345. It is recommended that you also specify a Doc Label (often _default_) and a Model Document Type by id.
+
+* **Input**
   * Filename including extension (required)
   * File (required). The file field acts differently depending on what data is mapped to it:
     * Text: Zapier will turn text into a .txt file and that file will be uploaded to the app.
@@ -149,7 +153,7 @@ This action creates a new ModelDocument based on a document output from a previo
   * Model Document Sub Type: If the selected Model Document Type has sub types, this selector will allow you to select which one use.
   * "name segment for user search below": This is a helper field for the User Id selector. Fill in this field with the name (or part of the name) of the "created_by" user, before searching with the selector below. This helps to trim down the number of results shown. NOTE: you must select a user below, after filling in this box.
   * Created By Id (required): enter the User id to use for the Created By Id. You may be able to may a user id from a previous step, _or_ use the box above to help narrow down the Id search.
-* Output
+* **Output**
   * id (the ModelDocument Id)
   * document_type (returns "file")
   * doc_label (e.g. "default")
@@ -164,5 +168,32 @@ This action creates a new ModelDocument based on a document output from a previo
   * created_by.id
   * created_by.full_name
   * document_file_size (in Bytes)
-* Notes:
-  * 
+
+### Search for a List of Fluxx Records With Line Item Support
+
+There may be times when you need to load in a set of Fluxx records related to a previous item, perhaps to access their values or to update them in some way. This action allows you to perform a Fluxx search based on a SQL-like query. If there are values from the Trigger or a previous Action that you need to use in the query, you can sub these values into the text box where appropriate.
+
+The list of items is returned as a Zapier "Line Item" set. You can use the "Looping by Zapier" action to loop through the line items, repeating any subsequent Zap steps for each of the items in the Line Item set. Note that each Action completed in a loop iteration counts against your Zapier Tasks count.
+
+* **Input**
+  * SQL input: see [_SQL Support_](./SQL_SUPPORT.md) e.g. SELECT id, name, nz_charities_number FROM Organization WHERE postal_code = "4500"
+    * Don't forget that you can sub values from previous steps into the SQL string e.g. ... WHERE postal_code = [[1. Postal Code: 4500]]
+  * Show MAVs: indicate True/False (default False). If true, any Multi Attribute Values returned will return percentage value (if available) and hierarchy information.
+* **Output**
+```
+results
+  1:
+    id: 105
+    model_type: organization
+    fields:
+      id: 105
+      name: Support Group for Those Bereaved by Suicide
+      nz_charities_number: null
+  2:
+    id: 12
+    model_type: organization
+    fields:
+      id: 12
+      name: Central Kindergarten
+      nz_charities_number: null
+```

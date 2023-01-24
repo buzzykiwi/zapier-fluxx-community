@@ -257,9 +257,10 @@ e.g.
 ```
 Core field: model_theme_id
   • This is the ID of the theme that the record is using to render.
-  • type: relation (ModelTheme) [this is a hyper-link to the API documentation for ModelTheme on your Fluxx instance]
+  • type: relation (ModelTheme) [links to API docs for ModelTheme on your Fluxx instance]
 ```
 
+* Input (continued)
   * **Value List** (required)
     * For each of the fields in the Field List (above), you need to specify a value. Like the Field List, each time you fill in a value a new box appears below.
     * You must have tghe same number of boxes in the Field List as you have boxes in the Value List. The first box in the Field List matches with the first box in the Value List, the second box in the Field List matches with the second box in the Value List, etc.

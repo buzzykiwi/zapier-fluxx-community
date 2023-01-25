@@ -125,12 +125,12 @@ module.exports.mav_and_ma_id_for_field_name_and_path = function(prepared_mas, fi
 }
 
 /**
- * structured_mas_and_mavs_for_model
+ * structured_mas_and_mvs_for_model
  * This gives a tree structure based on ModelAttributes. Each MA has 1-many ModelAttributeValues attached,
  * for any MAs that are *multi-value with multi allowed* (not just any old MAs), AND are in the field_list.
  * Using the field_list means we don't return any more fields (MAs) than we need.
  */
-const structured_mas_and_mavs_for_model = module.exports.structured_mas_and_mavs_for_model = async function(z, bundle, model_type, field_list) {
+const structured_mas_and_mvs_for_model = module.exports.structured_mas_and_mvs_for_model = async function(z, bundle, model_type, field_list) {
   let mas_options = {
     url: `https://${bundle.authData.client_domain}/api/rest/v2/model_attribute/list`,
     method: 'POST',
@@ -193,10 +193,10 @@ const structured_mas_and_mavs_for_model = module.exports.structured_mas_and_mavs
   return [mas, mavs];
 }
 
-module.exports.which_fields_are_mavs = async function(z, bundle, model_type, structured_mas, field_list) {
+module.exports.which_fields_are_mvs = async function(z, bundle, model_type, structured_mas, field_list) {
   // If no MAs given, look for them now and return them later.
   if (structured_mas === null) {
-    [structured_mas, structured_mavs] = await structured_mas_and_mavs_for_model(z, bundle, model_type, field_list);
+    [structured_mas, structured_mvs] = await structured_mas_and_mvs_for_model(z, bundle, model_type, field_list);
   }
   // Simple case: if there are no MAs for this model, return empty list.
   if (Array.isArray(structured_mas) && structured_mas.length == 0) {
@@ -213,7 +213,7 @@ module.exports.which_fields_are_mavs = async function(z, bundle, model_type, str
       names_for_return.push(field_name);
     }
   });
-  return [structured_mas, structured_mavs, names_for_return];
+  return [structured_mas, structured_mvs, names_for_return];
 }
 
 // for reference

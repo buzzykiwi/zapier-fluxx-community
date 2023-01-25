@@ -4,7 +4,7 @@ const FluxxAPI = require('../fluxx_api');
 
 // create a particular testsubinputs by name
 const perform = async (z, bundle) => {
-  let [mas, mavs] = await FluxxAPI.mav_tree.structured_mas_and_mavs_for_model(z, bundle, bundle.inputData.model_type);
+  let [mas, mavs] = await FluxxAPI.mav_tree.structured_mas_and_mvs_for_model(z, bundle, bundle.inputData.model_type);
 
   const [id, ma_id] = FluxxAPI.mav_tree.mav_and_ma_id_for_field_name_and_path(mas, bundle.inputData.field_name, bundle.inputData.test_path);
   z.console.log(`Test Mavs: path: ${bundle.inputData.test_path}; expected result: ${bundle.inputData.test_expected_id}; actual result: ${id}; returned MA id: ${ma_id}`);

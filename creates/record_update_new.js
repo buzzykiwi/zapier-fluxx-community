@@ -23,7 +23,7 @@ const perform = async (z, bundle) => {
   */
 
   // Which of the requested fields are MAVs? - also grab the structured tree of MAs and list of all multi-value MAVs
-  const [structured_mas, structured_mavs, mav_fields] = await FluxxAPI.mav_tree.which_fields_are_mavs(
+  const [structured_mas, structured_mavs, mv_fields] = await FluxxAPI.mav_tree.which_fields_are_mvs(
     z, 
     bundle, 
     inputData.model_type, 
@@ -35,7 +35,7 @@ const perform = async (z, bundle) => {
   const [all_fields_and_update_values, fields_and_update_values_without_mvs] = fields_and_values(
     inputData.fields,
     inputData.values,
-    mav_fields
+    mv_fields
   );
   
   var final_return;
@@ -59,33 +59,33 @@ const perform = async (z, bundle) => {
   }
   
   // handle Model Attribute Values (multi-value controls) separately.
-  if (Array.isArray(mav_fields) && mav_fields.length > 0) {
+  if (Array.isArray(mv_fields) && mv_fields.length > 0) {
     
-    // grab current MACs for record, restricted to only those relating to the mav_fields.
+    // grab current MACs for record, restricted to only those relating to the mv_fields.
     // this is an array of object returns from a Fluxx query, with keys:
     // 'id', 'amount_value', 'model_id', 'model_attribute_id', 'model_attribute_value_id'
-    let existing_macs = await existing_macs_for_record(z, bundle, inputData.id, structured_mas, mav_fields);
+    let existing_macs = await existing_macs_for_record(z, bundle, inputData.id, structured_mas, mv_fields);
     
-    for (var mav_field of mav_fields) {
+    for (var mv_field of mv_fields) {
       await processMAVOperationsForRecordField({
         z: z, 
         bundle: bundle, 
         model_type: inputData.model_type, 
         model_id: inputData.id, 
-        field_name: mav_field,
-        operations: all_fields_and_update_values[mav_field], // the "operations" text box
+        field_name: mv_field,
+        operations: all_fields_and_update_values[mv_field], // the "operations" text box
         structured_mas: structured_mas,
         existing_macs: existing_macs,
       });
     }
-/*    await Promise.allSettled(mav_fields.map(async (mav_field) => {
+/*    await Promise.allSettled(mv_fields.map(async (mv_field) => {
       processMAVOperationsForRecordField(
         z, 
         bundle, 
         inputData.model_type, 
         inputData.id, 
-        mav_field,
-        all_fields_and_update_values[mav_field], // the "operations" text box
+        mv_field,
+        all_fields_and_update_values[mv_field], // the "operations" text box
         structured_mas,
         existing_macs
       );
@@ -126,12 +126,12 @@ output =
    * the fields as keys and the values as values
    */
 
-  function fields_and_values(fields, values, mav_fields) {
+  function fields_and_values(fields, values, mv_fields) {
     var i;
     const all_fields = {}, fields_without_mvs = {};
     for (i = 0; i < fields.length; i++) {
       all_fields[fields[i]] = values[i];
-      if (!mav_fields.includes(fields[i])) {
+      if (!mv_fields.includes(fields[i])) {
         fields_without_mvs[fields[i]] = values[i];
       }
     }
@@ -395,7 +395,7 @@ async function remove_all_macs_for_ma(z, bundle, o, structured_mas, existing_mac
 
 // remove a MAC that relates to a particular "option" for the current model_id (aka MAV)
 // the "option" is a MAV, by name or id.
-// there can only one MAC for a MAV.
+// there can only be one MAC for a MAV.
 async function remove_mac(z, bundle, o, structured_mas, existing_macs, model_type, model_id, field_name, ma_id2)
 {
   let mav_id, ma_id;
@@ -432,7 +432,7 @@ async function remove_mac_with_id(z, bundle, mac_id)
   return response.data;
 }
 
-async function add_mac(z, bundle, o, structured_mas, existing_macs, model_type, model_id, user_id, mav_field_name)
+async function add_mac(z, bundle, o, structured_mas, existing_macs, model_type, model_id, user_id, mv_field_name)
 {
   // 1 - if there's a path, resolve it to a MAV id
   // 2 - check our list of existing MACs for that MAV (obviously for the current model id). We may already have one.
@@ -444,7 +444,7 @@ async function add_mac(z, bundle, o, structured_mas, existing_macs, model_type, 
   var mav_id, ma_id;
   if (o.path !== undefined) {
     // call something to get the id of the path from o.path
-    [mav_id, ma_id] = FluxxAPI.mav_tree.mav_and_ma_id_for_field_name_and_path(structured_mas, mav_field_name, o.path);
+    [mav_id, ma_id] = FluxxAPI.mav_tree.mav_and_ma_id_for_field_name_and_path(structured_mas, mv_field_name, o.path);
         
   } else {
     // call something to create the model_attribute_choice that links to model_id,
@@ -523,7 +523,7 @@ async function update_mac_with_new_percentage(z, bundle, mac_id, percentage, use
 }
 
 
-async function existing_macs_for_record(z, bundle, model_id, structured_mas, mav_fields)
+async function existing_macs_for_record(z, bundle, model_id, structured_mas, mv_fields)
 {
   
   // The structured MAs are the MAs which are multi-value. So, we want to get a list of all
@@ -541,7 +541,7 @@ async function existing_macs_for_record(z, bundle, model_id, structured_mas, mav
   };
   
   options.body.filter = JSON.stringify({
-    model_attribute_id: structured_mas.filter(ma => mav_fields.includes(ma.__zapier_orig.name)).map(ma => ma.__zapier_orig.id),
+    model_attribute_id: structured_mas.filter(ma => mv_fields.includes(ma.__zapier_orig.name)).map(ma => ma.__zapier_orig.id),
     model_id: model_id,
   });
   

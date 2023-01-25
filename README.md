@@ -200,7 +200,7 @@ results
       id: 105
       name: Support Group for Those Bereaved by Suicide
       nz_charities_number: null
-      _(all other requested fields appear here)_
+      (all other requested fields appear here)
   2:
     id: 12
     model_type: organization
@@ -208,7 +208,7 @@ results
       id: 12
       name: Central Kindergarten
       nz_charities_number: null
-      _(all other requested fields appear here)_
+      (all other requested fields appear here)
 ```
 
 
@@ -233,7 +233,7 @@ fields:
   id: 17443
   account_name: Save The Kids Trust
   account_number: 12-3456-1234567-000
-  _(all other requested fields appear here)_
+  (all other requested fields appear here)
 ```
 
 
@@ -263,6 +263,6 @@ Core field: model_theme_id
 * Input (continued)
   * **Value List** (required)
     * For each of the fields in the Field List (above), you need to specify a value. Like the Field List, each time you fill in a value a new box appears below.
-    * You must have tghe same number of boxes in the Field List as you have boxes in the Value List. The first box in the Field List matches with the first box in the Value List, the second box in the Field List matches with the second box in the Value List, etc.
+    * You must have the same number of boxes in the Field List as you have boxes in the Value List. The first box in the Field List matches with the first box in the Value List, the second box in the Field List matches with the second box in the Value List, etc.
     * For boolean values, use 1 for true and 0 for false.
-    * Multi-attribute values (select controls that allow more than one value, and/or percentage) can be specified using a special syntax that allows you to _remove_ existing selections and/or add selections. It cannot create Model Attribute Values that do not already exist in the system.
+    * Multi-attribute values (select controls that allow more than one value, and/or percentage) can be specified using a [special syntax](./MULTI_VALUE_FIELDS.md) that allows you to _remove_ existing selections and/or add selections. It cannot create Model Attribute Values that do not already exist in the system.

@@ -23,10 +23,10 @@ describe('oauth2 app', () => {
         // In production, Zapier passes along whatever code your API set in the query params when it redirects
         // the user's browser to the `redirect_uri`
         client_domain: process.env.CLIENT_DOMAIN,
-      },
-      environment: {
         CLIENT_ID: process.env.CLIENT_ID,
         CLIENT_SECRET: process.env.CLIENT_SECRET,
+      },
+      environment: {
       },
       cleanedRequest: {
         querystring: {

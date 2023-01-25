@@ -245,7 +245,7 @@ It is up to you to ensure that all required fields are given valid values.
 
 * **Input**
   * **Record ID**: Enter the id of the record to update, or leave blank to create a new record
-  * **Model Group** (required): As there are so many model types to choose from, they have been broken down into four lists: Basic, Intermediate, Dynamic Models only, and All. This filters the Model Types shown in the MOdel Type field. "Basic" contains Document, Grant Request, Initiative, Organization, Program, Project, Request Report, Request Transaction, Sub Initiative, Sub Program, and User.
+  * **Model Group** (required): As there are so many model types to choose from, they have been broken down into four lists: Basic, Intermediate, Dynamic Models only, and All. This filters the Model Types shown in the Model Type field. "Basic" contains Document, Grant Request, Initiative, Organization, Program, Project, Request Report, Request Transaction, Sub Initiative, Sub Program, and User.
   * **Model Type** (requred): accepts model types in both styles: grant_request or GrantRequest. You must specify a Model Type before the Field List for Update/Create control will appear.
   * **Field List for Update/Create** (required)
     * This multiple-select control knows about all Core and Dynamic fields available for the Model Type you specify above.
@@ -265,4 +265,5 @@ Core field: model_theme_id
     * For each of the fields in the Field List (above), you need to specify a value. Like the Field List, each time you fill in a value a new box appears below.
     * You must have the same number of boxes in the Field List as you have boxes in the Value List. The first box in the Field List matches with the first box in the Value List, the second box in the Field List matches with the second box in the Value List, etc.
     * For boolean values, use 1 for true and 0 for false.
+    * For foreign keys (most fields that end in "_id"), either hard-code an id, or you may need to perform another search to retrieve the required id. To set the id to null, leave the text field blank.
     * Multi-attribute values (select controls that allow more than one value, and/or percentage) can be specified using a [special syntax](./MULTI_VALUE_FIELDS.md) that allows you to _remove_ existing selections and/or add selections. It cannot create Model Attribute Values that do not already exist in the system.

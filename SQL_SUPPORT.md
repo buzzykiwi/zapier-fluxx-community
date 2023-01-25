@@ -8,10 +8,10 @@ Example:
 SELECT id, project_title, amount_requested, amount_recommended, program_organization_id.name FROM GrantRequest WHERE state = "granted" AND amount_requested < 1000 ORDER BY amount_requested, project_title LIMIT 100
 ```
 
-The syntax even allows cross-card filtering (sorry, this syntax is a departure from SQL). The foreign key comes first followed by _CROSSCARD( conditions )_ ...
+The syntax even allows cross-card filtering (sorry, this syntax is a departure from SQL). The foreign key comes first followed by _CROSSCARD( conditions on the related model's fields )_ ...
 
 ```sql
-SELECT id FROM GrantRequest WHERE program_organization_id **CROSSCARD(city = ‘Auckland’ AND gst_registered = ‘y’)** AND amount_requested < 1000
+SELECT id FROM GrantRequest WHERE program_organization_id CROSSCARD(city = 'Auckland' AND gst_registered = 'y') AND amount_requested < 1000
 ```
 
 Rules:
@@ -23,7 +23,7 @@ Rules:
   * Elastic-enabled models: can be multiply nested with brackets, and can include all types of comparisons allowed in Fluxx
   * Non-Elastic models: have to follow the structure of basic Fluxx filters: “=“ comparisons only, with no NOTs, e.g. WHERE (field1 = 1 OR field1 = 2 OR field1 = 3) AND (field2 = 1 OR field2 = 2 OR field2 = 3)
   * ANDs, ORs and NOTs follow mathematical binding principles. a OR b AND c OR d is treated as (a OR (b AND c) OR d)
-* Strings in comparisons can be surrounded by single or double quotes. Quote escapes are allowed e.g. ‘Bob\’s Diner’. Curly quotes are not allowed.
+* Strings in comparisons can be surrounded by single or double quotes. Quote escapes are allowed e.g. 'Bob\'s Diner'. Curly quotes are not allowed.
 * You cannot sort by dot-relations, only by fields on the main model being queried
 * There are no “joins”, though the dot-relations do a sort of join for to-one relationships.
 * Some fields that return a list of ids, e.g. program_organization.grant_ids, so there is a limited selection of to-many relationships possible.

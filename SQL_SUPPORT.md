@@ -68,8 +68,8 @@ Complete list of operators:
 * IS NULL
 * IS NOT NULL
 * IS IN RANGE (nn - nn)
-* IS IN YEAR RANGE (\\d+/\\d+/\\d+ *- *\\d+/\\d+/\\d+)
-* IS IN FISCAL YEAR RANGE (\\d+/\\d+/\\d+ *- *\\d+/\\d+/\\d+)
+* IS IN YEAR RANGE yyyy-yyyy
+* IS IN FISCAL YEAR RANGE yyyy-yyyy
 * IS YESTERDAY
 * IS TODAY
 * IS TOMORROW

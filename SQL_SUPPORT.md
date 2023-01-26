@@ -17,6 +17,7 @@ SELECT id FROM GrantRequest WHERE program_organization_id CROSSCARD(city = 'Auck
 Rules:
 
 * All SQL keywords such as SELECT, FROM, WHERE, AND, OR, NOT, ORDER BY and LIMIT must be capitalised. This is to help with parsing.
+* The entire expression must be on one line (no line breaks)
 * FROM model names can be given as grant_request or GrantRequest (snake or camel-case), and include dynamic model names (MacModelTypeDyn…)
 * Field names (SELECT field1, field2 etc) can use dot notation to retrieve to-one relationship data. In most cases, the “local” field has to end in “_id”, e.g. program_organization_id.name, not program_organization.name. This is a limitation of the Fluxx API. The dot relationships are turned into “relation” attributes in the API call, transparent to the user.
 * The WHERE clause
@@ -29,7 +30,7 @@ Rules:
 * Some fields that return a list of ids, e.g. program_organization.grant_ids, so there is a limited selection of to-many relationships possible.
 * You can’t use mathematical operations in the WHERE clause:
   * not allowed: WHERE (amount_requested * 1.5 < 1000)
-* You can’t compare one field to another. You can only specify a field on the left side of a clause.
+* You can’t compare one field to another. Field names can only appear on the left side of a clause.
   * not allowed: WHERE (amount_recommended > amount_requested)
 
 Complete list of operators:
@@ -67,7 +68,7 @@ Complete list of operators:
 
 * IS NULL
 * IS NOT NULL
-* IS IN RANGE (nn - nn)
+* IS IN RANGE nn-nn
 * IS IN YEAR RANGE yyyy-yyyy
 * IS IN FISCAL YEAR RANGE yyyy-yyyy
 * IS YESTERDAY

@@ -2,12 +2,14 @@
 
 The Fluxx API search filters can be difficult to construct by hand. FCE therefore allows an SQL-like SELECT statement to be used in certain triggers and actions. It converts the SQL-like statement into a filter which is then used to search using the Fluxx API.
 
+
 ### Important
 
 There are two types of database tables in Fluxx when it comes to searching: "Elastic enabled" and "Non-Elastic Enabled". Most of the common tables/model types such as GrantRequest, Organization, RequestTransaction etc are Elastic-enabled. In Triggers & Actions that perform searches in Fluxx, the FCE interface will generally indicate whether the selected Model Type is Elastic-enabled or not.
 
 * Elastic-enabled tables/model types allow a large range of operators (e.g. `IN RANGE`, `IS IN NEXT nn FISCAL YEARS`, `STARTS WITH` etc), equivalent to what can be achieved using Advanced card filters within Fluxx.
 * Non-Elastic enabled tables/model types have significant limitations, equivalent to what can be achieved using "Basic" filters within Fluxx.
+
 
 ### Syntax Example
 
@@ -20,6 +22,7 @@ The syntax even allows cross-card filtering (sorry, this syntax is a departure f
 ```sql
 SELECT id FROM GrantRequest WHERE program_organization_id CROSSCARD(city = 'Auckland' AND gst_registered = 'y') AND amount_requested < 1000
 ```
+
 
 ### Syntax Rules
 
@@ -71,88 +74,89 @@ SELECT id FROM GrantRequest WHERE program_organization_id CROSSCARD(city = 'Auck
 * There are no “joins”, though the dot-relations do a sort of join for to-one relationships.
 * Some fields that return a list of ids, e.g. `program_organization.grant_ids`, so there is a limited selection of to-many relationships possible.
 
+
 ### Available Operators
 
-* =
-* ==
-* eq
-* EQ
-* !=
-* <>
-* neq
-* NEQ
-* not-eq
-* NOT-EQ
-* NOT EQ
-* <
-* lt
-* LT
-* &gt;
-* gte
-* GTE
-* <=
-* lte
-* LTE
-* STARTS-WITH
-* STARTS WITH
-* NOT STARTS WITH
-* NOT-STARTS-WITH
-* CONTAINS
-* NOT-CONTAINS
-* NOT CONTAINS
-* LIKE
-* NOT-LIKE
-* NOT LIKE
+* `=`
+* `==`  (acts same as =)
+* `eq`
+* `EQ`
+* `!=`
+* `<>`
+* `neq`
+* `NEQ`
+* `not-eq`
+* `NOT-EQ`
+* `NOT EQ`
+* `<`
+* `lt`
+* `LT`
+* `&gt;`
+* `gte`
+* `GTE`
+* `<=`
+* `lte`
+* `LTE`
+* `STARTS-WITH`
+* `STARTS WITH`
+* `NOT STARTS WITH`
+* `NOT-STARTS-WITH`
+* `CONTAINS`
+* `NOT-CONTAINS`
+* `NOT CONTAINS`
+* `LIKE`
+* `NOT-LIKE`
+* `NOT LIKE`
 
-* IS NULL
-* IS NOT NULL
-* IS IN RANGE nn-nn
-* IS IN YEAR RANGE yyyy-yyyy
-* IS IN FISCAL YEAR RANGE yyyy-yyyy
-* IS YESTERDAY
-* IS TODAY
-* IS TOMORROW
+* `IS NULL`
+* `IS NOT NULL`
+* `IS IN RANGE nn-nn`
+* `IS IN YEAR RANGE yyyy-yyyy`
+* `IS IN FISCAL YEAR RANGE yyyy-yyyy`
+* `IS YESTERDAY`
+* `IS TODAY`
+* `IS TOMORROW`
 
-* IS IN LAST nn DAYS
-* IS IN NEXT nn DAYS
-* IS nn DAYS AGO
-* IS LAST WEEK
-* IS THIS WEEK
-* IS NEXT WEEK
-* IS IN LAST nn WEEKS
-* IS IN NEXT nn WEEKS
-* IS nn WEEKS AGO
-* IS LAST MONTH
-* IS THIS MONTH
-* IS NEXT MONTH
-* IS IN LAST nn MONTHS
-* IS IN NEXT nn MONTHS
-* IS nn MONTHS AGO
-* IS LAST QUARTER
-* IS THIS QUARTER
-* IS NEXT QUARTER
-* IS IN LAST nn QUARTERS
-* IS IN NEXT nn QUARTERS
-* IS nn QUARTERS AGO
-* IS LAST FISCAL QUARTER
-* IS THIS FISCAL QUARTER
-* IS NEXT FISCAL QUARTER
-* IS IN LAST nn FISCAL QUARTERS
-* IS IN NEXT nn FISCAL QUARTERS
-* IS nn FISCAL QUARTERS AGO
-* IS LAST YEAR
-* IS THIS YEAR
-* IS NEXT YEAR
-* IS IN LAST nn YEARS
-* IS IN NEXT nn YEARS
-* IS nn YEARS AGO
-* IS LAST FISCAL YEAR
-* IS THIS FISCAL YEAR
-* IS NEXT FISCAL YEAR
-* IS IN LAST nn FISCAL YEARS
-* IS IN NEXT nn FISCAL YEARS
-* IS nn FISCAL YEARS AGO
-* CROSSCARD(   )
+* `IS IN LAST nn DAYS`
+* `IS IN NEXT nn DAYS`
+* `IS nn DAYS AGO`
+* `IS LAST WEEK`
+* `IS THIS WEEK`
+* `IS NEXT WEEK`
+* `IS IN LAST nn WEEKS`
+* `IS IN NEXT nn WEEKS`
+* `IS nn WEEKS AGO`
+* `IS LAST MONTH`
+* `IS THIS MONTH`
+* `IS NEXT MONTH`
+* `IS IN LAST nn MONTHS`
+* `IS IN NEXT nn MONTHS`
+* `IS nn MONTHS AGO`
+* `IS LAST QUARTER`
+* `IS THIS QUARTER`
+* `IS NEXT QUARTER`
+* `IS IN LAST nn QUARTERS`
+* `IS IN NEXT nn QUARTERS`
+* `IS nn QUARTERS AGO`
+* `IS LAST FISCAL QUARTER`
+* `IS THIS FISCAL QUARTER`
+* `IS NEXT FISCAL QUARTER`
+* `IS IN LAST nn FISCAL QUARTERS`
+* `IS IN NEXT nn FISCAL QUARTERS`
+* `IS nn FISCAL QUARTERS AGO`
+* `IS LAST YEAR`
+* `IS THIS YEAR`
+* `IS NEXT YEAR`
+* `IS IN LAST nn YEARS`
+* `IS IN NEXT nn YEARS`
+* `IS nn YEARS AGO`
+* `IS LAST FISCAL YEAR`
+* `IS THIS FISCAL YEAR`
+* `IS NEXT FISCAL YEAR`
+* `IS IN LAST nn FISCAL YEARS`
+* `IS IN NEXT nn FISCAL YEARS`
+* `IS nn FISCAL YEARS AGO`
+* `CROSSCARD(   )`
 
 * NOT can be put before a set of brackets, or before a single field operator operand expression, e.g.
 

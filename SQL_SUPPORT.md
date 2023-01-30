@@ -36,15 +36,15 @@ SELECT id FROM GrantRequest WHERE program_organization_id CROSSCARD(city = 'Auck
 * `«model type»` is the name of a single model.
   * The model type can be given as `grant_request` or `GrantRequest` (snake or camel-case), and include dynamic model names (`MacModelTypeDynMyTableName`). Do not use spaces within the model name.
 * `«conditions»`
-  * Elastic-enabled models: can be multiply nested with brackets, and can include all types of comparisons allowed in Fluxx. See operator list below.
-    * ANDs, ORs and NOTs follow mathematical binding principles. `a OR b AND c OR d` is treated as `(a OR (b AND c) OR d)`
   * You cannot use mathematical operations in the WHERE clause:
     * invalid: `WHERE (amount_requested * 1.5 < 1000)`
     * valid: `WHERE amount_requested < 666.67`
   * You cannot compare one field to another. Field names can only appear on the left side of a clause.
     * valid: `WHERE amount_recommended > 10000`
     * invalid: `WHERE (amount_recommended > amount_requested)`
-  * Non-Elastic models have to follow the structure of basic Fluxx filters:
+  * __Elastic-enabled models__ can be multiply nested with brackets, and can include all types of comparisons allowed in Fluxx. See operator list below.
+    * ANDs, ORs and NOTs follow mathematical binding principles. `a OR b AND c OR d` is treated as `(a OR (b AND c) OR d)`
+  * __Non-Elastic models__ have to follow the structure of basic Fluxx filters:
     * “=“ comparisons only
     * NOTs are not allowed
     * If you give multiple possible values for a single field, these must be ORed together

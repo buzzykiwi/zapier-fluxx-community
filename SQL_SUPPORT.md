@@ -34,7 +34,7 @@ SELECT id FROM GrantRequest WHERE program_organization_id CROSSCARD(city = 'Auck
     * The dot relationships are turned into “relation” attributes in the API call, transparent to the user.
   * You cannot use * as a wildcard. Every field name must be explicitly specified.
 * `«model type»` is the name of a single model.
-  * The model type can be given as grant_request or GrantRequest (snake or camel-case), and include dynamic model names (`MacModelTypeDynMyTableName`). Do not use spaces within the model name.
+  * The model type can be given as `grant_request` or `GrantRequest` (snake or camel-case), and include dynamic model names (`MacModelTypeDynMyTableName`). Do not use spaces within the model name.
 * `«conditions»`
   * Elastic-enabled models: can be multiply nested with brackets, and can include all types of comparisons allowed in Fluxx. See operator list below.
     * ANDs, ORs and NOTs follow mathematical binding principles. `a OR b AND c OR d` is treated as `(a OR (b AND c) OR d)`

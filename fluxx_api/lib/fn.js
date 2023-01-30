@@ -538,6 +538,9 @@ const processSingleItemResponse = module.exports.processSingleItemResponse = fun
     	});
     } else {
     	out.fields[key] = item[key];
+      if (Array.isArray(item[key])) {
+        out.fields[key+"_json"] = JSON.stringify(item[key]);
+      }
     }
   });
   return out;

@@ -16,7 +16,7 @@
     "jest": "^29.3.1",
     "request": "^2.88.2",
     "yarn": "^1.22.19",
-    "zapier-platform-core": "12.2.0"
+    "zapier-platform-core": "13.0.0"
   },
   "devDependencies": {
     "mocha": "^5.2.0",

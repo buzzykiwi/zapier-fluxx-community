@@ -23,19 +23,19 @@ SELECT id FROM GrantRequest WHERE program_organization_id CROSSCARD(city = 'Auck
 
 ## Syntax Rules
 
-* `SELECT _«field list»_ FROM _«model type»_ WHERE _«conditions»_ ORDER BY _«ordering list»_ LIMIT _«limit»_`
-  * `ORDER BY _«ordering list»_` is optional
-  * `LIMIT _«limit»_` is optional
+* `SELECT «field list» FROM «model type» WHERE «conditions» ORDER BY «ordering list» LIMIT «limit»`
+  * `ORDER BY «ordering list»` is optional
+  * `LIMIT «limit»` is optional
   * All SQL keywords such as SELECT, FROM, WHERE, AND, OR, NOT, ORDER BY and LIMIT must be capitalised
   * The entire expression must be on one line (no line breaks)
-* `_«field list»_` is a comma-separated list of "internal" field names, e.g. id, name, updated_at
+* `«field list»` is a comma-separated list of "internal" field names, e.g. id, name, updated_at
   * You can use dot notation to retrieve to-one relationship data.
     * In most cases, the “local” field has to end in “_id”, e.g. `program_organization_id.name`, not `program_organization.name`. This is a limitation of the Fluxx API.
     * The dot relationships are turned into “relation” attributes in the API call, transparent to the user.
   * You cannot use * as a wildcard. Every field name must be explicitly specified.
-* `_«model type»_` is the name of a single model.
+* `«model type»` is the name of a single model.
   * The model type can be given as grant_request or GrantRequest (snake or camel-case), and include dynamic model names (`MacModelTypeDynMyTableName`). Do not use spaces within the model name.
-* `_«conditions»_`
+* `«conditions»`
   * Elastic-enabled models: can be multiply nested with brackets, and can include all types of comparisons allowed in Fluxx. See operator list below.
     * ANDs, ORs and NOTs follow mathematical binding principles. `a OR b AND c OR d` is treated as `(a OR (b AND c) OR d)`
   * You cannot use mathematical operations in the WHERE clause:
@@ -60,7 +60,7 @@ SELECT id FROM GrantRequest WHERE program_organization_id CROSSCARD(city = 'Auck
     * invalid:
       * `WHERE field2 = 'a"`
       * `WHERE field2 = ‘a’`
-* `_«ordering list»_` is a one or more fields (comma-separated) to sort by
+* `«ordering list»` is a one or more fields (comma-separated) to sort by
   * You cannot sort by dot-relations, only by fields on the main model being queried
   * For each field, you can specify `asc` (ascending) or `desc` (descending) following the field name to indicate the sort direction. The records are sorted by the first field & direction, then for any elements where that field is equal, they are sorted by the second field & direction, etc.
   * valid:

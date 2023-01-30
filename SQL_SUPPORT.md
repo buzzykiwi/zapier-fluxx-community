@@ -29,9 +29,9 @@ SELECT id FROM GrantRequest WHERE program_organization_id CROSSCARD(city = 'Auck
 * `SELECT «field list» FROM «model type» WHERE «conditions» ORDER BY «ordering list» LIMIT «limit»`
   * `ORDER BY «ordering list»` is optional
   * `LIMIT «limit»` is optional
-  * All SQL keywords such as SELECT, FROM, WHERE, AND, OR, NOT, ORDER BY and LIMIT must be capitalised
+  * All SQL keywords such as `SELECT`, `FROM`, `WHERE`, `AND`, `OR`, `NOT`, `ORDER BY` and `LIMIT` must be capitalised
   * The entire expression must be on one line (no line breaks)
-* `«field list»` is a comma-separated list of "internal" field names, e.g. id, name, updated_at
+* `«field list»` is a comma-separated list of "internal" field names, e.g. `id, name, updated_at`
   * You can use dot notation to retrieve to-one relationship data.
     * In most cases, the “local” field has to end in “_id”, e.g. `program_organization_id.name`, not `program_organization.name`. This is a limitation of the Fluxx API.
     * The dot relationships are turned into “relation” attributes in the API call, transparent to the user.
@@ -158,7 +158,7 @@ SELECT id FROM GrantRequest WHERE program_organization_id CROSSCARD(city = 'Auck
 * `IS nn FISCAL YEARS AGO`
 * `CROSSCARD(   )`
 
-* NOT can be put before a set of brackets, or before a single field operator operand expression, e.g.
+* `NOT` can be put before a set of brackets, or before a single field operator operand expression, e.g.
 
   * `NOT(name = 'People Inc' AND city = 'Whanganui')`
   * `NOT name = 'People Inc'`

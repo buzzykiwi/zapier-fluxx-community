@@ -91,7 +91,7 @@ SELECT id FROM GrantRequest WHERE program_organization_id CROSSCARD(city = 'Auck
 * `<`
 * `lt`
 * `LT`
-* `&gt;`
+* `>`
 * `gte`
 * `GTE`
 * `<=`

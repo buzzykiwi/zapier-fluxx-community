@@ -3,9 +3,9 @@
 > When using the Create/Update Fluxx Record Action, use a special syntax to add or remove values and/or percentages from multi-valued fields i.e. Select-Transfer controls, Checkboxes, or Hierarchical Dropdowns.
 
 ### About Multi-Value Fields
-* Each Select-Transfer control, set of Checkboxes, or Hierarchical Dropdown control relates to specific field name on a model. Different fields have independent sets of possible values.
-* Each multi-attribute field has a set of Model Attribute Values that can be assigned to it. This is the set of values that you would maintain in Fluxx to form the dropdown or set of checkboxes.
-* Each Model Attribute Value for a particular multi-value field has an id. If you have the MAV id, you can use that, but you don't have to — you can just use the name of the MAV, and FCE will look up the id for you.
+* Each Select-Transfer control, set of Checkboxes, and Hierarchical Dropdown control relates to specific field name on a model. Every such field has an independent set of possible values.
+* Each multi-attribute field has a set of Model Attribute Values (MAVs) that can be assigned to it. This is the set of options that you would maintain in Fluxx to form the dropdown or set of checkboxes.
+* Each Model Attribute Value (MAV) for a particular multi-value field has an id. If you have the MAV id, you can use that, but you don't have to — you can just use the name of the MAV, and FCE will look up the id for you.
 * Model Attribute (MA):
   * The database table representing the field definition
   * Field examples:
@@ -14,8 +14,8 @@
     * model_type="GrantRequest"
     * attribute_type="multi_value"
 * Model Attribute Value (MAV):
-  * The database table representing the possible set of values for the control.
-  * This can be a heirarchy by use of the dependent_model_attribute_value_id parameter which points to a parent value.
+  * The database table representing the possible set of options for the control.
+  * This can be a heirarchy by use of the dependent_model_attribute_value_id parameter which points to a parent MAV.
   * Field examples:
     * description="Los Angeles"
     * value="LA"
@@ -49,7 +49,7 @@
 * A delimiter at the start of each line is required, but it does not have to be "#", as long as the same delimter is used during the rest of that line. You may wish to use a different delimiter if one of your options contains the character "#".
 * If your values are heirarchical, specify the full path to the value you want to add/delete, using the delimiter to separate the path portions.
 
-e.g. let's say you have a hierarchy like this:
+e.g. let's say you have this hierarchy of options for a multi-value list:
 
 * California
   * Los Angeles
@@ -59,7 +59,7 @@ e.g. let's say you have a hierarchy like this:
   * Houston
 
 
-Remove all preious selections, then add San Francisco:
+Remove all previous selections, then add San Francisco:
 
 ```
 #remove_all
@@ -79,7 +79,7 @@ Add Dallas and Houston to whatever was there before:
 #add#Texas#Dallas
 ```
 
-Add Los Angeles 50%, and change the percentage to 50% if Los Angeles was already present with a different percentage:
+Add Los Angeles at 50%, and change the percentage to 50% if Los Angeles was already present with a different percentage:
 
 ```
 #remove_all

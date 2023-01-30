@@ -1,11 +1,18 @@
 # SQL Support in Fluxx Community Edition
 
-The Fluxx API search filters can be difficult to construct. FCE therefore allows an SQL-like SELECT statement to be used for certain triggers and actions. It converts the SQL-like statement into a filter that can be used in the Fluxx API.
+The Fluxx API search filters can be difficult to construct by hand. FCE therefore allows an SQL-like SELECT statement to be used in certain triggers and actions. It converts the SQL-like statement into a filter which is then used to search using the Fluxx API.
 
-Example:
+** Important **
+
+There are two types of database tables in Fluxx when it comes to searching: "Elastic enabled" and "Non-Elastic Enabled". Most of the common tables/model types such as GrantRequest, Organization, RequestTransaction etc are Elastic-enabled. In Triggers & Actions that perform searches in Fluxx, the FCE interface will generally indicate whether the selected Model Type is Elastic-enabled or not.
+
+* Elastic-enabled tables/model types allow a large range of operators (e.g. IN RANGE, IS IN NEXT nn FISCAL YEARS, STARTS WITH etc), equivalent to what can be achieved using Advanced card filters within Fluxx.
+** Non-Elastic enabled tables/model types have significant limitations, equivalent to what can be achieved using "Basic" filters within Fluxx.
+
+Syntax Example:
 
 ```sql
-SELECT id, project_title, amount_requested, amount_recommended, program_organization_id.name FROM GrantRequest WHERE state = "granted" AND amount_requested < 1000 ORDER BY amount_requested, project_title LIMIT 100
+SELECT id, project_title, amount_requested, amount_recommended, program_organization_id.name FROM GrantRequest WHERE state = "granted" AND amount_requested < 1000 ORDER BY amount_requested, project_title desc LIMIT 100
 ```
 
 The syntax even allows cross-card filtering (sorry, this syntax is a departure from SQL). The foreign key comes first followed by _CROSSCARD( conditions on the related model's fields )_ ...
@@ -14,24 +21,56 @@ The syntax even allows cross-card filtering (sorry, this syntax is a departure f
 SELECT id FROM GrantRequest WHERE program_organization_id CROSSCARD(city = 'Auckland' AND gst_registered = 'y') AND amount_requested < 1000
 ```
 
-Rules:
+Syntax Rules:
 
-* All SQL keywords such as SELECT, FROM, WHERE, AND, OR, NOT, ORDER BY and LIMIT must be capitalised. This is to help with parsing.
-* The entire expression must be on one line (no line breaks)
-* FROM model names can be given as grant_request or GrantRequest (snake or camel-case), and include dynamic model names (MacModelTypeDyn…)
-* Field names (SELECT field1, field2 etc) can use dot notation to retrieve to-one relationship data. In most cases, the “local” field has to end in “_id”, e.g. program_organization_id.name, not program_organization.name. This is a limitation of the Fluxx API. The dot relationships are turned into “relation” attributes in the API call, transparent to the user.
-* The WHERE clause
-  * Elastic-enabled models: can be multiply nested with brackets, and can include all types of comparisons allowed in Fluxx
-  * Non-Elastic models: have to follow the structure of basic Fluxx filters: “=“ comparisons only, with no NOTs, e.g. WHERE (field1 = 1 OR field1 = 2 OR field1 = 3) AND (field2 = 1 OR field2 = 2 OR field2 = 3)
-  * ANDs, ORs and NOTs follow mathematical binding principles. a OR b AND c OR d is treated as (a OR (b AND c) OR d)
-* Strings in comparisons can be surrounded by single or double quotes. Quote escapes are allowed e.g. 'Bob\'s Diner'. Curly quotes are not allowed.
-* You cannot sort by dot-relations, only by fields on the main model being queried
+* SELECT _«field list»_ FROM _«model type»_ WHERE _«conditions»_ ORDER BY _«ordering list»_ LIMIT _«limit»_
+  * ORDER BY _«ordering list»_ is optional
+  * LIMIT _«limit»_ is optional
+  * All SQL keywords such as SELECT, FROM, WHERE, AND, OR, NOT, ORDER BY and LIMIT must be capitalised
+  * The entire expression must be on one line (no line breaks)
+* _«field list»_ is a comma-separated list of "internal" field names, e.g. id, name, updated_at
+  * You can use dot notation to retrieve to-one relationship data.
+    * In most cases, the “local” field has to end in “_id”, e.g. program_organization_id.name, not program_organization.name. This is a limitation of the Fluxx API.
+    * The dot relationships are turned into “relation” attributes in the API call, transparent to the user.
+  * You cannot use * as a wildcard. Every field name must be explicitly specified.
+* _«model type»_ is the name of a single model.
+  * The model type can be given as grant_request or GrantRequest (snake or camel-case), and include dynamic model names (MacModelTypeDynMyTableName). Do not use spaces within the model name.
+* _«conditions»_
+  * Elastic-enabled models: can be multiply nested with brackets, and can include all types of comparisons allowed in Fluxx. See operator list below.
+    * ANDs, ORs and NOTs follow mathematical binding principles. a OR b AND c OR d is treated as (a OR (b AND c) OR d)
+  * You cannot use mathematical operations in the WHERE clause:
+    * invalid: WHERE (amount_requested * 1.5 < 1000)
+    * valid: WHERE amount_requested < 666.67
+  * You cannot compare one field to another. Field names can only appear on the left side of a clause.
+    * valid: WHERE amount_recommended > 10000
+    * invalid: WHERE (amount_recommended > amount_requested)
+  * Non-Elastic models have to follow the structure of basic Fluxx filters:
+    * “=“ comparisons only
+    * NOTs are not allowed
+    * If you give multiple possible values for a single field, these must be ORed together
+    * If more than one field is mentioned, any possible values for that field are ANDed with the values for any other field
+    * valid:
+      * WHERE (field1 = 1 OR field1 = 2 OR field1 = 3) AND (field2 = "a" OR field2 = "b" OR field2 = "c")
+    * invalid:
+      * WHERE (field1 = 1 AND field2 = "a") OR (field1 = 2 AND field2 = "b")
+      * WHERE field1 >= 2
+  * Strings in comparisons can be surrounded by single or double quotes. Quote escapes are allowed e.g. 'Bob\'s Diner'. Curly quotes are not allowed.
+    * valid:
+      * WHERE field2 = "a"
+      * WHERE field2 = 'a'
+    * invalid:
+      * WHERE field2 = 'a"
+      * WHERE field2 = ‘a’
+* _«ordering list»_ is a one or more fields (comma-separated) to sort by
+  * You cannot sort by dot-relations, only by fields on the main model being queried
+  * For each field, you can specify "asc" (ascending) or desc (descending) following the field name to indicate the sort direction. The records are sorted by the first field & direction, then for any elements where that field is equal, they are sorted by the second field & direction, etc.
+  * valid:
+    * ORDER BY name asc, updated_at desc
+    * ORDER BY program_organization_name (because that is a valid field that automagically traverses the relationship for you)
+  * invalid:
+    * ORDER BY program_organization_id.name
 * There are no “joins”, though the dot-relations do a sort of join for to-one relationships.
 * Some fields that return a list of ids, e.g. program_organization.grant_ids, so there is a limited selection of to-many relationships possible.
-* You can’t use mathematical operations in the WHERE clause:
-  * not allowed: WHERE (amount_requested * 1.5 < 1000)
-* You can’t compare one field to another. Field names can only appear on the left side of a clause.
-  * not allowed: WHERE (amount_recommended > amount_requested)
 
 Complete list of operators:
 
@@ -120,3 +159,4 @@ Complete list of operators:
 
   * NOT(name = 'People Inc' AND city = 'Whanganui')
   * NOT name = 'People Inc'
+

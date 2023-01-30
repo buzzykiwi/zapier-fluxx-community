@@ -2,12 +2,12 @@
 
 The Fluxx API search filters can be difficult to construct by hand. FCE therefore allows an SQL-like SELECT statement to be used in certain triggers and actions. It converts the SQL-like statement into a filter which is then used to search using the Fluxx API.
 
-** Important **
+**Important**
 
 There are two types of database tables in Fluxx when it comes to searching: "Elastic enabled" and "Non-Elastic Enabled". Most of the common tables/model types such as GrantRequest, Organization, RequestTransaction etc are Elastic-enabled. In Triggers & Actions that perform searches in Fluxx, the FCE interface will generally indicate whether the selected Model Type is Elastic-enabled or not.
 
 * Elastic-enabled tables/model types allow a large range of operators (e.g. IN RANGE, IS IN NEXT nn FISCAL YEARS, STARTS WITH etc), equivalent to what can be achieved using Advanced card filters within Fluxx.
-** Non-Elastic enabled tables/model types have significant limitations, equivalent to what can be achieved using "Basic" filters within Fluxx.
+* Non-Elastic enabled tables/model types have significant limitations, equivalent to what can be achieved using "Basic" filters within Fluxx.
 
 Syntax Example:
 

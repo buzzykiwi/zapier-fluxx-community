@@ -9,7 +9,7 @@ There are two types of database tables in Fluxx when it comes to searching: "Ela
 * Elastic-enabled tables/model types allow a large range of operators (e.g. IN RANGE, IS IN NEXT nn FISCAL YEARS, STARTS WITH etc), equivalent to what can be achieved using Advanced card filters within Fluxx.
 * Non-Elastic enabled tables/model types have significant limitations, equivalent to what can be achieved using "Basic" filters within Fluxx.
 
-## Syntax Example:
+## Syntax Example
 
 ```sql
 SELECT id, project_title, amount_requested, amount_recommended, program_organization_id.name FROM GrantRequest WHERE state = "granted" AND amount_requested < 1000 ORDER BY amount_requested, project_title desc LIMIT 100
@@ -21,7 +21,7 @@ The syntax even allows cross-card filtering (sorry, this syntax is a departure f
 SELECT id FROM GrantRequest WHERE program_organization_id CROSSCARD(city = 'Auckland' AND gst_registered = 'y') AND amount_requested < 1000
 ```
 
-## Syntax Rules:
+## Syntax Rules
 
 * SELECT _«field list»_ FROM _«model type»_ WHERE _«conditions»_ ORDER BY _«ordering list»_ LIMIT _«limit»_
   * ORDER BY _«ordering list»_ is optional
@@ -72,7 +72,7 @@ SELECT id FROM GrantRequest WHERE program_organization_id CROSSCARD(city = 'Auck
 * There are no “joins”, though the dot-relations do a sort of join for to-one relationships.
 * Some fields that return a list of ids, e.g. program_organization.grant_ids, so there is a limited selection of to-many relationships possible.
 
-## Complete list of operators:
+## Available Operators
 
 * =
 * ==

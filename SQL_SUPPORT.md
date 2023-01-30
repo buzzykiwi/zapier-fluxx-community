@@ -2,14 +2,14 @@
 
 The Fluxx API search filters can be difficult to construct by hand. FCE therefore allows an SQL-like SELECT statement to be used in certain triggers and actions. It converts the SQL-like statement into a filter which is then used to search using the Fluxx API.
 
-**Important**
+### Important
 
 There are two types of database tables in Fluxx when it comes to searching: "Elastic enabled" and "Non-Elastic Enabled". Most of the common tables/model types such as GrantRequest, Organization, RequestTransaction etc are Elastic-enabled. In Triggers & Actions that perform searches in Fluxx, the FCE interface will generally indicate whether the selected Model Type is Elastic-enabled or not.
 
 * Elastic-enabled tables/model types allow a large range of operators (e.g. `IN RANGE`, `IS IN NEXT nn FISCAL YEARS`, `STARTS WITH` etc), equivalent to what can be achieved using Advanced card filters within Fluxx.
 * Non-Elastic enabled tables/model types have significant limitations, equivalent to what can be achieved using "Basic" filters within Fluxx.
 
-## Syntax Example
+### Syntax Example
 
 ```sql
 SELECT id, project_title, amount_requested, amount_recommended, program_organization_id.name FROM GrantRequest WHERE state = "granted" AND amount_requested < 1000 ORDER BY amount_requested, project_title desc LIMIT 100
@@ -21,7 +21,7 @@ The syntax even allows cross-card filtering (sorry, this syntax is a departure f
 SELECT id FROM GrantRequest WHERE program_organization_id CROSSCARD(city = 'Auckland' AND gst_registered = 'y') AND amount_requested < 1000
 ```
 
-## Syntax Rules
+### Syntax Rules
 
 * `SELECT «field list» FROM «model type» WHERE «conditions» ORDER BY «ordering list» LIMIT «limit»`
   * `ORDER BY «ordering list»` is optional
@@ -71,7 +71,7 @@ SELECT id FROM GrantRequest WHERE program_organization_id CROSSCARD(city = 'Auck
 * There are no “joins”, though the dot-relations do a sort of join for to-one relationships.
 * Some fields that return a list of ids, e.g. `program_organization.grant_ids`, so there is a limited selection of to-many relationships possible.
 
-## Available Operators
+### Available Operators
 
 * =
 * ==

@@ -186,10 +186,9 @@ let parseWhereClause = module.exports.parseWhereClause = function(z, input, mode
   // If we come across any errors, we throw.
   if (no_elastic) {
     let ret = _internal.convertToNonElasticFilter(filter, model_type);
-    // convert all operands to lower case
-    convertAndOrNotToLower(ret.data);
-    // return z.JSON.stringify(ret).replace("=","[]=");
-    return z.JSON.stringify(ret);
+    // convert all operands to lower case - not needed for non-elastic
+    // convertAndOrNotToLower(ret.data);
+    return ret;
   }
 
   //filter
@@ -1401,7 +1400,7 @@ let paginated_fetch = module.exports.paginated_fetch = async (z, bundle, options
     response = await z.request(options);
     response.throwForStatus();
     handleFluxxAPIReturnErrors(response);
-  
+
     if (response.data !== undefined && response.data.records !== undefined && response.data.records[snakey] !== undefined) {
       if (first_response === null) {
         first_response = response; // we will add the subsequent results to this first fetch response as we fetch them.

@@ -27,6 +27,7 @@ const recordsSqlSearch = require('./creates/records_sql_search.js');
 const updateFluxxRecordCreate = require('./creates/record_update_new.js');
 const uploadFileCreate = require('./creates/file_upload.js');
 const downloadFileCreate = require('./creates/file_download.js');
+const transactionCreate = require('./creates/transaction_new.js');
 const testMavs = require('./creates/test_mavs.js');
 
 // Other
@@ -64,6 +65,7 @@ module.exports = {
     [uploadFileCreate.key]: uploadFileCreate,
     [downloadFileCreate.key]: downloadFileCreate,
     [createTestSubInputs.key]: createTestSubInputs,
+    [transactionCreate.key]: transactionCreate,
     [testMavs.key]: testMavs,
   },
   searches: {

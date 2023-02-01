@@ -261,6 +261,7 @@ module.exports = {
           'ID of the GrantRequest to which the RequestTransaction will be attached.',
         required: true,
         list: false,
+        placeholder: 'Enter ID or insert data…',
         altersDynamicFields: false,
       },
       {
@@ -271,6 +272,7 @@ module.exports = {
           'Request Funding Source id (if it already exists). Alternatively, provide the funding source id, program id, sub program id and spending year, below.',
         required: false,
         list: false,
+        placeholder: 'Enter ID, insert data, or leave blank to show alternative fields…',
         altersDynamicFields: true,
       },
       getInputFieldForFundingSource,
@@ -292,6 +294,7 @@ module.exports = {
           'Amount for the Request Transaction to be "due".',
         required: true,
         list: false,
+        placeholder: 'Enter amount or insert data…',
         altersDynamicFields: false,
       },
       {
@@ -302,6 +305,7 @@ module.exports = {
           'Date/time the payment will be due.',
         required: false,
         list: false,
+        placeholder: 'Enter date or insert data…',
         altersDynamicFields: false,
       },
       {
@@ -312,6 +316,7 @@ module.exports = {
           'Amount for the Request Transaction to be "paid".',
         required: false,
         list: false,
+        placeholder: 'Enter amount or insert data…',
         altersDynamicFields: false,
       },
       {
@@ -322,6 +327,7 @@ module.exports = {
           'Date/time the payment was paid. This can be set in advance or left blank if necessary.',
         required: false,
         list: false,
+        placeholder: 'Enter date or insert data…',
         altersDynamicFields: false,
       },
       {
@@ -342,6 +348,7 @@ module.exports = {
           'Comment for the Request Transaction.',
         required: false,
         list: false,
+        placeholder: 'Enter comment or insert data…',
         altersDynamicFields: false,
       },
       {

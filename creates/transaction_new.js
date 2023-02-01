@@ -291,7 +291,7 @@ module.exports = {
         label: 'Amount Due',
         type: 'number',
         helpText:
-          'Amount for the Request Transaction to be "due".',
+          'Amount for the Request Transaction to be "due". This amount is also used for the Request Transaction Funding Source.',
         required: true,
         list: false,
         placeholder: 'Enter amount or insert data…',
@@ -351,6 +351,8 @@ module.exports = {
         placeholder: 'Enter comment or insert data…',
         altersDynamicFields: false,
       },
+      getInputFieldForTransactionMachineStates,
+      getInputFieldForModelTheme,
       {
         key: 'from_bank_account_name',
         label: 'From Bank Account Name Filter',
@@ -362,8 +364,69 @@ module.exports = {
         altersDynamicFields: true,
       },
       getInputFieldForFromBankAccount,
-      getInputFieldForTransactionMachineStates,
-      getInputFieldForModelTheme,
+      {
+        key: 'to_bank_account_source',
+        label: 'Source of "To" Bank Account id',
+        required: false,
+        choices: {
+          bank_account_id: 'Bank Account Id', 
+          organization_id: 'Specify Organization; use first bank account from the Organization', 
+          request_id: 'Specify GrantRequest; use first bank account from its Program Organization or Grantee User',
+          none: 'none',
+        },
+        helpText:
+          'Where should FCE look for the "To" bank account?',
+        default: 'none',
+        altersDynamicFields: true,
+      },
+      function (z, bundle) {
+        if (bundle.inputData.to_bank_account_source === 'bank_account_id') {
+          return [{
+            key: 'to_bank_account_id',
+            label: '"To" Bank Account via Bank Account Id',
+            type: 'integer',
+            helpText:
+              'Use if you have access to the bank_account_id of the "To" Bank Account',
+            required: false,
+            list: false,
+            placeholder: 'Enter id or insert data…',
+            altersDynamicFields: false,
+          }];
+        }
+        return [];
+      },
+      function (z, bundle) {
+        if (bundle.inputData.to_bank_account_source === 'organization_id') {
+          return [{
+            key: 'to_bank_account_organization_id',
+            label: '"To" Bank Account via Organization Id',
+            type: 'integer',
+            helpText:
+              'Use if FCE can identify the "To" bank account as the first valid bank account attached to this organization',
+            required: false,
+            list: false,
+            placeholder: 'Enter id or insert data…',
+            altersDynamicFields: false,
+          }];
+        }
+        return [];
+      },
+      function (z, bundle) {
+        if (bundle.inputData.to_bank_account_source === 'request_id') {
+          return [{
+            key: 'to_bank_account_request_id',
+            label: '"To" Bank Account via Request Id',
+            type: 'integer',
+            helpText:
+              'Use if FCE can find a Bank Account in either the Grantee User or Program Organization attached to the GrantRequest. FCE will first look for a Program Organization, then for a Grantee User, to find a Bank Account.',
+            required: false,
+            list: false,
+            placeholder: 'Enter id or insert data…',
+            altersDynamicFields: false,
+          }];
+        }
+        return [];
+      },
       
     ],
     sample: {

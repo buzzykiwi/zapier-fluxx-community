@@ -44,7 +44,9 @@ const perform = async (z, bundle) => {
     inputData.id === 0 ||
     inputData.id === ''
   ) {
-    final_return = await create_fluxx_record(
+    final_return = await FluxxAPI.fn.create_fluxx_record(
+      z,
+      bundle,
       inputData.model_type,
       fields_and_update_values_without_mvs,
       inputData.cols
@@ -169,35 +171,6 @@ output =
     };
   }
 
-  async function create_fluxx_record(
-    model_type,
-    fields_and_update_values,
-    cols
-  ) {
-    const options = {
-      url: `https://${bundle.authData.client_domain}/api/rest/v2/${FluxxAPI.fn.modelToSnake(
-        model_type
-      )}`,
-      method: 'POST',
-      headers: FluxxAPI.c.STANDARD_HEADERS(bundle),
-      params: {},
-      body: {
-        data: z.JSON.stringify(fields_and_update_values),
-        cols: z.JSON.stringify(cols),
-      },
-    };
-
-    var response = await z.request(options);
-    response.throwForStatus();
-    FluxxAPI.fn.handleFluxxAPIReturnErrors(response);
-    response = response.data;
-    
-    return {
-      model_type: FluxxAPI.fn.modelToSnake(model_type),
-      id: response[FluxxAPI.fn.modelToSnake(model_type)].id,
-      fields: response[FluxxAPI.fn.modelToSnake(model_type)],
-    };
-  }
 };
 
 const getInputFieldsForModelTypes = async (z, bundle) => {

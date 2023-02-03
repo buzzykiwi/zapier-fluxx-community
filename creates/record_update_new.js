@@ -526,7 +526,7 @@ async function existing_macs_for_record(z, bundle, model_id, structured_mas, mv_
 }
 
 module.exports = {
-  key: 'record_update_new',
+  key: 'create_update_record',
   noun: 'Fluxx Record',
   display: {
     label: 'Create/Update Fluxx Record',

@@ -352,7 +352,7 @@ const getInputFieldForAmountAllocated = (z, bundle) => {
 };
 
 module.exports = {
-  key: 'record_update_new',
+  key: 'create_request_transaction',
   noun: 'Fluxx Request Transaction',
   display: {
     label: 'Create Fluxx Request Transaction',

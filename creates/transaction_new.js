@@ -17,6 +17,11 @@ const variousInputFieldsFromFluxx = async (z, bundle, sql, perform_check = true)
   return null;
 };
 
+function form_condition(z, input)
+{
+  if (input === null || input === undefined) return ' IS NULL ';
+  return ' = ' + z.JSON.stringify(input);
+}
 
 const perform = async (z, bundle) => {
   // 1 - Identify Request Funding Source id: we are given it as field
@@ -42,12 +47,12 @@ const perform = async (z, bundle) => {
   if (rfs_id === undefined || rfs_id === null || rfs_id == "") {
     // 2. find the FSA from the fields we were given
     let sql = 'SELECT id FROM funding_source_allocation ' +
-      'WHERE spending_year = ' + z.JSON.stringify(bundle.inputData.spending_year) +
-      ' AND funding_source_id = ' + z.JSON.stringify(bundle.inputData.funding_source_id) +
-      ' AND program_id = ' + z.JSON.stringify(bundle.inputData.rfs_program_id) +
-      ' AND sub_program_id = ' + z.JSON.stringify(bundle.inputData.rfs_sub_program_id) +
-      ' AND initiative_id = ' + z.JSON.stringify(bundle.inputData.rfs_initiative_id) +
-      ' AND sub_initiative_id = ' + z.JSON.stringify(bundle.inputData.rfs_sub_initiative_id);
+      'WHERE spending_year ' + form_condition(z, bundle.inputData.spending_year) +
+      ' AND funding_source_id ' + form_condition(z, bundle.inputData.funding_source_id) +
+      ' AND program_id ' + form_condition(z, bundle.inputData.rfs_program_id) +
+      ' AND sub_program_id ' + form_condition(z, bundle.inputData.rfs_sub_program_id) +
+      ' AND initiative_id ' + form_condition(z, bundle.inputData.rfs_initiative_id) +
+      ' AND sub_initiative_id ' + form_condition(z, bundle.inputData.rfs_sub_initiative_id);
     let results = await variousInputFieldsFromFluxx(z, bundle, sql, false);
     if (Array.isArray(results) && results.length > 0) {
       fsa_id = results[0].id;
@@ -76,23 +81,22 @@ const perform = async (z, bundle) => {
   // calculate the "to" bank account
   sql = null;
   let to_bank_account_id = null;
+  let processed_request_id = z.JSON.stringify(bundle.inputData.request_id);
   switch(bundle.inputData.to_bank_account_source) {
-  case "bank_account_id":
-    to_bank_account_id = bundle.inputData.to_bank_account_id;
-    break;
-  case "organization_id": // lookup bank account with org: bundle.inputData.payee_organization_id 
-    sql = 'SELECT id FROM BankAccount WHERE active = 1 AND owner_organization_id = ' + z.JSON.stringify(bundle.inputData.payee_organization_id);
-    break;
-  case "request_id": // lookup request's program_organization_id, lookup bank account with org id "that".
-    //'From main GrantRequest above; use first bank account from its Program Organization or Grantee User',
-    // BankAccount WHERE owner_organization_id CROSSCARD(grants CROSSCARD(id = 65))
-    sql = 'SELECT id FROM BankAccount WHERE active = 1 AND owner_organization_id CROSSCARD(request_ids CROSSCARD(id = ' +
-    z.JSON.stringify(bundle.inputData.request_id) + '))';
-    break;      
+    case "bank_account_id":
+      to_bank_account_id = bundle.inputData.to_bank_account_id;
+      break;
+    case "request_id":
+      // From main GrantRequest above; use first bank account from its Program Organization or Grantee User
+      sql = 'SELECT id FROM BankAccount WHERE active = 1 AND (owner_organization_id CROSSCARD(request_ids CROSSCARD(id = ' +
+      processed_request_id + ')) OR owner_user_id CROSSCARD(user_request_ids CROSSCARD(id = ' + processed_request_id + ')) )';
+      break;      
   }
   if (sql !== null) {
     results = await variousInputFieldsFromFluxx(z, bundle, sql, false);
-    if (results != null) {
+    if (!(Array.isArray(results)) || (Array.isArray(results) && results.length == 0)) {
+      throw(`Error: Unable to locate an active bank account for the grantee user/organisation for GrantRequest ${processed_request_id}`);
+    } else {
       to_bank_account_id = results[0].id;
     }
   }
@@ -108,8 +112,9 @@ const perform = async (z, bundle) => {
       amount_paid: bundle.inputData.amount_paid,
       paid_at: bundle.inputData.paid_at,
       model_theme_id: bundle.inputData.request_transaction_model_theme,
-      organization_payee_id: bundle.inputData.payee_organization_id,
-      user_payee_id: bundle.inputData.payee_user_id,
+      // we don't need to send the org/user payee ids, as Fluxx derives these from the info in the request.
+   //   organization_payee_id: bundle.inputData.payee_organization_id,
+   //   user_payee_id: bundle.inputData.payee_user_id,
       comment: bundle.inputData.comment,
       payment_type: bundle.inputData.payment_type,
       from_bank_account_id: bundle.inputData.from_account_id,
@@ -376,28 +381,6 @@ module.exports = {
         altersDynamicFields: false,
       },
       {
-        key: 'payee_organization_id',
-        label: 'Payee Organization ID',
-        type: 'integer',
-        helpText:
-          'ID of the Payee Organization (if any)',
-        required: false,
-        list: false,
-        placeholder: 'Enter ID or insert data…',
-        altersDynamicFields: false,
-      },
-      {
-        key: 'payee_user_id',
-        label: 'Payee User ID',
-        type: 'integer',
-        helpText:
-          'ID of the Payee User (if any).',
-        required: false,
-        list: false,
-        placeholder: 'Enter ID or insert data…',
-        altersDynamicFields: false,
-      },
-      {
         key: 'rfs_id',
         label: 'Request Funding Source Id',
         type: 'integer',
@@ -505,8 +488,7 @@ module.exports = {
         required: false,
         choices: {
           bank_account_id: 'Bank Account Id', 
-          organization_id: 'Specify Organization; use first bank account from the Payee Organization', 
-          request_id: 'From main GrantRequest above; use first bank account from its Program Organization or Grantee User',
+          request_id: 'From main GrantRequest above; use first active bank account from its Program Organization or Grantee User',
           none: 'none',
         },
         helpText:
@@ -522,22 +504,6 @@ module.exports = {
             type: 'integer',
             helpText:
               'Use if you have access to the bank_account_id of the "To" Bank Account',
-            required: false,
-            list: false,
-            placeholder: 'Enter id or insert data…',
-            altersDynamicFields: false,
-          }];
-        }
-        return [];
-      },
-      function (z, bundle) {
-        if (bundle.inputData.to_bank_account_source === 'organization_id') {
-          return [{
-            key: 'to_bank_account_organization_id',
-            label: '"To" Bank Account via Organization Id',
-            type: 'integer',
-            helpText:
-              'Use if FCE can identify the "To" bank account as the first valid bank account attached to this organization',
             required: false,
             list: false,
             placeholder: 'Enter id or insert data…',

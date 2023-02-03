@@ -22,7 +22,7 @@ const getAccessToken = async (z, bundle) => {
   return z.request(options)
     .then((response) => {
       response.throwForStatus();
-      FluxxAPI.fn.handleFluxxAPIReturnErrors(response);
+      FluxxAPI.fn.handleFluxxAPIReturnErrors(z, response);
 
       const results = response.data;
       // this value is bogus, but in order to use the
@@ -56,7 +56,7 @@ const refreshAccessToken = async (z, bundle) => {
   return z.request(options)
     .then((response) => {
       response.throwForStatus();
-      FluxxAPI.fn.handleFluxxAPIReturnErrors(response);
+      FluxxAPI.fn.handleFluxxAPIReturnErrors(z, response);
       const results = response.data;
       
       // You can do any parsing you need for results here before returning them

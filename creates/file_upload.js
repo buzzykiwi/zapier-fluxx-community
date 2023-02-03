@@ -103,7 +103,7 @@ const perform = async (z, bundle) => {
   }
 
   let response = await z.request(options);
-  FluxxAPI.fn.handleFluxxAPIReturnErrors(response);
+  FluxxAPI.fn.handleFluxxAPIReturnErrors(z, response);
   
     /*
     const file = response.data;

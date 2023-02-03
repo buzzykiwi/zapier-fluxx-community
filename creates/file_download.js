@@ -21,7 +21,7 @@ const perform = async (z, bundle) => {
 
   const initial_response = await z.request(options);
   initial_response.throwForStatus();
-  FluxxAPI.fn.handleFluxxAPIReturnErrors(initial_response);
+  FluxxAPI.fn.handleFluxxAPIReturnErrors(z, initial_response);
 
   let file = initial_response.data[model_type]; // Object
   

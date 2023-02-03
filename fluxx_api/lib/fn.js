@@ -618,7 +618,7 @@ module.exports.optionsForSingleItemFetch = function(z, bundle, p)
  * of the field names that are multi-value. Each object
  * has keys id, name, description and model_type.
 */
-module.exports.determine_mas = async function(model_type, field_list)
+module.exports.determine_mas = async function(z, model_type, field_list)
 {
   
   const sma_options = {
@@ -638,7 +638,7 @@ module.exports.determine_mas = async function(model_type, field_list)
   });
   const response = await z.request(sma_options);
   response.throwForStatus();
-  handleFluxxAPIReturnErrors(response);
+  handleFluxxAPIReturnErrors(z, response);
   return response.data.records.model_attribute;
 }
 
@@ -1356,18 +1356,21 @@ module.exports.getReturnFieldsDropdown = async (z, bundle) => {
   };
 };
 
-let handleFluxxAPIReturnErrors = module.exports.handleFluxxAPIReturnErrors = (response) => {
+let handleFluxxAPIReturnErrors = module.exports.handleFluxxAPIReturnErrors = (z, response) => {
   let data = response.data;
   if (isObj(data) && data.error !== undefined) {
     let code = data.error.code;
     let msg = data.error.message;
     let c; // use later
     if (code == 100 && (c = msg.match(/uninitialized constant (.*)>$/))) {
-      throw `Fluxx API: Unknown model: ${c[1]}`;
+      throw new z.errors.HaltedError(`Fluxx API: Unknown model: ${c[1]}`)
     }
     if (code == 100 && (c = msg.match(/#<Elasticsearch::Transport::Transport::Errors::BadRequest: \[400\] (.*)>/))) {
-      let d = JSON.parse(c[1]);
+      // let d = JSON.parse(c[1]); // not sure what to do here - perhaps just show the full message
       throw `Fluxx API returned error ${code}; ${msg}`;
+    }
+    if (code == 100) {
+      throw new z.errors.HaltedError(`Fluxx API returned error ${code}; ${JSON.parse(msg)}`)
     }
   }
 }
@@ -1399,7 +1402,7 @@ let paginated_fetch = module.exports.paginated_fetch = async (z, bundle, options
     options.body.page = page;
     response = await z.request(options);
     response.throwForStatus();
-    handleFluxxAPIReturnErrors(response);
+    handleFluxxAPIReturnErrors(z, response);
 
     if (response.data !== undefined && response.data.records !== undefined && response.data.records[snakey] !== undefined) {
       if (first_response === null) {
@@ -1475,7 +1478,7 @@ module.exports.create_fluxx_record =  async (
     z.console.log(options);
     var response = await z.request(options);
     response.throwForStatus();
-    handleFluxxAPIReturnErrors(response);
+    handleFluxxAPIReturnErrors(z, response);
     response = response.data;
     let ordered_response = {
       model_type: modelToSnake(model_type),

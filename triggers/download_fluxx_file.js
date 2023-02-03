@@ -24,7 +24,7 @@ const perform = async (z, bundle) => {
 
   const initial_response = await z.request(options);
   initial_response.throwForStatus();
-  FluxxAPI.fn.handleFluxxAPIReturnErrors(initial_response);
+  FluxxAPI.fn.handleFluxxAPIReturnErrors(z, initial_response);
   
   if (initial_response.data[model_type].length === 0) throw `${model_type} ${bundle.inputData.id} not found`;
 

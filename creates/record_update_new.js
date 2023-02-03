@@ -53,6 +53,7 @@ const perform = async (z, bundle) => {
     );
   } else {
     final_return = await update_fluxx_record(
+      z,
       inputData.model_type,
       inputData.id,
       fields_and_update_values_without_mvs,
@@ -141,6 +142,7 @@ output =
   }
 
   async function update_fluxx_record(
+    z,
     model_type,
     id,
     fields_and_update_values,
@@ -162,7 +164,7 @@ output =
 
     var response = await z.request(options);
     response.throwForStatus();
-    FluxxAPI.fn.handleFluxxAPIReturnErrors(response);
+    FluxxAPI.fn.handleFluxxAPIReturnErrors(z, response);
     response = response.data;
     return {
       model_type: FluxxAPI.fn.modelToSnake(model_type),
@@ -401,7 +403,7 @@ async function remove_mac_with_id(z, bundle, mac_id)
   };
   var response = await z.request(options);
   response.throwForStatus();
-  FluxxAPI.fn.handleFluxxAPIReturnErrors(response);
+  FluxxAPI.fn.handleFluxxAPIReturnErrors(z, response);
   return response.data;
 }
 
@@ -464,7 +466,7 @@ async function create_mac(z, bundle, model_id, ma_id, mav_id, percentage, user_i
   };
   var response = await z.request(options);
   response.throwForStatus();
-  FluxxAPI.fn.handleFluxxAPIReturnErrors(response);
+  FluxxAPI.fn.handleFluxxAPIReturnErrors(z, response);
   return response.data;
 }
 
@@ -489,7 +491,7 @@ async function update_mac_with_new_percentage(z, bundle, mac_id, percentage, use
 
   var response = await z.request(options);
   response.throwForStatus();
-  FluxxAPI.fn.handleFluxxAPIReturnErrors(response);
+  FluxxAPI.fn.handleFluxxAPIReturnErrors(z, response);
   return {
     amount_value: response.data.model_attribute_choice.amount_value,
   };

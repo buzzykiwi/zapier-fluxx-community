@@ -1452,3 +1452,38 @@ module.exports.sql_descriptions = async (z, bundle) => {
     helpText: desc,
   };
 };
+
+module.exports.create_fluxx_record =  async (
+    z,
+    bundle,
+    model_type,
+    fields_and_update_values,
+    cols
+  ) => {
+    const options = {
+      url: `https://${bundle.authData.client_domain}/api/rest/v2/${modelToSnake(
+        model_type
+      )}`,
+      method: 'POST',
+      headers: c.STANDARD_HEADERS(bundle),
+      params: {},
+      body: {
+        data: z.JSON.stringify(fields_and_update_values),
+        cols: z.JSON.stringify(cols),
+      },
+    };
+    z.console.log(options);
+    var response = await z.request(options);
+    response.throwForStatus();
+    handleFluxxAPIReturnErrors(response);
+    response = response.data;
+    let ordered_response = {
+      model_type: modelToSnake(model_type),
+      id: response[modelToSnake(model_type)].id,
+      fields: response[modelToSnake(model_type)],
+    };
+    
+    restoreNullFieldsInResponse(cols, ordered_response, "fields");
+    
+    return ordered_response;
+  }

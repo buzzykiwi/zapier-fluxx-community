@@ -30,7 +30,7 @@ describe('Create - record_update_new', () => {
     };
 
     let result = await appTester(
-      App.creates['record_update_new'].operation.perform, bundle
+      App.creates['create_update_record'].operation.perform, bundle
     );
     result.should.not.be.an.Array();
 
@@ -42,7 +42,7 @@ describe('Create - record_update_new', () => {
     bundle.inputData.cols       = ["id","amount_requested"];
     bundle.inputData.user_id    = 608;
     result = await appTester(
-      App.creates['record_update_new'].operation.perform, bundle
+      App.creates['create_update_record'].operation.perform, bundle
     );
     result.should.not.be.an.Array();
     

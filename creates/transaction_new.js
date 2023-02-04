@@ -41,18 +41,20 @@ const perform = async (z, bundle) => {
   // DONE.
   
   // 1.
-  let rfs_id = bundle.inputData.rfs_id;
+  const inputData = bundle.inputData;
+  
+  let rfs_id = inputData.rfs_id;
   let fsa_id;
   let new_rfs;
   if (rfs_id === undefined || rfs_id === null || rfs_id == "") {
     // 2. find the FSA from the fields we were given
     let sql = 'SELECT id FROM funding_source_allocation ' +
-      'WHERE spending_year ' + form_condition(z, bundle.inputData.spending_year) +
-      ' AND funding_source_id ' + form_condition(z, bundle.inputData.funding_source_id) +
-      ' AND program_id ' + form_condition(z, bundle.inputData.rfs_program_id) +
-      ' AND sub_program_id ' + form_condition(z, bundle.inputData.rfs_sub_program_id) +
-      ' AND initiative_id ' + form_condition(z, bundle.inputData.rfs_initiative_id) +
-      ' AND sub_initiative_id ' + form_condition(z, bundle.inputData.rfs_sub_initiative_id);
+      'WHERE spending_year ' + form_condition(z, inputData.spending_year) +
+      ' AND funding_source_id ' + form_condition(z, inputData.funding_source_id) +
+      ' AND program_id ' + form_condition(z, inputData.rfs_program_id) +
+      ' AND sub_program_id ' + form_condition(z, inputData.rfs_sub_program_id) +
+      ' AND initiative_id ' + form_condition(z, inputData.rfs_initiative_id) +
+      ' AND sub_initiative_id ' + form_condition(z, inputData.rfs_sub_initiative_id);
     let results = await variousInputFieldsFromFluxx(z, bundle, sql, false);
     if (Array.isArray(results) && results.length > 0) {
       fsa_id = results[0].id;
@@ -62,17 +64,15 @@ const perform = async (z, bundle) => {
     // We now have all we need for creating the RFS: fsa_id, funding_amount, request, prog, subprog, init, sub_init.
     
     new_rfs = await FluxxAPI.fn.create_fluxx_record(
-      z,
-      bundle,
-      "request_funding_source",
+      z, bundle, "request_funding_source",
       {
-        funding_amount: bundle.inputData.amount_allocated,
+        funding_amount: inputData.amount_allocated,
         funding_source_allocation_id: fsa_id,
-        request_id: bundle.inputData.request_id,
-        program_id: bundle.inputData.rfs_program_id,
-        sub_program_id: bundle.inputData.rfs_sub_program_id,
-        initiative_id: bundle.inputData.rfs_initiative_id,
-        sub_initiative_id: bundle.inputData.rfs_sub_initiative_id,
+        request_id: inputData.request_id,
+        program_id: inputData.rfs_program_id,
+        sub_program_id: inputData.rfs_sub_program_id,
+        initiative_id: inputData.rfs_initiative_id,
+        sub_initiative_id: inputData.rfs_sub_initiative_id,
       },
       ["id"], // return fields
     );
@@ -81,10 +81,10 @@ const perform = async (z, bundle) => {
   // calculate the "to" bank account
   sql = null;
   let to_bank_account_id = null;
-  let processed_request_id = z.JSON.stringify(bundle.inputData.request_id);
-  switch(bundle.inputData.to_bank_account_source) {
+  let processed_request_id = z.JSON.stringify(inputData.request_id);
+  switch(inputData.to_bank_account_source) {
     case "bank_account_id":
-      to_bank_account_id = bundle.inputData.to_bank_account_id;
+      to_bank_account_id = inputData.to_bank_account_id;
       break;
     case "request_id":
       // From main GrantRequest above; use first bank account from its Program Organization or Grantee User
@@ -100,37 +100,84 @@ const perform = async (z, bundle) => {
       to_bank_account_id = results[0].id;
     }
   }
+  const standard_rt_fields = ["request_id", "amount_due", "due_at", "amount_paid", "paid_at", "model_theme_id", "comment", "payment_type", "from_bank_account_id", "state", "bank_account_id"];
+  
+  const [structured_mas, structured_mavs, mv_fields] = await FluxxAPI.mav_tree.which_fields_are_mvs(
+    z, bundle, 
+    "RequestTransaction", 
+    null, // indicates that we need to retrieve MAs from Fluxx.
+    Array.from(new Set(standard_rt_fields.concat(inputData.fields))),
+  );
+  
+  // convert the fields and new values into {"field1":"new val 1", "field2","new_val_2"...}
+  let [all_fields_and_update_values, fields_and_update_values_without_mvs] = FluxxAPI.mav_tree.fields_and_values(
+    inputData.fields,
+    inputData.values,
+    mv_fields
+  );
+  
+  let standard_rt_data = {
+    request_id: inputData.request_id,
+    amount_due: inputData.amount_due,
+    due_at: inputData.due_at,
+    amount_paid: inputData.amount_paid,
+    paid_at: inputData.paid_at,
+    model_theme_id: inputData.request_transaction_model_theme,
+    // we don't need to send the org/user payee ids, as Fluxx derives these from the info in the request.
+    //   organization_payee_id: inputData.payee_organization_id,
+    //   user_payee_id: inputData.payee_user_id,
+    comment: inputData.comment,
+    payment_type: inputData.payment_type,
+    from_bank_account_id: inputData.from_account_id,
+    state: inputData.request_transaction_state,
+    bank_account_id: to_bank_account_id,
+  };
+  
+  // the standard RT data does not contain any MVs, so we add those items to both lists.
+  
+  all_fields_and_update_values = { ...all_fields_and_update_values, ...standard_rt_data};
+  fields_and_update_values_without_mvs = { ...fields_and_update_values_without_mvs, ...standard_rt_data};
   
   var new_rt = await FluxxAPI.fn.create_fluxx_record(
-    z,
-    bundle,
+    z, bundle,
     "request_transaction",
-    {
-      request_id: bundle.inputData.request_id,
-      amount_due: bundle.inputData.amount_due,
-      due_at: bundle.inputData.due_at,
-      amount_paid: bundle.inputData.amount_paid,
-      paid_at: bundle.inputData.paid_at,
-      model_theme_id: bundle.inputData.request_transaction_model_theme,
-      // we don't need to send the org/user payee ids, as Fluxx derives these from the info in the request.
-   //   organization_payee_id: bundle.inputData.payee_organization_id,
-   //   user_payee_id: bundle.inputData.payee_user_id,
-      comment: bundle.inputData.comment,
-      payment_type: bundle.inputData.payment_type,
-      from_bank_account_id: bundle.inputData.from_account_id,
-      state: bundle.inputData.request_transaction_state,
-      bank_account_id: to_bank_account_id,
-    },
+    fields_and_update_values_without_mvs,
     ["id", "from_bank_account_id", "bank_account_id", "state", "organization_payee_id", "user_payee_id", "due_at", "paid_at"], // return fields
   );
   var rt_id = new_rt.id;
+  
+  //
+  // handle Model Attribute Values (multi-value controls) on the RT separately.
+  //
+  
+  if (Array.isArray(mv_fields) && mv_fields.length > 0) {
+    
+    // grab current MACs for record, restricted to only those relating to the mv_fields.
+    // this is an array of object returns from a Fluxx query, with keys:
+    // 'id', 'amount_value', 'model_id', 'model_attribute_id', 'model_attribute_value_id'
+    // Since we are creating  anew record, this is always empty.
+    let existing_macs = [];
+    
+    for (var mv_field of mv_fields) {
+      await FluxxAPI.mav_tree.processMAVOperationsForRecordField({
+        z: z, 
+        bundle: bundle, 
+        model_type: "RequestTransaction", 
+        model_id: rt_id, 
+        field_name: mv_field,
+        operations: all_fields_and_update_values[mv_field], // the "operations" text box
+        structured_mas: structured_mas,
+        existing_macs: existing_macs,
+      });
+    }
+  }
   
   var new_rtfs = await FluxxAPI.fn.create_fluxx_record(
     z,
     bundle,
     "request_transaction_funding_source",
     {
-      amount: bundle.inputData.amount_due,
+      amount: inputData.amount_due,
       request_funding_source_id: rfs_id,
       request_transaction_id: rt_id,
     },
@@ -288,7 +335,7 @@ const getInputFieldForTransactionMachineStates = async (z, bundle) => {
       label: 'Request Transaction State',
       choices: a,
       type: 'string',
-      required: false,
+      required: true,
       list: false,
       placeholder: 'Select State',
       altersDynamicFields: false,
@@ -351,13 +398,17 @@ const getInputFieldForAmountAllocated = (z, bundle) => {
   };
 };
 
+
+
+
+
 module.exports = {
   key: 'create_request_transaction',
-  noun: 'Fluxx Request Transaction',
+  noun: 'Fluxx RequestTransaction',
   display: {
-    label: 'Create Fluxx Request Transaction',
+    label: 'Create Fluxx RequestTransaction',
     description:
-      'Allows you to create a Fluxx Transaction record along with all its other related entities: a Request Funding Source on its GrantRequest, and Request Transaction Funding Sources on the Transaction.',
+      'Creates a Fluxx RequestTransaction record along with its related entities: a Request Funding Source on its GrantRequest, and Request Transaction Funding Sources on the RequestTransaction.',
     hidden: false,
     important: true,
   },
@@ -512,6 +563,39 @@ module.exports = {
         }
         return [];
       },
+      {
+        key: 'extra_fields',
+        label: 'Extra fields',
+        type: 'copy',
+        helpText: "**Extra Fields and Values to Populate in the RequestTransaction (optional)**\n\nPlease ensure that you enter an equal number of fields and values in the two controls below.",
+      },
+      async function (z, bundle) {
+        const r = await FluxxAPI.fn.fields_for_model(z, bundle, "request_transaction", FluxxAPI.c.CORE_MODELS, true);
+        return {
+          key: 'fields',
+          label: 'Extra Field List for New RequestTransaction ',
+          choices: r,
+          type: 'string',
+          required: false,
+          list: true,
+          placeholder: 'Select a field to assign a value to…',
+          helpText:
+            'Enter the list of fields you want to populate in the new RequestTransaction. Use one per box.',
+          altersDynamicFields: false,
+        };
+      },
+      {
+        key: 'values',
+        label: 'Value List',
+        type: 'text',
+        helpText:
+          'Enter a value corresponding to each Field from the previous form control. Use one per box.\nThe first Field will be set to the first Value, the second Field to the second Value, etc.',
+        required: false,
+        list: true,
+        placeholder: 'Enter value to create/update for its corresponding Field above',
+        altersDynamicFields: false,
+      },
+      
     ],
     sample: {
       model_type: 'grant_request',

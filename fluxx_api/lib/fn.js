@@ -65,11 +65,14 @@ let modelToCamel = module.exports.modelToCamel = function(model)
 // OPERATORS REGEX
 let parseWhereClause = module.exports.parseWhereClause = function(z, input, model_type)
 {
-  let re = _internal.fluxx_operators_basic_regex();
-
+  if (input === null || input === undefined || input === "") {
+    return [];
+  }
+  
   // surround input in parentheses
   input = `(${input})`;
 
+  let re = _internal.fluxx_operators_basic_regex();
   let tokens = input.match(re);
   // e.g.
   //["field_1 eq 50", "AND", "(", "field_2 < 4", "OR", "field_2 > 40", ")"]
@@ -199,6 +202,9 @@ let parseWhereClause = module.exports.parseWhereClause = function(z, input, mode
 // go through the entire filter and find all the value-operand-value triples.
 // Convert the operand to lower case.
 function convertAndOrNotToLower(o) {
+  if (o === undefined || o === null || typeof o == 'string') {
+    return o;
+  }
   let cond;
   if (typeof o.group_type === 'string') {
     o.group_type = o.group_type.toLowerCase();
@@ -261,7 +267,7 @@ let parseOrderByClause = module.exports.parseOrderByClause = function(z,order_by
 // optionsForSelectClause
 let optionsForSelectClause = module.exports.optionsForSelectClause = function(z, clause)
 {
-  let re = new RegExp(String.raw`^SELECT +([a-z][\da-z_,. ]*) +FROM +(\w+) +WHERE +(.*?)( +ORDER *BY +([^ ].*?(?!LIMIT)))?( +LIMIT *(\d+))? *$`);
+  let re = new RegExp(String.raw`^SELECT +([a-z][\da-z_,. ]*) +FROM +(\w+)(?: +WHERE +(.*?))?( +ORDER *BY +([^ ].*?(?!LIMIT)))?( +LIMIT *(\d+))? *$`);
 
   // in Zapier, strings containing commas get sent to us as arrays which need a comma join.
   if (Array.isArray(clause)) {
@@ -551,7 +557,7 @@ module.exports.optionsForSqlSelect = function(z, bundle, p)
 {
   let parsed_cols = splitFieldListIntoColsAndRelations(p.cols);
   let order_by = p.order_by;
-  
+
   let options = {
     url: `https://${bundle.authData.client_domain}/api/rest/v2/${modelToSnake(p.model_type)}/list`,
     method: 'POST',

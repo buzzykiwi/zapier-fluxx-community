@@ -51,7 +51,6 @@ module.exports = {
     [newQueueTrigger.key]: newQueueTrigger,
     [downloadFluxxFileTrigger.key]: downloadFluxxFileTrigger,
     [machineModelListTrigger.key]: machineModelListTrigger,
-    [machineModels2TestTrigger.key]: machineModels2TestTrigger,
     [getUserList.key]: getUserList,
     [getModelDocumentType.key]: getModelDocumentType,
     [getModelDocumentSubType.key]: getModelDocumentSubType,

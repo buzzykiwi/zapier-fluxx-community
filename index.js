@@ -15,7 +15,6 @@ const {
 const newQueueTrigger = require('./triggers/new_queue.js');
 const downloadFluxxFileTrigger = require('./triggers/download_fluxx_file.js');
 const machineModelListTrigger = require('./triggers/machine_model_list.js');
-const machineModels2TestTrigger = require('./triggers/machine_models_2_test.js');
 const getUserList = require("./triggers/user_list");
 const getModelDocumentType = require("./triggers/model_document_type");
 const getModelDocumentSubType = require("./triggers/model_document_sub_type");
@@ -30,7 +29,6 @@ const uploadFileCreate = require('./creates/file_upload.js');
 const downloadFileCreate = require('./creates/file_download.js');
 const selectListManagement = require('./creates/select_list_management.js');
 const transactionCreate = require('./creates/transaction_new.js');
-const testMavs = require('./creates/test_mavs.js');
 
 // Other
 const hydrators = require('./hydrators');
@@ -39,7 +37,6 @@ const hydrators = require('./hydrators');
 const searchUser = require("./searches/user");
 const searchRecord = require('./searches/record.js');
 
-const createTestSubInputs = require("./creates/test_sub_inputs");
 
 module.exports = {
   version: require('./package.json').version,
@@ -68,9 +65,7 @@ module.exports = {
     [uploadFileCreate.key]: uploadFileCreate,
     [downloadFileCreate.key]: downloadFileCreate,
     [selectListManagement.key]: selectListManagement,
-    [createTestSubInputs.key]: createTestSubInputs,
     [transactionCreate.key]: transactionCreate,
-    [testMavs.key]: testMavs,
   },
   searches: {
     [searchUser.key]: searchUser,

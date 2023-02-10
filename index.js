@@ -20,6 +20,7 @@ const getUserList = require("./triggers/user_list");
 const getModelDocumentType = require("./triggers/model_document_type");
 const getModelDocumentSubType = require("./triggers/model_document_sub_type");
 const recordsSqlTrigger = require("./triggers/records_sql_trigger");
+const multiFieldsForModel = require("./triggers/multi_fields_for_model.js");
 
 // Creates
 const recordSqlSearch = require('./creates/record_sql_search.js');
@@ -27,6 +28,7 @@ const recordsSqlSearch = require('./creates/records_sql_search.js');
 const updateFluxxRecordCreate = require('./creates/record_update_new.js');
 const uploadFileCreate = require('./creates/file_upload.js');
 const downloadFileCreate = require('./creates/file_download.js');
+const selectListManagement = require('./creates/select_list_management.js');
 const transactionCreate = require('./creates/transaction_new.js');
 const testMavs = require('./creates/test_mavs.js');
 
@@ -57,6 +59,7 @@ module.exports = {
     [getModelDocumentType.key]: getModelDocumentType,
     [getModelDocumentSubType.key]: getModelDocumentSubType,
     [recordsSqlTrigger.key]: recordsSqlTrigger,
+    [multiFieldsForModel.key]: multiFieldsForModel,
   },
   creates: {
     [updateFluxxRecordCreate.key]: updateFluxxRecordCreate,
@@ -64,6 +67,7 @@ module.exports = {
     [recordsSqlSearch.key]: recordsSqlSearch,
     [uploadFileCreate.key]: uploadFileCreate,
     [downloadFileCreate.key]: downloadFileCreate,
+    [selectListManagement.key]: selectListManagement,
     [createTestSubInputs.key]: createTestSubInputs,
     [transactionCreate.key]: transactionCreate,
     [testMavs.key]: testMavs,

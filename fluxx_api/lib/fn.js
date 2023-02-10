@@ -406,6 +406,8 @@ let splitFieldListIntoColsAndRelations = module.exports.splitFieldListIntoColsAn
 module.exports.processInitialResponse = function(z, cols, response, model_type)
 {
   response.throwForStatus();
+  handleFluxxAPIReturnErrors(z, response);
+
   let data;
   if (response.data.records === undefined) {
     data = response.data[modelToSnake(model_type)]; // gets dict of single result;
@@ -675,8 +677,15 @@ let dynamic_fields_for_dynamic_model = module.exports.dynamic_fields_for_dynamic
  * write_access: if true, remove any "id" and r-o fields from the list: use this if looking for fields to update
  * or add to a new record, as you should never have to write to the id field.
  */
-let fields_for_model = module.exports.fields_for_model = async function(z, bundle, model_type, fields, write_access = false)
+let fields_for_model = module.exports.fields_for_model = async function(z, bundle, model_type, fields, write_access = false, multi_value_only = false)
 {
+  const model_attribute = {
+    model_type: modelToCamel(model_type),
+  };
+  if (multi_value_only) {
+    model_attribute.attribute_type = 'multi_value';
+  }
+        
   const options = {
     url: `https://${bundle.authData.client_domain}/api/rest/v2/model_attribute/list`,
     method: 'POST',
@@ -687,12 +696,11 @@ let fields_for_model = module.exports.fields_for_model = async function(z, bundl
       sort_attribute: 'name',
       sort_order: 'asc',
       filter: z.JSON.stringify({
-        model_attribute: {
-          model_type: modelToCamel(model_type),
-        },
+        model_attribute: model_attribute,
       }),
     },
   };
+  
   // first the core fields
   const field_list = fields[modelToCamel(model_type)];
 
@@ -703,33 +711,38 @@ let fields_for_model = module.exports.fields_for_model = async function(z, bundl
 
   const dropdown_list = [];
   
-  // Add the core fields to the list, first
-  Object.keys(field_list).forEach((field) => {
-    // ignore the key reserved for info about the model, as well as reverse relationships which don't appear to work
-    if (
-      field != '#info' && 
-      field.search('MacModelTypeDyn') == -1 && 
-      !(write_access == true && field == 'id') &&
-      !(write_access == true && field_list[field].permission == '[]') )
-      {
-        dropdown_list.push({
-          id: field,
-          value: field,
-          label: field + ' (' + 
-            field_list[field].data_type + 
-            (field_list[field].data_type == 'method' ? '; ' + field_list[field].type : '') +
-            ((field_list[field].plural == 'plural' && field_list[field].type != 'column')? '; list': '') + 
-          ')',
-        });
-      }
-  });
-  if (response.length > 0) {
-    dropdown_list.push({
-      id: 'DYNAMIC_FIELDS',
-      value: '',
-      label: 'DYNAMIC FIELDS (do not select this option; choose from options below)',
+  // If we are looking for multi-values only, the CORE list doesn't contain any. Bypass.
+  // Otherwise, add all the core fields for this model type.
+  if (!multi_value_only) {
+    // Add the core fields to the list, first
+    Object.keys(field_list).forEach((field) => {
+      // ignore the key reserved for info about the model, as well as reverse relationships which don't appear to work
+      if (
+        field != '#info' && 
+        field.search('MacModelTypeDyn') == -1 && 
+        !(write_access == true && field == 'id') &&
+        !(write_access == true && field_list[field].permission == '[]') )
+        {
+          dropdown_list.push({
+            id: field,
+            value: field,
+            label: field + ' (' + 
+              field_list[field].data_type + 
+              (field_list[field].data_type == 'method' ? '; ' + field_list[field].type : '') +
+              ((field_list[field].plural == 'plural' && field_list[field].type != 'column')? '; list': '') + 
+            ')',
+          });
+        }
     });
-
+  }
+  if (response.length > 0) {
+    if (!multi_value_only) {
+      dropdown_list.push({
+        id: 'DYNAMIC_FIELDS',
+        value: '',
+        label: 'DYNAMIC FIELDS (do not select this option; choose from options below)',
+      });
+    }
     // Then add the dynamic fields
     response.forEach((item) => {
       dropdown_list.push({
@@ -1357,6 +1370,10 @@ module.exports.getReturnFieldsDropdown = async (z, bundle) => {
 };
 
 let handleFluxxAPIReturnErrors = module.exports.handleFluxxAPIReturnErrors = (z, response) => {
+  if (response.status === 429) {
+    throw new z.errors.ThrottledError('Fluxx API limit exceeded – retry after 60 seconds', 60);  // Zapier will retry in 60 seconds
+  }
+  
   let data = response.data;
   if (isObj(data) && data.error !== undefined) {
     let code = data.error.code;
@@ -1456,7 +1473,7 @@ module.exports.sql_descriptions = async (z, bundle) => {
   };
 };
 
-module.exports.create_fluxx_record =  async (
+module.exports.create_fluxx_record = async (
     z,
     bundle,
     model_type,
@@ -1475,7 +1492,7 @@ module.exports.create_fluxx_record =  async (
         cols: z.JSON.stringify(cols),
       },
     };
-    z.console.log(options);
+
     var response = await z.request(options);
     response.throwForStatus();
     handleFluxxAPIReturnErrors(z, response);

@@ -53,7 +53,6 @@ const perform = async (z, bundle) => {
     if (e.status == 500) {
       return file; // non-existent files return 500 from Fluxx.
     }
-    // z.console.log(e);
     return file; // no need to dehydrate
   }
 

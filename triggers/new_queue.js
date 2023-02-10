@@ -22,6 +22,7 @@ const perform = async (z, bundle) => {
     // we don't do the paginated response, as this is a GET request (params, not body for attributes)
     response = await z.request(options);
     response.throwForStatus();
+    FluxxAPI.fn.handleFluxxAPIReturnErrors(z, response);
     results = response.data;
 
     if (results.data !== undefined) {
@@ -62,6 +63,7 @@ const perform = async (z, bundle) => {
     };
     response = await z.request(options_finished);
     response.throwForStatus();
+    FluxxAPI.fn.handleFluxxAPIReturnErrors(z, response);
   }
   return final_list;
 };

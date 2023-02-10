@@ -3,6 +3,9 @@
 const perform = async (z, bundle) => {
   const FluxxAPI = require('../fluxx_api');
   
+  return await FluxxAPI.fn.fields_for_model(z, bundle, bundle.inputData.model_type, FluxxAPI.c.CORE_MODELS, true, true);
+  
+  
   let p = FluxxAPI.fn.optionsForSelectClause(z, `SELECT id, full_name FROM user WHERE full_name CONTAINS ${z.JSON.stringify(bundle.inputData.name_segment)} ORDER BY last_name, first_name LIMIT 200`);
   // p = {select: cols, from: model_type, where: filter, order_by: order_by, limit: limit};
 
@@ -20,12 +23,12 @@ const perform = async (z, bundle) => {
 module.exports = {
   // see here for a full list of available properties:
   // https://github.com/zapier/zapier-platform/blob/master/packages/schema/docs/build/schema.md#triggerschema
-  key: 'user_list',
-  noun: 'Userlist',
+  key: 'multi_fields_for_model',
+  noun: 'Fields',
 
   display: {
-    label: 'New Userlist',
-    description: 'Test returning a trigger list of users',
+    label: 'New Field List',
+    description: 'Returning a trigger list of fields for a given model type',
     // helpText: '... unfortunately this list is likely to be too long to be of use, and would require paging. It does not allow parameters to the search.',
     hidden: true,
   },
@@ -37,11 +40,11 @@ module.exports = {
     // Zapier will pass them in as `bundle.inputData` later. They're optional.
     inputFields: [
       {
-        key: 'name_segment',
+        key: 'model_type',
         type: 'string',
-        label: 'User name to use for searches',
+        label: 'Model Type',
         helpText:
-          'Give a name or portion of a name here, to narrow down the list of names in the selector below',
+          'Select a model type here, and the Field selector below will display the possible multiple select options for that model.',
         required: true,
         altersDynamicFields: true,
       },
@@ -53,7 +56,7 @@ module.exports = {
     // returned records, and have obvious placeholder values that we can show to any user.
     sample: {
       id: 1,
-      name: 'Test'
+      name: 'test_multi_select_field'
     },
 
     // If fields are custom to each user (like spreadsheet columns), `outputFields` can create human labels

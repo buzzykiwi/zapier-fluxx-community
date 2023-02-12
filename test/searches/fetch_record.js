@@ -7,9 +7,6 @@ const appTester = zapier.createAppTester(App);
 
 const FluxxAPI = require('../../fluxx_api');
 
-//console.log(JSON.stringify(FluxxAPI.fn.optionsForSelectClause("SELECT id FROM Job2 WHERE NOT (c = 3 OR c<2) AND test_id CROSSCARD ( name='stephen') AND test IS 5 MONTHS AGO")));
-
-
 describe('Search - record', () => {
   zapier.tools.env.inject();
 

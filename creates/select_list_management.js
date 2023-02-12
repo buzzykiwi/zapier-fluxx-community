@@ -168,9 +168,6 @@ const perform = async (z, bundle) => {
       );
     }
     all_deletes_results = await Promise.allSettled(delete_promises).then(transformAllSettled); // allows concurrent deletion
-    // pretend we were throttled at this point. If it repeats the entire Action, then we won't hit the throttle,
-    // as all the previous items were deleted.
-//    throw new z.errors.ThrottledError('test throttle after deletions; ' + inputData.li_value_path, 60);
     mavs = []; // hey none left
   }
   
@@ -232,7 +229,6 @@ const perform = async (z, bundle) => {
   
   mavs.forEach(mav => {
     let mav_parent = mav.dependent_model_attribute_value_id;
-    // mav.path = "§" + mav.value;
     mav.path = '';
     while (mav_parent !== undefined && mav_parent !== null && mav_parent > 0) {
       mav.path = `§${mavs_by_id[mav_parent].value}${mav.path}`;

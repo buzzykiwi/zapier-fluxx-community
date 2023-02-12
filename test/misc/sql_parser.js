@@ -77,6 +77,14 @@ describe('Trigger - SQL parser', () => {
         p = FluxxAPI.fn.parseSelectStatement(z, sql);
         expect(FluxxAPI.fn.modelToCamel(p.model_type)).toEqual("GrantRequest");
         expect(FluxxAPI.fn.modelToSnake(p.model_type)).toEqual("grant_request");
+        
+        // random condition with complex regex, and a newline for good measure.
+        sql = `SELECT id FROM grant_request WHERE foo IS IN 
+  FISCAL YEAR RANGE 2000-2010 LIMIT 10`;
+        p = FluxxAPI.fn.parseSelectStatement(z, sql);
+        expect(p.filter.conditions[0][1]).toEqual("range-year-fiscal");
+        expect(p.filter.conditions[0][2]).toEqual("2000-2010");
+        
   
         sql = "SELECT id FROM grant_request"; // test for basic select with no filter, order by or limit
         p = FluxxAPI.fn.parseSelectStatement(z, sql);

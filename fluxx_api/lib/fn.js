@@ -83,7 +83,6 @@ let parseWhereClause = module.exports.parseWhereClause = function(z, input, mode
   // If they are bound to a bracketed group, if the group was AND it will be come NOT-AND,
   // likewise for OR / NOT-OR
   tokens = _internal.clean_up_nots(tokens);
-
   const stack = new (_internal.Stack)();
 
   let filter = {
@@ -196,12 +195,14 @@ let parseWhereClause = module.exports.parseWhereClause = function(z, input, mode
 
   //filter
   convertAndOrNotToLower(filter.data);
+//  reduceSingleItemAndsAndOrs(z, filter.data, filter, "data");
   return filter.data;
 };
 
 // go through the entire filter and find all the value-operand-value triples.
 // Convert the operand to lower case.
-function convertAndOrNotToLower(o) {
+function convertAndOrNotToLower(o)
+{
   if (o === undefined || o === null || typeof o == 'string') {
     return o;
   }
@@ -219,6 +220,31 @@ function convertAndOrNotToLower(o) {
     });
   }
 }
+
+// This was a nice idea, but Fluxx requires an AND/OR at root level, and cross card filters can only contain an and/or in them, so no reduction possible.
+function reduceSingleItemAndsAndOrs(z, o, par, attribute)
+{
+  if (o === undefined || o === null || typeof o == 'string') {
+    return;
+  }
+  let cond, index;
+  let conds = o.conditions;
+  if (Array.isArray(conds)) {
+    if (conds.length == 1) {
+      // here's where we can remove the AND/OR.
+      par[attribute] = conds[0]; // replaces itself in the parent item. new item has same "parent" as current item
+      reduceSingleItemAndsAndOrs(z, conds[0], par, attribute); // then go and check that item
+    } else {
+      o.conditions.forEach((cond, index) => {
+        reduceSingleItemAndsAndOrs(z, cond, o.conditions, index); // check all sub items
+      });
+    }
+  } else if (Array.isArray(o) && o[1] == 'filter'){
+    reduceSingleItemAndsAndOrs(z, o[2], o, 2); // check all sub items
+  } else {
+  }
+}
+
 
 let parseOrderByClause = module.exports.parseOrderByClause = function(z,order_by, model_type)
 {
@@ -267,7 +293,7 @@ let parseOrderByClause = module.exports.parseOrderByClause = function(z,order_by
 // parseSelectStatement
 let parseSelectStatement = module.exports.parseSelectStatement = function(z, clause)
 {
-  let re = new RegExp(String.raw`^\s*SELECT\s+([a-z][\da-z_,. ]*)\s+FROM\s+(\w+)(?:\s+WHERE\s+(.*?))?(\s+ORDER\s*BY\s+([^ ].*?(?!LIMIT)))?(\s+LIMIT\s*(\d+))?\s*$`);
+  let re = new RegExp(String.raw`^\s*SELECT\s+([a-z][\da-z_,. ]*)\s+FROM\s+(\w+)(?:\s+WHERE\s+(.*?))?(\s+ORDER\s*BY\s+([^ ].*?(?!LIMIT)))?(\s+LIMIT\s*(\d+))?\s*$`,"s");
 
   // in Zapier, strings containing commas get sent to us as arrays which need a comma join.
   if (Array.isArray(clause)) {
@@ -1456,20 +1482,26 @@ let paginated_fetch = module.exports.paginated_fetch = async (z, bundle, options
 module.exports.sql_descriptions = async (z, bundle) => {
   let desc = "";
   try {
+    if (bundle.inputData.in === undefined || bundle.inputData.in === null || bundle.inputData.in.trim() == "") {
+      throw "blank SQL statement";
+    }
     let p = parseSelectStatement(z, bundle.inputData.in);
+    if (p == false) {
+      throw "invalid SQL";
+    }
     // p = {select: cols, from: model_type, where: filter, order_by: order_by, limit: limit};
     let parsed_cols = splitFieldListIntoColsAndRelations(p.cols);  
 
-    desc += `- Model Type: ${p.model_type}\n`; 
+    desc += `- Model Type: ${modelToCamel(p.model_type)}\n`; 
     (Object.keys(parsed_cols.cols).length > 0)      && (desc += `- Cols: ${z.JSON.stringify(parsed_cols.cols)}\n`);
     (Object.keys(parsed_cols.relation).length > 0)  && (desc += `- Relation: ${z.JSON.stringify(parsed_cols.relation)}\n`);
     desc += `- Filter: ${_internal.unescapeSlashes(z.JSON.stringify(p.filter))}\n`;
-    (p.order_by !== undefined) && (p.order_by !== "") && (desc += `- Order By: ${z.JSON.stringify(p.order_by)}\n`);
+    (p.order_by !== undefined) && (p.order_by !== "") && (desc += `- Order By: ${z.JSON.stringify(p.order_by).replace(',"style":"ELASTIC"', "") }\n`);
     (p.limit !== undefined)     && (desc += `- Limit: ${z.JSON.stringify(p.limit)}\n`);
     
     desc += `\nPlease check to ensure that the SQL parser has accurately represented your SQL statement. Common errors include forgetting to capitalise SELECT, FROM, WHERE, AND, OR, NOT, ORDER BY, LIMIT.`;
   } catch (e) {
-    desc = e + z.JSON.stringify(e);
+    desc = z.JSON.stringify(e);
   }
   return {
     key: 'help_text',

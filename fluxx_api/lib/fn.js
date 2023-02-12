@@ -1319,9 +1319,9 @@ module.exports.getReturnFieldDescriptions = async function (z, bundle) {
         }
         descriptions += `**Core field: ${field}**` + "\n\n- " + s.description + "\n\n";
         if (s.plural == "plural" && s.type != 'column') {
-          descriptions += "- returns a **list**\n\n";
+          descriptions += "- Returns a **list** of ids. Lists are read-only.\n\n";
         }
-        descriptions += `- type: ${s.type} (${ (link === false ? s.data_type: link)})` + "\n\n";
+        descriptions += `- Type: ${s.type} (${ (link === false ? s.data_type: link)})` + "\n\n";
       } else {
         let dyn_field = dyn_fields.find(f => f.name == field);
         if (dyn_field !== undefined) {

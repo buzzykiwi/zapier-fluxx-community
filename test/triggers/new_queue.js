@@ -8,6 +8,10 @@ const appTester = zapier.createAppTester(App);
 describe('Trigger - new_queue', () => {
   zapier.tools.env.inject();
 
+  // for doing the tests, specify a queue id on the test server.
+  should(process.env).have.property("_TEST_QUEUE_ID");
+
+
   it('should get an array', async () => {
     const bundle = {
       authData: {
@@ -16,7 +20,9 @@ describe('Trigger - new_queue', () => {
         refresh_token: process.env.REFRESH_TOKEN,
       },
 
-      inputData: {},
+      inputData: {
+        api_queue: process.env._TEST_QUEUE_ID,
+      },
     };
 
     const results = await appTester(

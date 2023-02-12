@@ -30,7 +30,7 @@ SELECT id FROM GrantRequest WHERE program_organization_id CROSSCARD(city = 'Auck
   * `ORDER BY «ordering list»` is optional
   * `LIMIT «limit»` is optional
   * All SQL keywords such as `SELECT`, `FROM`, `WHERE`, `AND`, `OR`, `NOT`, `ORDER BY` and `LIMIT` must be capitalised
-  * The entire expression must be on one line (no line breaks)
+  * The expression may contain line breaks, spaces and tabs
 * `«field list»` is a comma-separated list of "internal" field names, e.g. `id, name, updated_at`
   * You can use dot notation to retrieve to-one relationship data.
     * In most cases, the “local” field has to end in “_id”, e.g. `program_organization_id.name`, not `program_organization.name`. This is a limitation of the Fluxx API.

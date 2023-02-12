@@ -112,15 +112,18 @@ describe('Trigger - SQL parser', () => {
         p = FluxxAPI.fn.parseSelectStatement(z, sql);
         options = FluxxAPI.fn.optionsFromParsedSelectStatement(z, bundle, p);
   
+        let failed = false;
         sql = "SELECT id FROM model_attribute_value WHERE value CONTAINS 'test'"; // non-elastic table, should throw exception
         try {
           p = FluxxAPI.fn.parseSelectStatement(z, sql);
           options = FluxxAPI.fn.optionsFromParsedSelectStatement(z, bundle, p);
-          expect(false).toEqual("Should not have got here: an exception should be thrown when using non-'=' comparators on a non-Elastic table");
+          failed = true;
         } catch (e) {
           expect(e).toContain("Non-Elastic model_type");
         }
-  
+        // throw an error, not caught in the handler above, if the previous test did not throw as it should have.
+        if (failed) expect(false).toEqual("Should not have got here: an exception should be thrown when using non-'=' comparators on a non-Elastic table");
+
 //          cols: m[1].split(/ *, */), // from comma-separated string to Array
 //          model_type: model_type,
 //          filter: parseWhereClause(z, m[3], model_type),

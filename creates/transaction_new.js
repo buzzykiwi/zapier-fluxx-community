@@ -7,12 +7,12 @@ const variousInputFieldsFromFluxx = async (z, bundle, sql, perform_check = true)
   if (perform_check == true && bundle.inputData.rfs_id !== undefined && bundle.inputData.rfs_id !== null && bundle.inputData.rfs_id !== "") {
     return null;
   }
-  const p = FluxxAPI.fn.optionsForSelectClause(z, sql);
-  const options = FluxxAPI.fn.optionsForSqlSelect(z, bundle, p);
+  const p = FluxxAPI.fn.parseSelectStatement(z, sql);
+  const options = FluxxAPI.fn.optionsFromParsedSelectStatement(z, bundle, p);
   
   if (options !== null && options !== undefined) {
     const response = await FluxxAPI.fn.paginated_fetch(z, bundle, options, options.model_type, p.limit);
-    return FluxxAPI.fn.processInitialResponse(z, p.cols, response, options.model_type);
+    return FluxxAPI.fn.preProcessFluxxResponse(z, p.cols, response, options.model_type);
   }
   return null;
 };

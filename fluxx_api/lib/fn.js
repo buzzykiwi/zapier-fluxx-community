@@ -264,10 +264,10 @@ let parseOrderByClause = module.exports.parseOrderByClause = function(z,order_by
   return ret;
 };
 
-// optionsForSelectClause
-let optionsForSelectClause = module.exports.optionsForSelectClause = function(z, clause)
+// parseSelectStatement
+let parseSelectStatement = module.exports.parseSelectStatement = function(z, clause)
 {
-  let re = new RegExp(String.raw`^SELECT +([a-z][\da-z_,. ]*) +FROM +(\w+)(?: +WHERE +(.*?))?( +ORDER *BY +([^ ].*?(?!LIMIT)))?( +LIMIT *(\d+))? *$`);
+  let re = new RegExp(String.raw`^\s*SELECT\s+([a-z][\da-z_,. ]*)\s+FROM\s+(\w+)(?:\s+WHERE\s+(.*?))?(\s+ORDER\s*BY\s+([^ ].*?(?!LIMIT)))?(\s+LIMIT\s*(\d+))?\s*$`);
 
   // in Zapier, strings containing commas get sent to us as arrays which need a comma join.
   if (Array.isArray(clause)) {
@@ -388,7 +388,7 @@ let splitFieldListIntoColsAndRelations = module.exports.splitFieldListIntoColsAn
 };
 
 /**
- * processInitialResponse(z, cols, response, model_type)
+ * preProcessFluxxResponse(z, cols, response, model_type)
  *
  * Performs several processes on the data immediately returned from the FLuxx API:
  * 1 - Makes all returned objects conform to the template object in processSingleItemResponse(),
@@ -409,7 +409,7 @@ let splitFieldListIntoColsAndRelations = module.exports.splitFieldListIntoColsAn
  *                Array of records containing keys with id, model_type and fields.
  */
 
-module.exports.processInitialResponse = function(z, cols, response, model_type)
+module.exports.preProcessFluxxResponse = function(z, cols, response, model_type)
 {
   response.throwForStatus();
   handleFluxxAPIReturnErrors(z, response);
@@ -553,7 +553,7 @@ const processSingleItemResponse = module.exports.processSingleItemResponse = fun
   return out;
 };
 
-module.exports.optionsForSqlSelect = function(z, bundle, p)
+module.exports.optionsFromParsedSelectStatement = function(z, bundle, p)
 {
   let parsed_cols = splitFieldListIntoColsAndRelations(p.cols);
   let order_by = p.order_by;
@@ -586,7 +586,7 @@ module.exports.optionsForSqlSelect = function(z, bundle, p)
 
 /**
  * optionsForSingleItemFetch
- * similar to optionsForSqlSelect except returns the options object
+ * similar to optionsFromParsedSelectStatement except returns the options object
  * for a single item rather than a list of items.
  * The p object has to contain:
  * - id requested
@@ -1456,7 +1456,7 @@ let paginated_fetch = module.exports.paginated_fetch = async (z, bundle, options
 module.exports.sql_descriptions = async (z, bundle) => {
   let desc = "";
   try {
-    let p = optionsForSelectClause(z, bundle.inputData.in);
+    let p = parseSelectStatement(z, bundle.inputData.in);
     // p = {select: cols, from: model_type, where: filter, order_by: order_by, limit: limit};
     let parsed_cols = splitFieldListIntoColsAndRelations(p.cols);  
 

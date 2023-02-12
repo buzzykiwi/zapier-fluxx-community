@@ -31,7 +31,7 @@ const perform = async (z, bundle) => {
   }
 
   // ok, the file exists, now let's get the raw file behind it.
-  file = FluxxAPI.fn.processInitialResponse(z, fields, initial_response, model_type)
+  file = FluxxAPI.fn.preProcessFluxxResponse(z, fields, initial_response, model_type)
   const document_content_type = file.fields.document_content_type;
   
   let file_download_options = {

@@ -3,10 +3,10 @@
 const perform = async (z, bundle) => {
   const FluxxAPI = require('../fluxx_api');
   
-  let p = FluxxAPI.fn.optionsForSelectClause(z, `SELECT id, full_name FROM user WHERE full_name CONTAINS ${z.JSON.stringify(bundle.inputData.name_segment)} ORDER BY last_name, first_name LIMIT 200`);
+  let p = FluxxAPI.fn.parseSelectStatement(z, `SELECT id, full_name FROM user WHERE full_name CONTAINS ${z.JSON.stringify(bundle.inputData.name_segment)} ORDER BY last_name, first_name LIMIT 200`);
   // p = {select: cols, from: model_type, where: filter, order_by: order_by, limit: limit};
 
-  let options = FluxxAPI.fn.optionsForSqlSelect(z, bundle, p);
+  let options = FluxxAPI.fn.optionsFromParsedSelectStatement(z, bundle, p);
   if (options !== null && options !== undefined) {
     const response = await FluxxAPI.fn.paginated_fetch(z, bundle, options, p.model_type, p.limit);
     const ret = response.data.records[FluxxAPI.fn.modelToSnake(options.model_type)];

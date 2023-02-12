@@ -3,10 +3,10 @@ const FluxxAPI = require('../fluxx_api');
 
 const perform = async (z, bundle) => {
 
-  let p = FluxxAPI.fn.optionsForSelectClause(z, bundle.inputData.in);
+  let p = FluxxAPI.fn.parseSelectStatement(z, bundle.inputData.in);
   // p = {select: cols, from: model_type, where: filter, order_by: order_by, limit: limit};
   
-  let options = FluxxAPI.fn.optionsForSqlSelect(z, bundle, p);
+  let options = FluxxAPI.fn.optionsFromParsedSelectStatement(z, bundle, p);
   if (options !== null && options !== undefined) {
     if (bundle.inputData.show_mavs == 'true') {
       options.params.show_mavs = 'true';
@@ -14,7 +14,7 @@ const perform = async (z, bundle) => {
     
     // pagination system
     const response = await FluxxAPI.fn.paginated_fetch(z, bundle, options, p.model_type, 1);
-    const ret = FluxxAPI.fn.processInitialResponse(z, p.cols, response, p.model_type);
+    const ret = FluxxAPI.fn.preProcessFluxxResponse(z, p.cols, response, p.model_type);
     
     if (ret.length === 0) return {};
     return ret[0]; // the first one in the list

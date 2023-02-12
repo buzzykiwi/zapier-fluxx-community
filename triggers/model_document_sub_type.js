@@ -5,10 +5,10 @@ const perform = async (z, bundle) => {
   let type_id = parseInt(bundle.inputData.model_document_type_id);
   if (isNaN(type_id)) return [];
   
-  let p = FluxxAPI.fn.optionsForSelectClause(z, `SELECT id, value FROM model_document_sub_type WHERE model_document_type_id = ${type_id} ORDER BY value asc`);
+  let p = FluxxAPI.fn.parseSelectStatement(z, `SELECT id, value FROM model_document_sub_type WHERE model_document_type_id = ${type_id} ORDER BY value asc`);
   // p = {select: cols, from: model_type, where: filter, order_by: order_by, limit: limit};
   
-  let options = FluxxAPI.fn.optionsForSqlSelect(z, bundle, p);
+  let options = FluxxAPI.fn.optionsFromParsedSelectStatement(z, bundle, p);
   
   if (options !== null && options !== undefined) {
     const response = await FluxxAPI.fn.paginated_fetch(z, bundle, options, p.model_type, p.limit);

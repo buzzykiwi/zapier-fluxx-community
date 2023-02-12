@@ -9,7 +9,7 @@ const perform = async (z, bundle) => {
     
   const clause = `SELECT id, document_content_type, document_file_name, created_at, created_by_id.full_name, updated_by_id.full_name, updated_at, doc_label, document_file_size, document_updated_at, original_file_name, model_document_type_id.name, document_type, document_text, documentable_type, documentable_id, model_document_template_id.description FROM ${model_type} WHERE id = ${bundle.inputData.id} LIMIT 1`;
   
-  let p = FluxxAPI.fn.optionsForSelectClause(z, clause);  
+  let p = FluxxAPI.fn.parseSelectStatement(z, clause);  
   // p = {select: cols, from: model_type, where: filter, order_by: order_by, limit: limit};
   
   const options = FluxxAPI.fn.optionsForSingleItemFetch(
@@ -28,7 +28,7 @@ const perform = async (z, bundle) => {
   
   if (initial_response.data[model_type].length === 0) throw `${model_type} ${bundle.inputData.id} not found`;
 
-  const ret = FluxxAPI.fn.processInitialResponse(z, p.cols, initial_response, model_type)
+  const ret = FluxxAPI.fn.preProcessFluxxResponse(z, p.cols, initial_response, model_type)
   const file = ret[0];
   const document_content_type = file.fields.document_content_type;
   

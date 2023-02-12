@@ -5,10 +5,10 @@ const perform = async (z, bundle) => {
   let snakey = FluxxAPI.fn.modelToSnake(bundle.inputData.model_type);
   let cameley = FluxxAPI.fn.modelToCamel(bundle.inputData.model_type);
   // the JSON.stringify puts quotes around strings, and escapes everything in the string - perfect.
-  let p = FluxxAPI.fn.optionsForSelectClause(z, `SELECT id, name FROM model_document_type WHERE model_type = ${JSON.stringify(cameley)} ORDER BY name asc`);
+  let p = FluxxAPI.fn.parseSelectStatement(z, `SELECT id, name FROM model_document_type WHERE model_type = ${JSON.stringify(cameley)} ORDER BY name asc`);
   // p = {select: cols, from: model_type, where: filter, order_by: order_by, limit: limit};
   
-  let options = FluxxAPI.fn.optionsForSqlSelect(z, bundle, p);
+  let options = FluxxAPI.fn.optionsFromParsedSelectStatement(z, bundle, p);
   
   if (options !== null && options !== undefined) {
     const response = await FluxxAPI.fn.paginated_fetch(z, bundle, options, p.model_type, p.limit);    

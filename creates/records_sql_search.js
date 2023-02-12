@@ -4,10 +4,10 @@ const FluxxAPI = require('../fluxx_api');
 const perform = async (z, bundle) => {
 
   const FluxxAPI = require('../fluxx_api');
-  let p = FluxxAPI.fn.optionsForSelectClause(z, bundle.inputData.in);
+  let p = FluxxAPI.fn.parseSelectStatement(z, bundle.inputData.in);
   // p = {select: cols, from: model_type, where: filter, order_by: order_by, limit: limit};
   
-  let options = FluxxAPI.fn.optionsForSqlSelect(z, bundle, p);
+  let options = FluxxAPI.fn.optionsFromParsedSelectStatement(z, bundle, p);
   
   if (options !== null && options !== undefined) {
     if (bundle.inputData.show_mavs == 'true') {
@@ -18,7 +18,7 @@ const perform = async (z, bundle) => {
     
     // return as line items: have to return a single object, but it can return an array via an object key
     return {
-      results: FluxxAPI.fn.processInitialResponse(z, p.cols, response, options.model_type),
+      results: FluxxAPI.fn.preProcessFluxxResponse(z, p.cols, response, options.model_type),
     }; 
   }
 };

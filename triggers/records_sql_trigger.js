@@ -4,10 +4,10 @@ const perform = async (z, bundle) => {
 
   const FluxxAPI = require('../fluxx_api');
 
-  let p = FluxxAPI.fn.optionsForSelectClause(z, bundle.inputData.in);
+  let p = FluxxAPI.fn.parseSelectStatement(z, bundle.inputData.in);
   // p = {select: cols, from: model_type, where: filter, order_by: order_by, limit: limit};
   
-  let options = FluxxAPI.fn.optionsForSqlSelect(z, bundle, p);
+  let options = FluxxAPI.fn.optionsFromParsedSelectStatement(z, bundle, p);
   
   if (options !== null && options !== undefined) {
     const response = await FluxxAPI.fn.paginated_fetch(z, bundle, options, p.model_type, p.limit);

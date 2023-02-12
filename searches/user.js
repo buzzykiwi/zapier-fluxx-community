@@ -6,10 +6,10 @@ const FluxxAPI = require('../fluxx_api');
 // This has to use a search API since we search by name rather than fetch by id.
 const perform = async (z, bundle) => {
 
-  let p = FluxxAPI.fn.optionsForSelectClause(z, `SELECT id, full_name FROM user WHERE full_name = ${z.JSON.stringify(bundle.inputData.name)} ORDER BY last_name, first_name LIMIT 1`);
+  let p = FluxxAPI.fn.parseSelectStatement(z, `SELECT id, full_name FROM user WHERE full_name = ${z.JSON.stringify(bundle.inputData.name)} ORDER BY last_name, first_name LIMIT 1`);
   // p = {select: cols, from: model_type, where: filter, order_by: order_by, limit: limit};
   
-  let options = FluxxAPI.fn.optionsForSqlSelect(z, bundle, p);
+  let options = FluxxAPI.fn.optionsFromParsedSelectStatement(z, bundle, p);
     
   if (options !== null && options !== undefined) {
     const response = await FluxxAPI.fn.paginated_fetch(z, bundle, options, p.model_type, p.limit);

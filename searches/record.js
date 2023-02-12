@@ -27,7 +27,7 @@ const perform = async (z, bundle) => {
   FluxxAPI.fn.handleFluxxAPIReturnErrors(z, response);
   
   // our API call returns a single object - Zapier expects an array of which it will use the first entry.
-  return [FluxxAPI.fn.processInitialResponse(z, fields, response, model_type)];
+  return [FluxxAPI.fn.preProcessFluxxResponse(z, fields, response, model_type)];
 };
 
 module.exports = {

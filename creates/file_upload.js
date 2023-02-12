@@ -117,7 +117,7 @@ const perform = async (z, bundle) => {
 
     return file;
     */
-  return FluxxAPI.fn.processInitialResponse(z, cols, response, "model_document");
+  return FluxxAPI.fn.preProcessFluxxResponse(z, cols, response, "model_document");
 
 };
 

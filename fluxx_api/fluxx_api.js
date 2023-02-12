@@ -13,7 +13,7 @@ FluxxAPI = function() {
 // Note that we're executing the function here.
 }();
 
-console.log(JSON.stringify(FluxxAPI.optionsForSelectClause(z, "SELECT id FROM Job2 WHERE NOT (c = 3 OR c<2) AND test_id CROSSCARD ( name='stephen') AND test IS 5 MONTHS AGO")));
+console.log(JSON.stringify(FluxxAPI.parseSelectStatement(z, "SELECT id FROM Job2 WHERE NOT (c = 3 OR c<2) AND test_id CROSSCARD ( name='stephen') AND test IS 5 MONTHS AGO")));
 
 console.log(FluxxAPI.splitFieldListIntoColsAndRelations(["id", "test", "program_organization_id.full_name", "updated_by.full_name"]));
 /*
@@ -21,7 +21,7 @@ think about API:
 
 public:
 Y parseWhereClause(string)
-Y optionsForSelectClause(string)
+Y parseSelectStatement(string)
 Y modelToSnake(string)
 Y modelToCamel(string)
 Y NO_ELASTIC

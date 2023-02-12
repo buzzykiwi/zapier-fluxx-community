@@ -1,4 +1,5 @@
 'use_strict';
+const FluxxAPI = require('../fluxx_api');
 
 const perform = async (z, bundle) => {
 
@@ -39,8 +40,9 @@ module.exports = {
           "e.g. SELECT id, name FROM Organization WHERE city = 'Auckland' ORDER BY updated_at desc LIMIT 100",
         required: false,
         list: false,
-        altersDynamicFields: false,
+        altersDynamicFields: true,
       },
+      FluxxAPI.fn.sql_descriptions,
     ],
     perform: perform,
     canPaginate: false,

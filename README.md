@@ -191,8 +191,8 @@ There may be times when you need to load in a set of Fluxx records related to a 
 The list of items is returned as a Zapier "Line Item" set. You can use the "Looping by Zapier" action to loop through the line items, repeating any subsequent Zap steps for each of the items in the Line Item set. Note that each Action completed in a loop iteration counts against your Zapier Tasks count.
 
 * **Input**
-  * **SQL input**: see [_SQL Support_](./SQL_SUPPORT.md) e.g. SELECT id, name, nz_charities_number FROM Organization WHERE postal_code = "4500"
-    * Don't forget that you can sub values from previous steps into the SQL string e.g. ... WHERE postal_code = [[1. Postal Code: 4500]]
+  * **SQL input**: see [_SQL Support_](./SQL_SUPPORT.md) e.g. `SELECT id, name, nz_charities_number FROM Organization WHERE postal_code = "4500"`
+    * Don't forget that you can sub values from previous steps into the SQL string e.g. ... `WHERE postal_code = [[1. Postal Code: 4500]]`
   * **Show MAVs**: indicate True/False (default False). If true, any Multi Attribute Values returned will return percentage value (if available) and hierarchy information.
 * **Output**
 ```
@@ -218,15 +218,15 @@ results
 
 ### Search for a Single Fluxx Record
 
-This action allows you retrieve a Fluxx record via arbitrary SQL-like search. If you already have a model id, you should use the "Search for Record" Action instead of this one. This Action is better suited to more complex retrievals where you do not have the id of the record, but have to search with a more complex filter.
+This action allows you retrieve a Fluxx record via arbitrary SQL-like search. If you already have a record id, you should use the "Search for Record" Action instead of this one. This Action is better suited to more complex retrievals where you do not have the id of the record, but have to search with a more complex filter.
 
-As the search may return more than one item, only the _first_ item returned will be used by Zapier, so you may wish to use an ORDER BY clause, and LIMIT 1 in order to place the most relevant item at the start of the list. e.g.
+As the search may return more than one item, only the _first_ item returned will be used by Zapier, so you may wish to use an `ORDER BY` clause, and `LIMIT 1` in order to place the most relevant item at the start of the list. e.g.
 
-* to use the most recent match: ORDER BY updated_at desc LIMIT 1
-* to use the largest grant request: ORDER BY amount_requested desc LIMIT 1
+* to use the most recent match: `ORDER BY updated_at desc LIMIT 1`
+* to use the largest grant request: `ORDER BY amount_requested desc LIMIT 1`
 
 * **Input**
-  * **SQL input**: see [_SQL Support_](./SQL_SUPPORT.md) e.g. SELECT id, account_name, account_number FROM BankAccount WHERE owner_organization_id = [[ id from previous step ]] AND active = 1 ORDER BY updated_at desc LIMIT 1
+  * **SQL input**: see [_SQL Support_](./SQL_SUPPORT.md) e.g. `SELECT id, account_name, account_number FROM BankAccount WHERE owner_organization_id = [[ id from previous step ]] AND active = 1 ORDER BY updated_at desc LIMIT 1`
   * **Show MAVs**: indicate True/False (default False). If true, any Multi Attribute Values returned will return percentage value (if available) and hierarchy information.
 
 * **Output**

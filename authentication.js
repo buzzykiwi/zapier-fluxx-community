@@ -82,7 +82,7 @@ module.exports = {
     test: {
       params: {
         cols: '["id"]',
-        client_domain: '{{bundle.authData.client_domain}}',
+        // client_domain: '{{bundle.authData.client_domain}}',
         per_page: '1',
       },
       headers: {
@@ -112,7 +112,7 @@ module.exports = {
         label: 'Fluxx client domain',
         type: 'string',
         helpText:
-          "This is the domain name of the Fluxx installation.\ne.g. mysite.fluxx.io   (live site)\ne.g. mysite.preprod.fluxxlabs.com  (preprod)\n\nDon't include https:// or any leading or trailing slashes.",
+          "This is the domain name of the Fluxx installation.\ne.g. mysite.fluxx.io   (live site)\ne.g. **mysite.preprod.fluxxlabs.com**  (preprod)\n\n**Don't include https:// or any leading or trailing slashes.**",
         inputFormat: 'https://{{input}}/',
       },
       {

@@ -46,29 +46,33 @@ FCE is provided free of charge. You may use it in three ways:
 ### Setup and Authentication
 
 1. If you have not already done so, follow [the link](https://zapier.com/developer/public-invite/171896/79f0f6177294d5882a4e1eb79aa80fef/) to add FCE to your Zapier account. You only need to do this once.
-2. Set up an API application id and secret on your Fluxx Preprod and/or Production servers. The link is https://[[server url]]/oauth/applications
+2. Set up an API application id and secret on your Fluxx Preprod and/or Production servers. The link is **https://[[server url]]/oauth/applications**
    1. Name the application e.g. "Zapier integration"
    2. Redirect URI: *copy and paste the following text:* https://zapier.com/dashboard/auth/oauth/return/App171896CLIAPI/
    3. Scopes: *leave blank*
    4. Click Submit
    5. The browser now shows the Application Name, Id, and Secret. Keep this window open as you will need the Id and Secret later.
 3. In a new browser tab, create a new Zap in Zapier
-4. For each Fluxx step in the Zap, choose "Fluxx Community Edition (X.Y.Z)" under "Choose app & event"
-5. The first time you do this, you need to "Connect to a new account" to connect to your Fluxx instance.
-   1. Click on "Choose Account" then "Choose an Account", then "Connect a new account". A popup window appears, so ensure that popup windows are enabled for Zapier.com in your browser.
-   2. In Fluxx Client Domain, enter the full domain name of the Fluxx Preprod or Production site, e.g. **mydomain.preprod.fluxxlabs.com**
+4. In the search bar under *1. Trigger*, search for *Fluxx* 
+5. Choose "Fluxx Community Edition (X.Y.Z)" under "Choose app & event"
+6. Choose an Event that will occur in Fluxx and trigger this Zap to start processing. e.g. "Trigger on New Records", then "Continue"
+7. The first time you do this, you need to click on "Sign In" next to "Connect Fluxx Community Edition *(nn.nn.nn)*" to connect to your Fluxx instance.
+   1. A popup window appears, so ensure that popup windows are enabled for Zapier.com in your browser.
+   2. In Fluxx Client Domain, enter the full domain name of the Fluxx Preprod or Production site, e.g. **mydomain.preprod.fluxxlabs.com**. Do not include the leading *https://*
    3. In Fluxx Application Id, copy and paste the Application Id you created in step 2
    4. In Fluxx Secret, copy and paste the "Secret" you created in step 2
    5. Click "Yes, Continue"
    6. The browser redirects to your chosen Fluxx instance, https://[[server url]]/oauth/authorize?client_id=...
-   7. If the browser takes you to the Fluxx login page, complete the login then close the popup window and repeat from step 5i again.
+   7. If the browser takes you to the Fluxx login page, complete the login then close the popup window and repeat from step 7i again.
+8. Finish setting up the trigger. The "Trigger on New Records" trigger could use a trigger such as: `SELECT id, full_name FROM User ORDER BY updated_at desc LIMIT 100` to take the latest 100 records, and trigger on any new ones found.
+9. Perform the Test Trigger step to ensure that Zapier is able to retrieve records from Fluxx. Zapier will pull in the latest three individual records and name them SQL Records Search Results [A-C].
 
 If the authentication succeeds, congratulations! You are now ready to start automating Fluxx actions.
 
 
 ## Triggers
 
-FEC includes two Triggers: Trigger on Queued Records, and Trigger on New Records, plus a third, deprecated trigger that can access Fluxx ModelDocuments.
+FCE includes two Triggers: Trigger on Queued Records, and Trigger on New Records, plus a third, deprecated trigger that can access Fluxx ModelDocuments.
 
 
 ### Trigger on Queued Records

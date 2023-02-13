@@ -142,7 +142,7 @@ const perform = async (z, bundle) => {
     z, bundle,
     "request_transaction",
     fields_and_update_values_without_mvs,
-    ["id", "from_bank_account_id", "bank_account_id", "state", "organization_payee_id", "user_payee_id", "due_at", "paid_at"], // return fields
+    ["id", "from_bank_account_id", "bank_account_id", "state", "organization_payee_id", "user_payee_id", "amount_due", "amount_paid", "due_at", "paid_at"], // return fields
   );
   var rt_id = new_rt.id;
   
@@ -597,16 +597,60 @@ module.exports = {
       },
       
     ],
+    //  { rfs_id: rfs_id, rfs: new_rfs, request_transaction: new_rt, request_transaction_funding_source: new_rtfs };
+
     sample: {
-      model_type: 'grant_request',
-      id: 65,
-      fields: { id: 65, amount_requested: 4000, amount_recommended: 1000 },
+      request_funding_source_id: 12345,
+      request_funding_source: {id: 12345},
+      request_transaction: {
+        id: 123456,
+        model_type: "request_transaction",
+        fields: {
+          id: 123456,
+          from_bank_account_id: 1414141, 
+          bank_account_id: 2424242,
+          state: "pending",
+          organization_payee_id: 333111,
+          user_payee_id: 888444,
+          amount_due: 10000,
+          amount_paid: 10000,
+          due_at: '2023-02-04T13:04:24+0100',
+          paid_at: '2023-02-04T13:04:24+0100',
+        },
+      },
+      request_transaction_funding_source: {
+        model_type: "request_transaction_funding_source",
+        id: 999555,
+        fields: {
+          id: 999555,
+          amount: 10000,
+          request_funding_source_id: 12345,
+          request_transaction_id: 123456,
+        },
+      },
     },
     outputFields: [
-      { key: 'model_type' },
-      { key: 'id', type: 'integer' },
-      { key: 'fields__amount_requested', type: 'number' },
-      { key: 'fields__amount_recommended', type: 'number' },
+      { key: 'request_funding_source_id', type: 'integer' },
+      { key: 'request_funding_source__id', type: 'integer' },
+      { key: 'request_transaction__id', type: 'integer' },
+      { key: 'request_transaction__model_type', type: 'string' },
+      { key: 'request_transaction__fields__id', type: 'integer' },
+      { key: 'request_transaction__fields__from_bank_account_id', type: 'integer' },
+      { key: 'request_transaction__fields__bank_account_id', type: 'integer' },
+      { key: 'request_transaction__fields__state', type: 'string' },
+      { key: 'request_transaction__fields__organization_payee_id', type: 'integer' },
+      { key: 'request_transaction__fields__user_payee_id', type: 'integer' },
+      { key: 'request_transaction__fields__amount_due', type: 'number' },
+      { key: 'request_transaction__fields__amount_paid', type: 'number' },
+      { key: 'request_transaction__fields__due_at', type: 'datetime' },
+      { key: 'request_transaction__fields__paid_at', type: 'datetime' },
+      { key: 'request_transaction_funding_source__id', type: 'integer' },
+      { key: 'request_transaction_funding_source__model_type', type: 'string' },
+      { key: 'request_transaction_funding_source__fields__id', type: 'integer' },
+      { key: 'request_transaction_funding_source__fields__amount', type: 'number' },
+      { key: 'request_transaction_funding_source__fields__request_funding_source_id', type: 'integer' },
+      { key: 'request_transaction_funding_source__fields__request_transaction_id', type: 'integer' },
+      
     ],
     perform: perform,
   },

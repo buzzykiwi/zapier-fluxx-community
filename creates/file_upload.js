@@ -87,7 +87,7 @@ const perform = async (z, bundle) => {
     "model_document_type_id.id",
     "model_document_type_id.name",
     "model_document_sub_type_id.id",
-    "model_document_sub_type_id.name",
+    "model_document_sub_type_id.value",
     "updated_by.full_name",
     "created_by.full_name",
     "document_file_size"
@@ -180,9 +180,26 @@ module.exports = {
     perform: perform,
     sample: {
       id: 1,
-      name: 'Example PDF',
-      file: 'SAMPLE FILE',
-      file_name: 'example.pdf',
+      model_type: 'model_document',
+      fields: {
+        id: 1,
+        document_type: 'file',
+        document_content_type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        document_file_name: 'My Spreadsheet.xlsx',
+        document_file_size: 30923,
+        doc_label: 'default',
+        'model_document_type_id.id': 101,
+        'model_document_type_id.name': 'Annual Financial Document',
+
+        'model_document_sub_type_id.id': 202,
+        'model_document_sub_type_id.value': '2023',
+        
+        'created_by.id': 608,
+        'created_by.full_name': 'Joe Tester',
+    
+        'updated_by.id': 608,
+        'updated_by.full_name': 'Joe Tester',
+      },
     },
     outputFields: [
       {key: 'id',                                       type: 'integer',  label: 'ID:'},
@@ -196,7 +213,7 @@ module.exports = {
       {key: 'fields__model_document_type_id.id',        type: 'integer',  label: 'ModelDocument Type Id:'},
       {key: 'fields__model_document_type_id.name',      type: 'string',   label: 'ModelDocument Type Name:'},
       {key: 'fields__model_document_sub_type_id.id',    type: 'integer',  label: 'ModelDocument SubType Id:'},
-      {key: 'fields__model_document_sub_type_id.name',  type: 'string',   label: 'ModelDocument SubType Name:'},
+      {key: 'fields__model_document_sub_type_id.value', type: 'string',   label: 'ModelDocument SubType Name:'},
       {key: 'fields__updated_by.id',                    type: 'integer',  label: 'Updated By Id:'},
       {key: 'fields__updated_by.full_name',             type: 'string',   label: 'Updated By Name:'},
       {key: 'fields__created_by.id',                    type: 'integer',  label: 'Created By Id:'},

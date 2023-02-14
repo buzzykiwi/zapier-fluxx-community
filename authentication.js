@@ -112,7 +112,7 @@ module.exports = {
         label: 'Fluxx client domain',
         type: 'string',
         helpText:
-          "This is the domain name of the Fluxx installation.\ne.g. mysite.fluxx.io   (live site)\ne.g. **mysite.preprod.fluxxlabs.com**  (preprod)\n\n**Don't include https:// or any leading or trailing slashes.**",
+          "This is the domain name of the Fluxx installation.\n\ne.g. **mysite.fluxx.io**   (live site)\n\ne.g. **mysite.preprod.fluxxlabs.com**  (preprod)\n\n**Don't include https:// or any leading or trailing slashes.**",
         inputFormat: 'https://{{input}}/',
       },
       {

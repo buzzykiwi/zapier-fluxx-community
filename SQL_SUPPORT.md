@@ -111,8 +111,8 @@ SELECT id FROM GrantRequest WHERE program_organization_id CROSSCARD(city = 'Auck
 * `IS NULL`
 * `IS NOT NULL`
 * `IS IN RANGE nn-nn`
-* `IS IN YEAR RANGE yyyy-yyyy`
-* `IS IN FISCAL YEAR RANGE yyyy-yyyy`
+* `IS IN YEAR RANGE yyyy-yyyy` (single year also valid)
+* `IS IN FISCAL YEAR RANGE yyyy-yyyy` (single year also valid)
 * `IS YESTERDAY`
 * `IS TODAY`
 * `IS TOMORROW`

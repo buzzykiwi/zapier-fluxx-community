@@ -449,11 +449,13 @@ module.exports.preProcessFluxxResponse = function(z, cols, response, model_type)
   let ordered_response;
   let item;
   if (isObj(data)) { // single response, in Object
-    ordered_response = processSingleItemResponse(data, model_type);
+    //z.console.log(z.JSON.stringify(data));
+    
+    ordered_response = processSingleItemResponse(z, data, model_type);
   } else if (Array.isArray(data)) {
     ordered_response = [];
     data.forEach(item => {
-      ordered_response.push(processSingleItemResponse(item, model_type));
+      ordered_response.push(processSingleItemResponse(z, item, model_type));
     });
   } else throw 'Illegal response from Fluxx API call';
   
@@ -464,7 +466,7 @@ module.exports.preProcessFluxxResponse = function(z, cols, response, model_type)
 };
 
 /*
- * processSingleItemResponse(item, model_type)
+ * processSingleItemResponse(z, item, model_type)
  *
  * Feed each item (single item for a fetch/update; each object from a list from a search)
  * into this function. It creates a new structure like this, to standardise handling
@@ -500,7 +502,7 @@ module.exports.preProcessFluxxResponse = function(z, cols, response, model_type)
  *  If the result was an Object (single item GET) with only an id returned, the
  *  record did not exist, so we just return a null.
  */
-const processSingleItemResponse = module.exports.processSingleItemResponse = function(item, model_type)
+const processSingleItemResponse = module.exports.processSingleItemResponse = function(z, item, model_type)
 {
   const out = {}; // holds our output
   // top level holds only id and model_type
@@ -513,15 +515,73 @@ const processSingleItemResponse = module.exports.processSingleItemResponse = fun
   
   keys.forEach(key => {
     const val = item[key];
-    
+    //z.console.log(key, typeof(val), Array.isArray(val), val);
     if (Array.isArray(val) && val.length > 0 && isObj(val[0])) {
       // it was a relation. show_mavs sections contain further arrays.
     	const foreign_fields = Object.keys(val[0]);
     	foreign_fields.forEach(foreign_field => {
-    		out.fields[key + "." + foreign_field] = val[0][foreign_field];
+        // need to allow for MAVs here, too.
+        const inner_val = val[0][foreign_field];
+        if (Array.isArray(inner_val) && inner_val.length > 0 && Array.isArray(inner_val[0]) ) { // mav on relation
+        
+          out.fields[key + "." + foreign_field] = [];
+          out.fields[key + "." + foreign_field + ":id"] = [];
+          out.fields[key + "." + foreign_field + ":percent"] = [];
+          out.fields[key + "." + foreign_field + ":value"] = [];
+          
+          let max_depth = 0;
+          // find the max depth of breadcrumbs for the set of results, so we can null-fill missing items
+        	inner_val.forEach(element => {
+            (element.length > max_depth) && (max_depth = element.length);
+          });
+        	inner_val.forEach(element => {  // steps through all the MAVS. element is a MAV; an array of inner levels
+        		// ignore 0-length arrays that sneak in
+        		if (!(Array.isArray(element) && element.length === 0)) {
+        			let single_selection = {}; // one selection of the multi-select
+        			single_selection.breadcrumbs_rev = {};
+
+        			// now within each (array) element there is 1 or more
+        			// objects holding path segment info.
+        			let percentage = -1;
+        			let elements = [];
+              let i = max_depth;
+              if (element.length < max_depth) {
+                for (i; i > element.length; i--) {
+                  single_selection.breadcrumbs_rev[i] = " ";
+                }
+              }
+        			element.forEach(segment => {  // steps through the LEVELS in a MAV. segment is a level.
+                single_selection.breadcrumbs_rev[i--] = segment.desc;
+        				elements.push(segment.desc);
+        				if (segment.amount_value === undefined) {
+                  percentage = null;
+                } else {
+        					percentage = segment.amount_value;
+        				}
+        			});
+        			single_selection.value = elements.join(' / ');
+        			single_selection.list = elements;
+        			if (percentage != -1) {
+        				single_selection.percent = percentage;
+        			} else {
+        				single_selection.percent = null;
+        			}
+        			out.fields[key + "." + foreign_field].push(single_selection);
+        			out.fields[key + "." + foreign_field + ":id"].push(element[element.length -1].id);
+        			out.fields[key + "." + foreign_field + ":percent"].push(single_selection.percent);
+        			out.fields[key + "." + foreign_field + ":value"].push(element[element.length -1].val);
+        		}
+        	});
+        
+        
+        
+        
+        } else {
+    		  out.fields[key + "." + foreign_field] = val[0][foreign_field];
+        }
     	});
       
-    } else if (Array.isArray(val) && val.length > 0 && Array.isArray(val[0])) {
+    } else if (Array.isArray(val) && val.length > 0 && (Array.isArray(val[0]) || Array.isArray(val[1]))) {
       // show_mavs section
     	out.fields[key] = [];
       let max_depth = 0;
@@ -583,6 +643,10 @@ module.exports.optionsFromParsedSelectStatement = function(z, bundle, p)
 {
   let parsed_cols = splitFieldListIntoColsAndRelations(p.cols);
   let order_by = p.order_by;
+  // ensure there's always at least one column requested: id
+  if (parsed_cols.cols === null || parsed_cols.cols === undefined || (Array.isArray(parsed_cols.cols) && parsed_cols.cols.length == 0)) {
+    parsed_cols.cols == ["id"];
+  }
 
   let options = {
     url: `https://${bundle.authData.client_domain}/api/rest/v2/${modelToSnake(p.model_type)}/list`,

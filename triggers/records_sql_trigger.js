@@ -14,7 +14,7 @@ const perform = async (z, bundle) => {
     const response = await FluxxAPI.fn.paginated_fetch(z, bundle, options, p.model_type, p.limit);
     const ret = response.data.records[FluxxAPI.fn.modelToSnake(options.model_type)];
     
-    if (ret.length === 0) return {};
+    if (ret.length === 0) return [];
     return ret; // {results:ret}; // try to make it line items?
   }
 

@@ -7,7 +7,7 @@ const perform = async (z, bundle) => {
   const FluxxAPI = require('../fluxx_api');
   const model_type = 'model_document';
   
-  const fields = ["id", "document_content_type", "document_file_name", "created_at", "created_by_id.full_name", "updated_by_id.full_name", "updated_at", "doc_label", "document_file_size", "document_updated_at", "original_file_name", "model_document_type_id.name", "document_type", "document_text", "documentable_type", "documentable_id", "model_document_template_id.description"];
+  const fields = ["id", "document_content_type", "document_file_name", "created_at", "created_by_id.full_name", "updated_by_id.full_name", "updated_at", "doc_label", "document_file_size", "document_updated_at", "original_file_name", "model_document_type_id.name", "model_document_sub_type_id.value", "document_type", "document_text", "documentable_type", "documentable_id", "model_document_template_id.description"];
   
   // Nice shortcut method, adds relations for any related models (with a dot).
   const options = FluxxAPI.fn.optionsForSingleItemFetch(
@@ -92,26 +92,28 @@ module.exports = {
         'updated_by_id.id':                             1,
         'updated_by_id.full_name':                      'John Doe',
         document_file_name:                             'Financials.pdf',
-        original_file_name:                             'C:\\financials.pdf',
+        original_file_name:                             'C:\\\\financials.pdf',
         document_content_type:                          'application/pdf',
         document_file_size:                             761939,
         document_updated_at:                            '2020-09-28T21:11:18Z',
         'model_document_type_id.id':                    8483,
         'model_document_type_id.name':                  'Copy of Annual Finance Accounts',
+        'model_document_sub_type_id.id':                1000,
+        'model_document_sub_type_id.value':             '2023',
         doc_label:                                      'default',
         document_type:                                  'file',
         document_text:                                  'Liquid code example',
         documentable_type:                              'GrantRequest',
-        documentable_id:                                '1',
+        documentable_id:                                '65',
         'model_document_template_id.id':                '2',
         'model_document_template_id.description':       'Description for Liquid Code or name for letter template',
-        file:                                           "sample contents (binary if PDF etc)", 
+        contents:                                       'sample contents (binary if PDF etc)', 
       }
     },
     outputFields: [
       { key: 'id',                                      type: 'integer',  label: 'Id:' },
       { key: 'model_type',                              type: 'string',   label: 'Model type:' },
-      { key: 'fields__file',                            type: 'file',     label: 'File contents:' },
+      { key: 'fields__contents',                        type: 'file',     label: 'File contents:' },
       { key: 'fields__id',                              type: 'integer',  label: 'Id:' },
       { key: 'fields__created_at',                      type: 'datetime', label: 'Created at:' },
       { key: 'fields__updated_at',                      type: 'datetime', label: 'Updated at:' },
@@ -120,19 +122,21 @@ module.exports = {
       { key: 'fields__updated_by_id.id',                type: 'integer',  label: 'Updated by id:' },
       { key: 'fields__updated_by_id.full_name',         type: 'string',   label: 'Updated by full name:' },
       { key: 'fields__document_file_name',              type: 'string',   label: 'Doc file name:' },
-      { key: 'fields__original_file_name',              type: 'string',   label: 'Original file name:' },
+      { key: 'fields__original_file_name',              type: 'string',   label: 'Doc original file name:' },
       { key: 'fields__document_content_type',           type: 'string',   label: 'Doc content (MIME) type:' },
       { key: 'fields__document_file_size',              type: 'number',   label: 'File size:' },
       { key: 'fields__document_updated_at',             type: 'datetime', label: 'Doc updated at:' },
       { key: 'fields__model_document_type_id.id',       type: 'integer',  label: 'Doc type id:' },
       { key: 'fields__model_document_type_id.name',     type: 'string',   label: 'Doc type name:' },
+      { key: 'fields__model_document_sub_type_id.id',   type: 'integer',  label: 'Doc sub type id:' },
+      { key: 'fields__model_document_sub_type_id.value',type: 'string',   label: 'Doc sub type name:' },
       { key: 'fields__doc_label',                       type: 'string',   label: 'Doc label:' },
       { key: 'fields__document_type',                   type: 'string',   label: 'Doc type (file/text):' },
       { key: 'fields__document_text',                   type: 'string',   label: 'Doc text (Liquid):' },
       { key: 'fields__documentable_type',               type: 'string',   label: 'Linked model type:' },
       { key: 'fields__documentable_id',                 type: 'integer',  label: 'Linked model id:' },
-      { key: 'fields__model_document_template_id.id',   type: 'integer',  label: 'Template id:' },
-      { key: 'fields__model_document_template_id.description', type: 'string', label: 'Template description:' },
+      { key: 'fields__model_document_template_id.id',   type: 'integer',  label: 'ModelDocument Template id:' },
+      { key: 'fields__model_document_template_id.description', type: 'string', label: 'ModelDocument Template description:' },
     ],
   }
 };

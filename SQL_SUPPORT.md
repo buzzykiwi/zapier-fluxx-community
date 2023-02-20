@@ -14,13 +14,17 @@ There are two types of database tables in Fluxx when it comes to searching: "Ela
 ### Syntax Example
 
 ```sql
-SELECT id, project_title, amount_requested, amount_recommended, program_organization_id.name FROM GrantRequest WHERE state = "granted" AND amount_requested < 1000 ORDER BY amount_requested, project_title desc LIMIT 100
+SELECT id, project_title, amount_requested, amount_recommended, program_organization_id.name 
+FROM GrantRequest WHERE state = "granted" AND amount_requested < 1000 
+ORDER BY amount_requested, project_title desc LIMIT 100
 ```
 
 The syntax even allows cross-card filtering (sorry, this syntax is a departure from SQL). The foreign key comes first followed by _CROSSCARD( conditions on the related model's fields )_ ...
 
 ```sql
-SELECT id FROM GrantRequest WHERE program_organization_id CROSSCARD(city = 'Auckland' AND gst_registered = 'y') AND amount_requested < 1000
+SELECT id FROM GrantRequest 
+WHERE program_organization_id CROSSCARD(city = 'Auckland' 
+AND gst_registered = 'y') AND amount_requested < 1000
 ```
 
 

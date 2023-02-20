@@ -13,6 +13,8 @@ const perform = async (z, bundle) => {
   //   bundle.inputData.return_fields = ["amount_received","program_organization_id.name"] or null
 
   const inputData = bundle.inputData;
+  inputData.values_clean = JSON.parse(JSON.stringify(inputData.values).replace("||COMMA||", ","));
+  
   /*
     inputData.id = 65; // or null, to force creation of new model
     inputData.fields = ["amount_recommended","project_title","type_1"];
@@ -33,7 +35,7 @@ const perform = async (z, bundle) => {
   // convert the fields and new values into {"field1":"new val 1", "field2","new_val_2"...}
   const [all_fields_and_update_values, fields_and_update_values_without_mvs] = FluxxAPI.mav_tree.fields_and_values(
     inputData.fields,
-    inputData.values,
+    inputData.values_clean,
     mv_fields
   );
   
@@ -144,7 +146,7 @@ output =
       params: {},
       form: {
         // CONVERT BACK TO body FIXME! ??
-        data: z.JSON.stringify(fields_and_update_values),
+        data: z.JSON.stringify(fields_and_update_values).replace("||COMMA||", ","),
         cols: z.JSON.stringify(cols),
       },
     };

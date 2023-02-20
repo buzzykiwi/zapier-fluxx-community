@@ -23,8 +23,8 @@ The syntax even allows cross-card filtering (sorry, this syntax is a departure f
 
 ```sql
 SELECT id FROM GrantRequest 
-WHERE program_organization_id CROSSCARD(city = 'Auckland' 
-AND gst_registered = 'y') AND amount_requested < 1000
+WHERE program_organization_id CROSSCARD(city = 'Auckland' AND gst_registered = 'y')
+AND amount_requested < 1000
 ```
 
 

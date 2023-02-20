@@ -480,7 +480,7 @@ module.exports.preProcessFluxxResponse = function(z, cols, response, model_type)
  *      {
  *        value: "Hierarchy / To / Selection / Leaf / Node 1",
  *        percent: 50,
- *        list: ["Hierarchy", "To", "Selection", "Leaf", "Node 1"], // May not be accessible as Line Items
+ *        breadcrumbs: ["Hierarchy", "To", "Selection", "Leaf", "Node 1"], // May not be accessible as Line Items
  *        breadcrumbs_rev: {
  *          5 => "Hierarchy",                                       // May be easier to access as Line Items,
  *          4 => "To",                                              //  reversed, so [1] is the "end" leaf
@@ -570,7 +570,7 @@ const processSingleItemResponse = module.exports.processSingleItemResponse = fun
         			});
           
         			single_selection.value = segments.join(' / ');
-        			single_selection.list = segments;
+        			single_selection.breadcrumbs = segments;
         			if (percentage != -1) {
         				single_selection.percent = percentage;
         			}
@@ -585,7 +585,7 @@ const processSingleItemResponse = module.exports.processSingleItemResponse = fun
               line_item.path = ez_path.replace(",","||COMMA||");
               line_item.id = mav[mav.length - 1].id;
               line_item.value = mav[mav.length - 1].val.replace(",","||COMMA||");
-              line_item.percentage = (percentage !== null && percentage != -1) ? percentage : null;
+              line_item.percent = (percentage !== null && percentage != -1) ? percentage : null;
               line_item.description = mav[mav.length - 1].desc.replace(",","||COMMA||");
               // the retired value does not get transferred when doing a show_mavs request.
               out.fields[field + "." + foreign_field + `.line_items`].push(line_item);
@@ -651,7 +651,7 @@ const processSingleItemResponse = module.exports.processSingleItemResponse = fun
     			});
           
     			single_selection.value = segments.join(' / ');
-    			single_selection.list = segments;
+    			single_selection.breadcrumbs = segments;
     			if (percentage != -1) {
     				single_selection.percent = percentage;
     			}
@@ -666,7 +666,7 @@ const processSingleItemResponse = module.exports.processSingleItemResponse = fun
           line_item.path = ez_path.replace(",","||COMMA||");
           line_item.id = mav[mav.length - 1].id;
           line_item.value = mav[mav.length - 1].val.replace(",","||COMMA||");
-          line_item.percentage = (percentage !== null && percentage != -1) ? percentage : null;
+          line_item.percent = (percentage !== null && percentage != -1) ? percentage : null;
           line_item.description = mav[mav.length - 1].desc.replace(",","||COMMA||");
           // the retired value does not get transferred when doing a show_mavs request.
           out.fields[field + `.line_items`].push(line_item);

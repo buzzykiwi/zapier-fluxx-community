@@ -193,7 +193,7 @@ The list of items is returned as a Zapier "Line Item" set. You can use the "Loop
 * **Input**
   * **SQL input**: see [_SQL Support_](./SQL_SUPPORT.md) e.g. `SELECT id, name, nz_charities_number FROM Organization WHERE postal_code = "4500"`
     * Don't forget that you can sub values from previous steps into the SQL string e.g. ... `WHERE postal_code = [[1. Postal Code: 4500]]`
-  * **Show MAVs**: indicate True/False (default False). If true, any Multi Attribute Values returned will return percentage value (if available) and hierarchy information.
+  * **Show MAVs**: indicate True/False (default False). If true, any Model Attribute Values returned will return percentage value (if available) and hierarchy information.
 * **Output**
 ```
 results
@@ -215,6 +215,57 @@ results
       (all other requested fields appear here)
 ```
 
+* **Output with MAVs**
+```
+results
+  1:
+    id: 21553552
+    model_type: grant_request
+    fields:
+      id: 21553552
+      grant_or_request_id: GC-2006-34227
+      app_specific_focus_level_of_need_and_age: true
+      program_organization_id.id: 10261982
+      program_organization_id.org_deprivation_reach:  #NB: this is a single select
+        1:
+          id: 10097888
+          desc: Community Deprivation
+          val: Community Deprivation
+      program_organization_id.org_deprivation:
+        1:
+          breadcrumbs:
+            1: New Plymouth District
+            2: Blagdon | Moturoa | Lynmouth (8)
+          breadcrumbs_rev:
+            1: Blagdon | Moturoa | Lynmouth (8)
+            2: New Plymouth District
+          value: New Plymouth District / Blagdon | Moturoa | Lynmouth (8)
+          percent: null
+      program_organization_id.org_deprivation.add_list: §add§New Plymouth District§Blagdon | Moturoa | Lynmouth (8)
+      program_organization_id.org_deprivation.add_list_by_id: §add_by_id§10097725
+      program_organization_id.org_deprivation.line_items:
+        1.
+          id: 10097725
+          percent: null
+          path: §New Plymouth District§Blagdon | Moturoa | Lynmouth (8)
+          value: Blagdon | Moturoa | Lynmouth (8)
+          description: Blagdon | Moturoa | Lynmouth (8)
+  2:
+```
+
+**Note about MAV (Multi-Select) output**
+
+When "Show Mavs" is selected, as seen above, the multi-attribute values are output in several different formats for maximum flexibility.
+
+1. Single select controls are output in an array of size 1, with their MAV id, value and description.
+2. Multi-value select controls are output in the following ways:
+   a. as the field name: an array of objects that contain breadcrumbs (array), reverse breadcrumbs (array), value (with path separated by slashes), and percent.
+   b. as the field name appended with ".add_list": in the format used by the Create/Update Fluxx Record MAV format (see [here](./MULTI_VALUE_FIELDS.md)). This allows you to feed the output of a single or multi item select into the Create/Update Fluxx Record, and allow it to recreate the same Model Attribute Values for a given field.
+  e.g. ```§add§New Plymouth District§Blagdon | Moturoa | Lynmouth (8)```
+  c. as the field name appended with ".add_list_by_id": similar to (b) except uses the MAV id.
+  e.g. ```§add_by_id§10097725```
+  d. as Zapier Line Items, with the field name appended with ".line_items": an array of objects, each containing the id, percent, path to the final value (delimited with the § character), value and description of the final value.
+
 
 ### Search for a Single Fluxx Record
 
@@ -227,7 +278,7 @@ As the search may return more than one item, only the _first_ item returned will
 
 * **Input**
   * **SQL input**: see [_SQL Support_](./SQL_SUPPORT.md) e.g. `SELECT id, account_name, account_number FROM BankAccount WHERE owner_organization_id = [[ id from previous step ]] AND active = 1 ORDER BY updated_at desc LIMIT 1`
-  * **Show MAVs**: indicate True/False (default False). If true, any Multi Attribute Values returned will return percentage value (if available) and hierarchy information.
+  * **Show MAVs**: indicate True/False (default False). If true, any Model Attribute Values returned will return percentage value (if available) and hierarchy information.
 
 * **Output**
 ```

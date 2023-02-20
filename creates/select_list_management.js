@@ -284,7 +284,7 @@ const perform = async (z, bundle) => {
         // either description or retired or order are different. Do an edit.
         updates.push({
           id:                               item.id,
-          description:                      item.description,
+          description:                      item.description.replace("||COMMA||", ","),
           retired:                          item.retired,
           display_order:                    item.order,
           updated_by_id:                    inputData.created_by_id,
@@ -300,8 +300,8 @@ const perform = async (z, bundle) => {
         'model_attribute_value',
         {
           dependent_model_attribute_value_id: parent_id,
-          value:                              item.value,
-          description:                        item.description,
+          value:                              item.value.replace("||COMMA||", ","),
+          description:                        item.description.replace("||COMMA||", ","),
           retired:                            item.retired,
           display_order:                      item.order,
           model_attribute_id:                 inputData.field_id,
@@ -381,7 +381,7 @@ const perform = async (z, bundle) => {
       params: {},
       form: {
         // CONVERT BACK TO body FIXME! ??
-        data: z.JSON.stringify(fields_and_update_values),
+        data: z.JSON.stringify(fields_and_update_values).replace("||COMMA||", ","),
         cols: z.JSON.stringify(cols),
       },
     };
@@ -514,7 +514,7 @@ module.exports = {
             label: 'Description',
             required: false,
             helpText:
-              'Enter the Line Item containing the description of the new Select option, here (optional). If not used, the Sepect option will display the last item in its path name; otherwise, the Description is used for display.',
+              'Enter the Line Item containing the description of the new Select option, here (optional). If not used, the Select option will display the last item in its path name; otherwise, the Description is used for display.',
           },
           {
             key: 'li_retired',

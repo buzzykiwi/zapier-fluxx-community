@@ -448,9 +448,7 @@ module.exports.preProcessFluxxResponse = function(z, cols, response, model_type)
   }
   let ordered_response;
   let item;
-  if (isObj(data)) { // single response, in Object
-    //z.console.log(z.JSON.stringify(data));
-    
+  if (isObj(data)) { // single response, in Object    
     ordered_response = processSingleItemResponse(z, data, model_type);
   } else if (Array.isArray(data)) {
     ordered_response = [];
@@ -513,9 +511,8 @@ const processSingleItemResponse = module.exports.processSingleItemResponse = fun
   out.fields = {};
   const keys = Object.keys(item);
   
-  keys.forEach(key => {
-    const val = item[key];
-    //z.console.log(key, typeof(val), Array.isArray(val), val);
+  keys.forEach(field => {
+    const val = item[field];
     if (Array.isArray(val) && val.length > 0 && isObj(val[0])) {
       // it was a relation. show_mavs sections contain further arrays.
     	const foreign_fields = Object.keys(val[0]);
@@ -524,115 +521,169 @@ const processSingleItemResponse = module.exports.processSingleItemResponse = fun
         const inner_val = val[0][foreign_field];
         if (Array.isArray(inner_val) && inner_val.length > 0 && Array.isArray(inner_val[0]) ) { // mav on relation
         
-          out.fields[key + "." + foreign_field] = [];
-          out.fields[key + "." + foreign_field + ":id"] = [];
-          out.fields[key + "." + foreign_field + ":percent"] = [];
-          out.fields[key + "." + foreign_field + ":value"] = [];
-          
+        	out.fields[field + "." + foreign_field] = [];
+        	out.fields[field + "." + foreign_field + ".add_list"] = "";
+        	out.fields[field + "." + foreign_field + ".add_list_by_id"] = "";
+
+          out.fields[field + "." + foreign_field + `.line_items`] = [];
+
           let max_depth = 0;
           // find the max depth of breadcrumbs for the set of results, so we can null-fill missing items
-        	inner_val.forEach(element => {
-            (element.length > max_depth) && (max_depth = element.length);
+        	inner_val.forEach(mav => {
+            (mav.length > max_depth) && (max_depth = mav.length);
           });
-        	inner_val.forEach(element => {  // steps through all the MAVS. element is a MAV; an array of inner levels
+      
+          // run through all the MAVs, and make out.fields[field] an array of these MAVs.
+        	inner_val.forEach(mav => {
+            let line_item = {};
+        
         		// ignore 0-length arrays that sneak in
-        		if (!(Array.isArray(element) && element.length === 0)) {
+        		if (!(Array.isArray(mav) && mav.length === 0)) {
         			let single_selection = {}; // one selection of the multi-select
         			single_selection.breadcrumbs_rev = {};
 
-        			// now within each (array) element there is 1 or more
+        			// now within each (array) segment there is 1 or more
         			// objects holding path segment info.
         			let percentage = -1;
-        			let elements = [];
+        			let segments = [];
               let i = max_depth;
-              if (element.length < max_depth) {
-                for (i; i > element.length; i--) {
+          
+              // blank out some breadcrumbs for any items that have less breadcrumbs than the maximum
+              if (mav.length < max_depth) {
+                for (i; i > mav.length; i--) {
                   single_selection.breadcrumbs_rev[i] = " ";
                 }
               }
-        			element.forEach(segment => {  // steps through the LEVELS in a MAV. segment is a level.
+          
+              // create back-to-front breadcrumbs, so the first item is always the "final" segment
+              let ez_path = "";
+        			mav.forEach(segment => {
                 single_selection.breadcrumbs_rev[i--] = segment.desc;
-        				elements.push(segment.desc);
+        				segments.push(segment.desc);
+                ez_path = `${ez_path}§${segment.val}`
+                // all segments of the MAV show the same percentage, even though only the final one is really "chosen"
         				if (segment.amount_value === undefined) {
                   percentage = null;
                 } else {
         					percentage = segment.amount_value;
         				}
         			});
-        			single_selection.value = elements.join(' / ');
-        			single_selection.list = elements;
+          
+        			single_selection.value = segments.join(' / ');
+        			single_selection.list = segments;
         			if (percentage != -1) {
         				single_selection.percent = percentage;
-        			} else {
-        				single_selection.percent = null;
         			}
-        			out.fields[key + "." + foreign_field].push(single_selection);
-        			out.fields[key + "." + foreign_field + ":id"].push(element[element.length -1].id);
-        			out.fields[key + "." + foreign_field + ":percent"].push(single_selection.percent);
-        			out.fields[key + "." + foreign_field + ":value"].push(element[element.length -1].val);
+        			out.fields[field + "." + foreign_field].push(single_selection);
+              if (percentage !== null && percentage != -1) {
+                out.fields[field + "." + foreign_field + `.add_list_by_id`] += (`§add_by_id/${percentage}§${mav[mav.length - 1].id}` + "\n");
+                out.fields[field + "." + foreign_field + `.add_list`] += (`§add/${percentage}${ez_path.replace(",","||COMMA||")}` + "\n");
+              } else {
+                out.fields[field + "." + foreign_field + `.add_list_by_id`] += (`§add_by_id§${mav[mav.length - 1].id}` + "\n");
+                out.fields[field + "." + foreign_field + `.add_list`] += (`§add${ez_path.replace(",","||COMMA||")}` + "\n");
+              }
+              line_item.path = ez_path.replace(",","||COMMA||");
+              line_item.id = mav[mav.length - 1].id;
+              line_item.value = mav[mav.length - 1].val.replace(",","||COMMA||");
+              line_item.percentage = (percentage !== null && percentage != -1) ? percentage : null;
+              line_item.description = mav[mav.length - 1].desc.replace(",","||COMMA||");
+              // the retired value does not get transferred when doing a show_mavs request.
+              out.fields[field + "." + foreign_field + `.line_items`].push(line_item);
+          
         		}
-        	});
-        
+        	});        
         
         
         
         } else {
-    		  out.fields[key + "." + foreign_field] = val[0][foreign_field];
+    		  out.fields[field + "." + foreign_field] = val[0][foreign_field];
         }
     	});
       
     } else if (Array.isArray(val) && val.length > 0 && (Array.isArray(val[0]) || Array.isArray(val[1]))) {
       // show_mavs section
-    	out.fields[key] = [];
+    	out.fields[field] = [];
+    	out.fields[field + ".add_list"] = "";
+    	out.fields[field + ".add_list_by_id"] = "";
+
+      out.fields[field + `.line_items`] = [];
+
       let max_depth = 0;
       // find the max depth of breadcrumbs for the set of results, so we can null-fill missing items
-    	val.forEach(element => {
-        (element.length > max_depth) && (max_depth = element.length);
+    	val.forEach(mav => {
+        (mav.length > max_depth) && (max_depth = mav.length);
       });
-    	val.forEach(element => {
+      
+      // run through all the MAVs, and make out.fields[field] an array of these MAVs.
+    	val.forEach(mav => {
+        let line_item = {};
+        
     		// ignore 0-length arrays that sneak in
-    		if (!(Array.isArray(element) && element.length === 0)) {
+    		if (!(Array.isArray(mav) && mav.length === 0)) {
     			let single_selection = {}; // one selection of the multi-select
     			single_selection.breadcrumbs_rev = {};
 
-    			// now within each (array) element there is 1 or more
+    			// now within each (array) segment there is 1 or more
     			// objects holding path segment info.
     			let percentage = -1;
-    			let elements = [];
+    			let segments = [];
           let i = max_depth;
-          if (element.length < max_depth) {
-            for (i; i > element.length; i--) {
+          
+          // blank out some breadcrumbs for any items that have less breadcrumbs than the maximum
+          if (mav.length < max_depth) {
+            for (i; i > mav.length; i--) {
               single_selection.breadcrumbs_rev[i] = " ";
             }
           }
-    			element.forEach(segment => {
+          
+          // create back-to-front breadcrumbs, so the first item is always the "final" segment
+          let ez_path = "";
+    			mav.forEach(segment => {
             single_selection.breadcrumbs_rev[i--] = segment.desc;
-    				elements.push(segment.desc);
+    				segments.push(segment.desc);
+            ez_path = `${ez_path}§${segment.val}`
+            // all segments of the MAV show the same percentage, even though only the final one is really "chosen"
     				if (segment.amount_value === undefined) {
               percentage = null;
             } else {
     					percentage = segment.amount_value;
     				}
     			});
-    			single_selection.value = elements.join(' / ');
-    			single_selection.list = elements;
+          
+    			single_selection.value = segments.join(' / ');
+    			single_selection.list = segments;
     			if (percentage != -1) {
     				single_selection.percent = percentage;
     			}
-    			out.fields[key].push(single_selection);
+    			out.fields[field].push(single_selection);
+          if (percentage !== null && percentage != -1) {
+            out.fields[field + `.add_list_by_id`] += (`§add_by_id/${percentage}§${mav[mav.length - 1].id}` + "\n");
+            out.fields[field + `.add_list`] += (`§add/${percentage}${ez_path.replace(",","||COMMA||")}` + "\n");
+          } else {
+            out.fields[field + `.add_list_by_id`] += (`§add_by_id§${mav[mav.length - 1].id}` + "\n");
+            out.fields[field + `.add_list`] += (`§add${ez_path.replace(",","||COMMA||")}` + "\n");
+          }
+          line_item.path = ez_path.replace(",","||COMMA||");
+          line_item.id = mav[mav.length - 1].id;
+          line_item.value = mav[mav.length - 1].val.replace(",","||COMMA||");
+          line_item.percentage = (percentage !== null && percentage != -1) ? percentage : null;
+          line_item.description = mav[mav.length - 1].desc.replace(",","||COMMA||");
+          // the retired value does not get transferred when doing a show_mavs request.
+          out.fields[field + `.line_items`].push(line_item);
+          
     		}
     	});
     } else if (Array.isArray(val) && val.length > 0 && (val[0] === null || typeof val[0] === 'string')) { // plain old multi select values
-    	out.fields[key] = [];
-    	val.forEach(element => {
-    		if (element !== null) {
-    			out.fields[key].push(element);
+    	out.fields[field] = [];
+    	val.forEach(mav => {
+    		if (mav !== null) {
+    			out.fields[field].push(mav);
     		}
     	});
     } else {
-    	out.fields[key] = item[key];
-      if (Array.isArray(item[key])) {
-        out.fields[key+"_json"] = JSON.stringify(item[key]);
+    	out.fields[field] = item[field];
+      if (Array.isArray(item[field])) {
+        out.fields[field+"_json"] = JSON.stringify(item[field]);
       }
     }
   });
@@ -1509,10 +1560,11 @@ let paginated_fetch = module.exports.paginated_fetch = async (z, bundle, options
     limit = 0;
   }
 
-  options.body.per_page = max_return;
+  options.body.per_page = (limit != 0 && limit < max_return) ? limit : max_return;
   
   do {
     options.body.page = page;
+
     response = await z.request(options);
     response.throwForStatus();
     handleFluxxAPIReturnErrors(z, response);
@@ -1590,7 +1642,7 @@ module.exports.create_fluxx_record = async (
       headers: c.STANDARD_HEADERS(bundle),
       params: {},
       body: {
-        data: z.JSON.stringify(fields_and_update_values),
+        data: z.JSON.stringify(fields_and_update_values).replace("||COMMA||", ","),
         cols: z.JSON.stringify(cols),
       },
     };

@@ -11,11 +11,9 @@ const perform = async (z, bundle) => {
   let options = FluxxAPI.fn.optionsFromParsedSelectStatement(z, bundle, p);
   
   if (options !== null && options !== undefined) {
+    options.body.show_mavs = 'true';
     const response = await FluxxAPI.fn.paginated_fetch(z, bundle, options, p.model_type, p.limit);
-    const ret = response.data.records[FluxxAPI.fn.modelToSnake(options.model_type)];
-    
-    if (ret.length === 0) return [];
-    return ret; // {results:ret}; // try to make it line items?
+    return FluxxAPI.fn.preProcessFluxxResponse(z, p.cols, response, p.model_type);
   }
 
 };

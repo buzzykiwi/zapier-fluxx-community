@@ -259,12 +259,12 @@ When "Show Mavs" is selected, as seen above, the multi-attribute values are outp
 
 1. Single select controls are output in an array of size 1, with their MAV id, value and description.
 2. Multi-value select controls are output in the following ways:
-   a. as the field name: an array of objects that contain breadcrumbs (array), reverse breadcrumbs (array), value (with path separated by slashes), and percent.
-   b. as the field name appended with ".add_list": in the format used by the Create/Update Fluxx Record MAV format (see [here](./MULTI_VALUE_FIELDS.md)). This allows you to feed the output of a single or multi item select into the Create/Update Fluxx Record, and allow it to recreate the same Model Attribute Values for a given field.
-  e.g. ```§add§New Plymouth District§Blagdon | Moturoa | Lynmouth (8)```
-  c. as the field name appended with ".add_list_by_id": similar to (b) except uses the MAV id.
-  e.g. ```§add_by_id§10097725```
-  d. as Zapier Line Items, with the field name appended with ".line_items": an array of objects, each containing the id, percent, path to the final value (delimited with the § character), value and description of the final value.
+     a. as the field name: an array of objects that contain breadcrumbs (array), reverse breadcrumbs (array), value (with path separated by slashes), and percent.
+     b. as the field name appended with ".add_list": in the format used by the Create/Update Fluxx Record MAV format (see [here](./MULTI_VALUE_FIELDS.md)). This allows you to feed the output of a single or multi item select into the Create/Update Fluxx Record, and allow it to recreate the same Model Attribute Values for a given field.
+     e.g. ```§add§New Plymouth District§Blagdon | Moturoa | Lynmouth (8)```
+     c. as the field name appended with ".add_list_by_id": similar to (b) except uses the MAV id.
+     e.g. ```§add_by_id§10097725```
+     d. as Zapier Line Items, with the field name appended with ".line_items": an array of objects, each containing the id, percent, path to the final value (delimited with the § character), value and description of the final value.
 
 
 ### Search for a Single Fluxx Record

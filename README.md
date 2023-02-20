@@ -263,7 +263,7 @@ When "Show Mavs" is selected, as seen above, the multi-attribute values are outp
      * as the field name appended with ".add_list": in the format used by the Create/Update Fluxx Record MAV format (see [here](./MULTI_VALUE_FIELDS.md)). This allows you to feed the output of a single or multi item select into the Create/Update Fluxx Record, and allow it to recreate the same Model Attribute Values for a given field.
        * e.g. ```§add§New Plymouth District§Blagdon | Moturoa | Lynmouth (8)```
      * as the field name appended with ".add_list_by_id": similar to (b) except uses the MAV id.
-       e.g. ```§add_by_id§10097725```
+       * e.g. ```§add_by_id§10097725```
      * as Zapier Line Items, with the field name appended with ".line_items": an array of objects, each containing the id, percent, path to the final value (delimited with the § character), value and description of the final value.
 
 
@@ -278,7 +278,7 @@ As the search may return more than one item, only the _first_ item returned will
 
 * **Input**
   * **SQL input**: see [_SQL Support_](./SQL_SUPPORT.md) e.g. `SELECT id, account_name, account_number FROM BankAccount WHERE owner_organization_id = [[ id from previous step ]] AND active = 1 ORDER BY updated_at desc LIMIT 1`
-  * **Show MAVs**: indicate True/False (default False). If true, any Model Attribute Values returned will return percentage value (if available) and hierarchy information.
+  * **Show MAVs**: indicate True/False (default False). If true, any Model Attribute Values returned will return percentage value (if available) and hierarchy information as described above.
 
 * **Output**
 ```

@@ -544,9 +544,10 @@ const fields_and_values = module.exports.fields_and_values = function (fields, v
   var i;
   const all_fields = {}, fields_without_mvs = {};
   for (i = 0; i < fields.length; i++) {
-    all_fields[fields[i]] = values[i];
+    let v = Array.isArray(values[i]) ? values[i].join(",") : values[i];
+    all_fields[fields[i]] = v;
     if (!mv_fields.includes(fields[i])) {
-      fields_without_mvs[fields[i]] = values[i];
+      fields_without_mvs[fields[i]] = v;
     }
   }
   return [all_fields, fields_without_mvs];

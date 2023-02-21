@@ -1,6 +1,7 @@
 # Multi-Value Fields in Fluxx Community Edition
 
 > When using the **Create/Update Fluxx Record** Action, use a special syntax to add or remove values and/or percentages from multi-valued fields for records i.e. Select-Transfer controls, Checkboxes, or Hierarchical Dropdowns.
+
 > FCE can also alter the list of available options itself, so you can change the list of options that appear in a dropdown. This is done with the **Manage Items in SELECT Lists** Action *[documentation](./MANAGE_ITEMS_IN_SELECT_LIST.md)*
 
 ### About Multi-Value Fields

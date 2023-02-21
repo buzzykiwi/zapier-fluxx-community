@@ -8,9 +8,7 @@ const perform = async (z, bundle) => {
   
   let options = FluxxAPI.fn.optionsFromParsedSelectStatement(z, bundle, p);
   if (options !== null && options !== undefined) {
-    if (bundle.inputData.show_mavs == 'true') {
-      options.params.show_mavs = 'true';
-    }
+    options.params.show_mavs = 'true';
     
     // pagination system
     const response = await FluxxAPI.fn.paginated_fetch(z, bundle, options, p.model_type, 1);
@@ -45,17 +43,6 @@ module.exports = {
         altersDynamicFields: true,
       },
       FluxxAPI.fn.sql_descriptions,
-      {
-        key: 'show_mavs',
-        label: 'Show MAVs',
-        type: 'string',
-        helpText:
-          'Do you want to get additional information about Multi Attribute Values in the request? If true, MAVs will return percentage value (if available) and hierarchy.',
-        choices: ['true', 'false'],
-        required: false,
-        list: false,
-        altersDynamicFields: false,
-      },
     ],
     perform: perform,
     sample: { id: 30444, name: 'default' },

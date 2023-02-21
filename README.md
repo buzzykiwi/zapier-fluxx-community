@@ -193,7 +193,6 @@ The list of items is returned as a Zapier "Line Item" set. You can use the "Loop
 * **Input**
   * **SQL input**: see [_SQL Support_](./SQL_SUPPORT.md) e.g. `SELECT id, name, nz_charities_number FROM Organization WHERE postal_code = "4500"`
     * Don't forget that you can sub values from previous steps into the SQL string e.g. ... `WHERE postal_code = [[1. Postal Code: 4500]]`
-  * **Show MAVs**: indicate True/False (default False). If true, any Model Attribute Values returned will return percentage value (if available) and hierarchy information.
 * **Output**
 ```
 results

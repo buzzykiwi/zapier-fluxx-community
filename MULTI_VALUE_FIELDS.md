@@ -4,31 +4,31 @@
 
 ### About Multi-Value Fields
 * Each Select-Transfer control, set of Checkboxes, and Hierarchical Dropdown control relates to specific field name on a model. Every such field has an independent set of possible values.
-* Each multi-attribute field has a set of Model Attribute Values (MAVs) that can be assigned to it. This is the set of options that you would maintain in Fluxx to form the dropdown or set of checkboxes.
+* Each multi-attribute field has a set of Model Attribute Values (MAVs) that can be assigned to it. This is the set of options that you maintain in Fluxx to form the dropdown or set of checkboxes.
 * Each Model Attribute Value (MAV) for a particular multi-value field has an id. If you have the MAV id, you can use that, but you don't have to — you can just use the name of the MAV, and FCE will look up the id for you.
-* Model Attribute (MA):
+* _Model Attribute (MA):_
   * The database table representing the field definition
   * Field examples:
-    * name="test_multi_select"
-    * description="Test Multi Select"
-    * model_type="GrantRequest"
-    * attribute_type="multi_value"
-* Model Attribute Value (MAV):
+    * `name`="test_multi_select"
+    * `description`="Test Multi Select"
+    * `model_type`="GrantRequest"
+    * `attribute_type`="multi_value"
+* _Model Attribute Value (MAV):_
   * The database table representing the possible set of options for the control.
   * This can be a heirarchy by use of the dependent_model_attribute_value_id parameter which points to a parent MAV.
   * Field examples:
-    * description="Los Angeles"
-    * value="LA"
-    * dependent_model_attribute_value_id=12345 (the parent item in the hierarchy)
-    * model_attribute_id=123 (link back to the Model Attribute that this MAV appears on)
-* Model Attribute Choice (MAC):
+    * `description`="Los Angeles"
+    * `value`="LA"
+    * `dependent_model_attribute_value_id`=12345 (the parent item in the hierarchy)
+    * `model_attribute_id=123` (link back to the Model Attribute that this MAV appears on)
+* _Model Attribute Choice (MAC):_
   * The database table holding the actual selections made for a given multi-select field, on a given record. This holds a link to the MAV, a link to the record (e.g. a particular GrantRequest id), and optionally a percentage value.
   * Field examples:
-    * model_attribute_value_id=99999 (the MAV that holds the text of the selected option)
-    * model_attribute_id=123 (the field definition)
-    * value=50 (the optional percentage value)
-    * model_id=505051 (the Id of the GrantRequest or whatever model this relates to)
-    * Note the the Model Type itself is not found here: you can get it from following the model_attribute_id, as the Model Attribute has a copy of the model_type.
+    * `model_attribute_value_id`=99999 (the MAV that holds the text of the selected option)
+    * `model_attribute_id`=123 (the field definition)
+    * `value`=50 (the optional percentage value)
+    * `model_id`=505051 (the Id of the GrantRequest or whatever Model Type this relates to)
+    * Note the the Model Type itself is not found here: you can get it from following the `model_attribute_id`, as the Model Attribute has a copy of the model_type.
 
 ### Adding and Removing Model Attribute Values to a Field
 
@@ -47,9 +47,9 @@
 
 * "Remove" instructions are performed before "add" instructions, irrespective of what order you put them in.
 * A delimiter at the start of each line is required, but it does not have to be "#", as long as the same delimter is used during the rest of that line. You may wish to use a different delimiter if one of your options contains the character "#".
-* If your values are heirarchical, specify the full path to the value you want to add/delete, using the delimiter to separate the path portions.
+* If your values are hierarchical, specify the full path to the value you want to add/delete, using the delimiter to separate the path portions.
 
-e.g. let's say you have this hierarchy of options for a multi-value list:
+e.g. let's say you have this hierarchy of options for a multi-value list on a particular field in Fluxx:
 
 * California
   * Los Angeles
@@ -90,10 +90,9 @@ Add Los Angeles at 50%, and change the percentage to 50% if Los Angeles was alre
 
 Imagine a scenario where you want to generate a new GrantRequest based on an existing GrantRequest, including the contents of a multi-select field, then add or remove some options from that field. The multi-select field is ``program_location``.
 
-Here is how to set that up in FCE.
+Here is how to set this up in FCE.
 
 * Use one of the triggers to load in the record you want to replicate – or trigger with a webhook that provides the existing GrantRequest's id, and feed that into the "Search for Record" action to retrieve all the fields you want to replicate including program_location.
-  * Ensure that "Show MAVs" is set to Yes.
 * Set up an Action: "Create/Update Fluxx Record".
   * Use "Field List for Update/Create" to select all of the different fields you want to replicate from the "input" GrantRequest, one per row.
   * In the Value List, map each value from the "input" GrantRequest in the previous step(s) to its associated field. The first field in the Field List maps to the first value in the Value List, and so on.

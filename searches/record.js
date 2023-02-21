@@ -18,9 +18,7 @@ const perform = async (z, bundle) => {
     }
   );
 
-  if (bundle.inputData.show_mavs == 'true') {
-    options.params.show_mavs = 'true';
-  }
+  options.params.show_mavs = 'true';
 
   response = await z.request(options);
   response.throwForStatus();
@@ -66,17 +64,6 @@ module.exports = {
       FluxxAPI.fn.getModelTypeDescription,
       FluxxAPI.fn.getReturnFieldsDropdown,
       FluxxAPI.fn.getReturnFieldDescriptions,
-      {
-        key: 'show_mavs',
-        label: 'Show MAVs',
-        type: 'string',
-        helpText:
-          'Do you want to get additional information about Multi Attribute Values in the request? If true, MAVs will return percentage value (if available) and hierarchy.',
-        choices: ['true', 'false'],
-        required: false,
-        list: false,
-        altersDynamicFields: false,
-      },
     ],
     sample: {
       id: 65,

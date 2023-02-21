@@ -230,16 +230,6 @@ results
           id: 10097888
           desc: Community Deprivation
           val: Community Deprivation
-      program_organization_id.org_deprivation:
-        1:
-          breadcrumbs:
-            1: New Plymouth District
-            2: Blagdon | Moturoa | Lynmouth (8)
-          breadcrumbs_rev:
-            1: Blagdon | Moturoa | Lynmouth (8)
-            2: New Plymouth District
-          value: New Plymouth District / Blagdon | Moturoa | Lynmouth (8)
-          percent: null
       program_organization_id.org_deprivation.add_list: §add§New Plymouth District§Blagdon | Moturoa | Lynmouth (8)
       program_organization_id.org_deprivation.add_list_by_id: §add_by_id§10097725
       program_organization_id.org_deprivation.line_items:
@@ -256,7 +246,7 @@ results
 
 Values from Select fields are output from FCE actions in several different formats for maximum flexibility.
 
-1. Single Select controls are output in an object in an array of size 1, with their MAV id, value and description.
+1. **Single Select** controls are output in an object in an array of size 1, with their MAV id, value and description.
 
 e.g. as viewed in the Test output from a Zapier Action:
 
@@ -276,8 +266,7 @@ Fields Reach Val: Community Deprivation
 Fields Reach Desc: Community Deprivation
 ```
 
-2. Multi-value Select controls (e.g. checklists, Select-Transfers, or Hierarchical Dropdowns) are output in the following ways:
-     * as the field name: an array of objects that contain breadcrumbs (array), reverse breadcrumbs (array), value (with path separated by slashes), and percent.
+2. **Multi-value Select** controls (e.g. checklists, Select-Transfers, or Hierarchical Dropdowns) are output in the following ways:
      * as the field name appended with ".add_list": in the format used by the Create/Update Fluxx Record MAV format (see [here](./MULTI_VALUE_FIELDS.md)). This allows you to feed the output of a single or multi item select into the Create/Update Fluxx Record, and allow it to recreate the same Model Attribute Values for a given field.
        * e.g. ```§add§New Plymouth District§Blagdon | Moturoa | Lynmouth (8)```
      * as the field name appended with ".add_list_by_id": similar to (b) except uses the MAV id.

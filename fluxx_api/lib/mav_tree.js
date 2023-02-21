@@ -452,8 +452,7 @@ const add_mac = module.exports.add_mac = async function (z, bundle, o, structure
     if (old_percentage == o.percentage) {
       return; // nothing to do here
     } else {
-      // return an async function; should be fine as the caller "waits".
-      return update_mac_with_new_percentage(z, bundle, previous_mac_object.id, o.percentage, user_id);
+      return await update_mac_with_new_percentage(z, bundle, previous_mac_object.id, o.percentage, user_id);
     }
   }
 }

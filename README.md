@@ -252,12 +252,31 @@ results
   2:
 ```
 
-**Note about MAV (Multi-Select) output**
+**Note about Output from Select Fields**
 
-When "Show Mavs" is selected, as seen above, the multi-attribute values are output in several different formats for maximum flexibility.
+Values from Select fields are output from FCE actions in several different formats for maximum flexibility.
 
-1. Single select controls are output in an array of size 1, with their MAV id, value and description.
-2. Multi-value select controls are output in the following ways:
+1. Single Select controls are output in an object in an array of size 1, with their MAV id, value and description.
+
+e.g. as viewed in the Test output from a Zapier Action:
+
+```
+reach:
+  1:
+    id: 10097888
+    desc: Community Deprivation
+    val: Community Deprivation
+```
+
+e.g. as viewed in the input to subsequent actions:
+
+```
+Fields Reach Id: 10097888
+Fields Reach Val: Community Deprivation
+Fields Reach Desc: Community Deprivation
+```
+
+2. Multi-value Select controls (e.g. checklists, Select-Transfers, or Hierarchical Dropdowns) are output in the following ways:
      * as the field name: an array of objects that contain breadcrumbs (array), reverse breadcrumbs (array), value (with path separated by slashes), and percent.
      * as the field name appended with ".add_list": in the format used by the Create/Update Fluxx Record MAV format (see [here](./MULTI_VALUE_FIELDS.md)). This allows you to feed the output of a single or multi item select into the Create/Update Fluxx Record, and allow it to recreate the same Model Attribute Values for a given field.
        * e.g. ```§add§New Plymouth District§Blagdon | Moturoa | Lynmouth (8)```
@@ -265,6 +284,42 @@ When "Show Mavs" is selected, as seen above, the multi-attribute values are outp
        * e.g. ```§add_by_id§10097725```
      * as Zapier Line Items, with the field name appended with ".line_items": an array of objects, each containing the id, percent, path to the final value (delimited with the § character), value and description of the final value.
 
+e.g. as viewed in the Test output from a Zapier Action:
+```
+communities.add_list:
+    §add/60§California§Los Angeles
+    §add/40§California§San Francisco
+communities.add_list_by_id:
+    §add_by_id/60§9978168
+    §add_by_id/40§9978170
+communities.line_items:
+  1:
+    path: §California§Los Angeles
+    id: 9978168
+    val: Los Angeles
+    percent: 60
+    desc: Los Angeles
+  2:
+    path: §California§San Francisco
+    id: 9978170
+    val: San Francisco
+    percent: 40
+    desc: San Francisco
+```
+
+e.g. as viewed in the input to subsequent actions:
+
+```
+Fields Communities Add List: §add/60§California§Los Angeles\n§add/40§California§San Francisco
+Fields Communities Add List By Id: §add_by_id/60§9978168\n§add/40§9978170
+Fields Communities Line Items Desc: Los Angeles, San Francisco
+Fields Communities Line Items Id: 9978168, 9978170
+Fields Communities Line Items Path: §California§Los Angeles, §California§San Francisco
+Fields Communities Line Items Percent: 60, 40
+Fields Communities Line Items Val: Los Angeles, San Francisco
+```
+
+Note that the Add List and Add List By Id values may contain newlines and can be used as input to the FCE "Create/Update Fluxx Record" Action, but the Line Items are comma-separated lists that are treated as  Zapier Line items (see [docs](https://zapier.com/blog/formatter-line-item-automation/)). See [here](./MULTI_VALUE_FIELDS.md) for more information about FCE's handling of multi-attribute fields.
 
 ### Search for a Single Fluxx Record
 

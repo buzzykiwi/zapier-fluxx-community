@@ -521,7 +521,7 @@ const processSingleItemResponse = module.exports.processSingleItemResponse = fun
         const inner_val = val[0][foreign_field];
         if (Array.isArray(inner_val) && inner_val.length > 0 && Array.isArray(inner_val[0]) ) { // mav on relation
         
-          out.fields[field + "." + foreign_field] = [];
+          // out.fields[field + "." + foreign_field] = [];
           out.fields[field + "." + foreign_field + ".add_list"] = "";
           out.fields[field + "." + foreign_field + ".add_list_by_id"] = "";
 
@@ -539,32 +539,13 @@ const processSingleItemResponse = module.exports.processSingleItemResponse = fun
         
             // ignore 0-length arrays that sneak in
             if (!(Array.isArray(mav) && mav.length === 0)) {
-              let single_selection = {}; // one selection of the multi-select
-              single_selection.breadcrumbs     = {};
-              single_selection.breadcrumbs_rev = {};
 
               // now within each (array) segment there is 1 or more
               // objects holding path segment info.
               let percentage = -1;
               let segments = [];
-              let i = max_depth;
-          
-              // blank out some breadcrumbs for any items that have less breadcrumbs than the maximum
-              if (mav.length < max_depth) {
-                for (i; i > mav.length; i--) {
-                  single_selection.breadcrumbs[i]     = " ";
-                  single_selection.breadcrumbs_rev[i] = " ";
-                }
-              }
-              // at this point, i = mav.length
-          
-              // create back-to-front breadcrumbs, so the first item is always the "final" segment
               let ez_path = "";
               mav.forEach(segment => {
-                // from index 1 up...
-                single_selection.breadcrumbs[mav.length - i + 1] = segment.desc;
-                // from index mav.length down...
-                single_selection.breadcrumbs_rev[i--] = segment.desc;
                 segments.push(segment.desc);
                 ez_path = `${ez_path}§${segment.val}`
                 // all segments of the MAV show the same percentage, even though only the final one is really "chosen"
@@ -575,12 +556,6 @@ const processSingleItemResponse = module.exports.processSingleItemResponse = fun
                 }
               });
           
-              single_selection.value = segments.join(' / ');
-              //single_selection.breadcrumbs = segments;
-              if (percentage != -1) {
-                single_selection.percent = percentage;
-              }
-              out.fields[field + "." + foreign_field].push(single_selection);
               if (percentage !== null && percentage != -1) {
                 out.fields[field + "." + foreign_field + `.add_list_by_id`] += (`§add_by_id/${percentage}§${mav[mav.length - 1].id}` + "\n");
                 out.fields[field + "." + foreign_field + `.add_list`] += (`§add/${percentage}${ez_path.replace(",","||COMMA||")}` + "\n");
@@ -590,9 +565,9 @@ const processSingleItemResponse = module.exports.processSingleItemResponse = fun
               }
               line_item.path = ez_path.replace(",","||COMMA||");
               line_item.id = mav[mav.length - 1].id;
-              line_item.value = mav[mav.length - 1].val.replace(",","||COMMA||");
+              line_item.val = mav[mav.length - 1].val.replace(",","||COMMA||");
               line_item.percent = (percentage !== null && percentage != -1) ? percentage : null;
-              line_item.description = mav[mav.length - 1].desc.replace(",","||COMMA||");
+              line_item.desc = mav[mav.length - 1].desc.replace(",","||COMMA||");
               // the retired value does not get transferred when doing a show_mavs request.
               out.fields[field + "." + foreign_field + `.line_items`].push(line_item);
           
@@ -606,7 +581,7 @@ const processSingleItemResponse = module.exports.processSingleItemResponse = fun
       
     } else if (Array.isArray(val) && val.length > 0 && (Array.isArray(val[0]) || Array.isArray(val[1]))) {
       // show_mavs section
-      out.fields[field] = [];
+      //out.fields[field] = [];
       out.fields[field + ".add_list"] = "";
       out.fields[field + ".add_list_by_id"] = "";
 
@@ -624,32 +599,13 @@ const processSingleItemResponse = module.exports.processSingleItemResponse = fun
         
         // ignore 0-length arrays that sneak in
         if (!(Array.isArray(mav) && mav.length === 0)) {
-          let single_selection = {}; // one selection of the multi-select
-          single_selection.breadcrumbs     = {};
-          single_selection.breadcrumbs_rev = {};
 
           // now within each (array) segment there is 1 or more
           // objects holding path segment info.
           let percentage = -1;
           let segments = [];
-          let i = max_depth;
-          
-          // blank out some breadcrumbs for any items that have less breadcrumbs than the maximum
-          if (mav.length < max_depth) {
-            for (i; i > mav.length; i--) {
-              single_selection.breadcrumbs[i]     = " ";
-              single_selection.breadcrumbs_rev[i] = " ";
-            }
-          }
-          // at this point, i = mav.length
-          
-          // create back-to-front breadcrumbs, so the first item is always the "final" segment
           let ez_path = "";
           mav.forEach(segment => {
-            // from index 1 up...
-            single_selection.breadcrumbs[mav.length - i + 1] = segment.desc;
-            // from index mav.length down...
-            single_selection.breadcrumbs_rev[i--] = segment.desc;
             segments.push(segment.desc);
             ez_path = `${ez_path}§${segment.val}`
             // all segments of the MAV show the same percentage, even though only the final one is really "chosen"
@@ -660,12 +616,6 @@ const processSingleItemResponse = module.exports.processSingleItemResponse = fun
             }
           });
           
-          single_selection.value = segments.join(' / ');
-          //single_selection.breadcrumbs = segments;
-          if (percentage != -1) {
-            single_selection.percent = percentage;
-          }
-          out.fields[field].push(single_selection);
           if (percentage !== null && percentage != -1) {
             out.fields[field + `.add_list_by_id`] += (`§add_by_id/${percentage}§${mav[mav.length - 1].id}` + "\n");
             out.fields[field + `.add_list`] += (`§add/${percentage}${ez_path.replace(",","||COMMA||")}` + "\n");
@@ -675,9 +625,9 @@ const processSingleItemResponse = module.exports.processSingleItemResponse = fun
           }
           line_item.path = ez_path.replace(",","||COMMA||");
           line_item.id = mav[mav.length - 1].id;
-          line_item.value = mav[mav.length - 1].val.replace(",","||COMMA||");
+          line_item.val = mav[mav.length - 1].val.replace(",","||COMMA||");
           line_item.percent = (percentage !== null && percentage != -1) ? percentage : null;
-          line_item.description = mav[mav.length - 1].desc.replace(",","||COMMA||");
+          line_item.desc = mav[mav.length - 1].desc.replace(",","||COMMA||");
           // the retired value does not get transferred when doing a show_mavs request.
           out.fields[field + `.line_items`].push(line_item);
           

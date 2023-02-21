@@ -1,6 +1,7 @@
 # Multi-Value Fields in Fluxx Community Edition
 
-> When using the Create/Update Fluxx Record Action, use a special syntax to add or remove values and/or percentages from multi-valued fields i.e. Select-Transfer controls, Checkboxes, or Hierarchical Dropdowns.
+> When using the **Create/Update Fluxx Record** Action, use a special syntax to add or remove values and/or percentages from multi-valued fields for records i.e. Select-Transfer controls, Checkboxes, or Hierarchical Dropdowns.
+> FCE can also alter the list of available options itself, so you can change the list of options that appear in a dropdown. This is done with the **Manage Items in SELECT Lists** Action *[documentation](./MANAGE_ITEMS_IN_SELECT_LIST.md)*
 
 ### About Multi-Value Fields
 * Each Select-Transfer control, set of Checkboxes, and Hierarchical Dropdown control relates to specific field name on a model. Every such field has an independent set of possible values.
@@ -30,7 +31,7 @@
     * `model_id`=505051 (the Id of the GrantRequest or whatever Model Type this relates to)
     * Note the the Model Type itself is not found here: you can get it from following the `model_attribute_id`, as the Model Attribute has a copy of the model_type.
 
-### Adding and Removing Model Attribute Values to a Field
+### Adding/Removing Model Attribute Values to/from a Field
 
 * In the Create/Update Fluxx Record Action, you are given a text area to enter instructions for the MAVs to add or remove.
 * Each instruction uses one line: use a line break (press Enter) to separate lines.
@@ -100,7 +101,7 @@ Here is how to set this up in FCE.
     * Use the output field from the previous step called ``Fields Program Location Add List``. This may contain something like `§add/40§Texas§Houston\n§add/60§Texas§Dallas`, which indicates two rows (two items selected in the dropdown), with Houston assigned 40% and Dallas assigned 60%. The format of these rows is _exactly_ the format used by Create/Update Fluxx Record to create new Model Attribute Values (selected items in a multi-select control).
     * Use the output field from the previous step called ``Fields Program Location Add List By Id``. This may contain something like `§add/40§2055430\n§add/60§2055432`, indicating the ID number for Houston (2055430) and Dallas (2055432). This option is preferable if there is any chance that there is more than one possible value with the same path name (e.g. two items called Texas/Houston).
   * If there are any options that you would like to remove from ALL duplicated items, or any you need to add, add some remove or add lines to the same input control, after the substituted value from the previous step. Don't forget that you can use any delimiter character you like, as long as it remains consistent for the rest of the line.
-  * A third option may be available depending on your needs: a set of fields called `Fields Program Location Line Items [ID|Path|Value|Description|Percent]`. These can be used in any action that supports Line Items [docs here](https://zapier.com/blog/formatter-line-item-automation/).
+  * A third option may be available depending on your needs: a set of fields called `Fields Program Location Line Items [ID|Path|Val|Desc|Percent]`. These can be used in any action that supports Line Items [docs here](https://zapier.com/blog/formatter-line-item-automation/).
   
 e.g.
 ```

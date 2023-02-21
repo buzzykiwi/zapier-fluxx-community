@@ -10,44 +10,44 @@ c.CORE_MODELS = require('./core_models').CORE_MODELS;
 // utility
 let modelToSnake = module.exports.modelToSnake = function(model)
 {
-	// lower_case stays the same
-	// lowercase stays the same
-	// Project changed to project
-	// GrantRequest changed to grant_request
-	if (model.toLowerCase() == model) {
-		return model; // grant_request will make it through
-	}
-	// now replace any upper case letters with _ and the lower case equivalent
-	var r = '';
-	for (i = 0; i < model.length; i++) {
-		const ch = model[i];
-		if (ch >= 'A' && ch <= 'Z') {
-			if (i === 0) {
-				r = ch.toLowerCase();
-			} else {
-				r = r + '_' + ch.toLowerCase();
-			}
-		} else {
-			r = r + ch;
-		}
-	}
-	return r;
+  // lower_case stays the same
+  // lowercase stays the same
+  // Project changed to project
+  // GrantRequest changed to grant_request
+  if (model.toLowerCase() == model) {
+    return model; // grant_request will make it through
+  }
+  // now replace any upper case letters with _ and the lower case equivalent
+  var r = '';
+  for (i = 0; i < model.length; i++) {
+    const ch = model[i];
+    if (ch >= 'A' && ch <= 'Z') {
+      if (i === 0) {
+        r = ch.toLowerCase();
+      } else {
+        r = r + '_' + ch.toLowerCase();
+      }
+    } else {
+      r = r + ch;
+    }
+  }
+  return r;
 };
     
 let modelToCamel = module.exports.modelToCamel = function(model)
 {
-	// lower_case changed to LowerCase
-	// lowercase changed to Lowercase
-	// Project stays the same
-	// GrantRequest stays the same
+  // lower_case changed to LowerCase
+  // lowercase changed to Lowercase
+  // Project stays the same
+  // GrantRequest stays the same
   if (model[0].toUpperCase() == model[0]) {
     return model;
   }
   var capitalise_next = false;
   var r = '';
   var ch = '';
-	for (i = 0; i < model.length; i++) {
-		ch = model[i];
+  for (i = 0; i < model.length; i++) {
+    ch = model[i];
     if (capitalise_next === true || i === 0) {
       ch = ch.toUpperCase();
     }
@@ -373,29 +373,29 @@ const restoreNullFieldsInResponse = module.exports.restoreNullFieldsInResponse =
  */
 let isObj = module.exports.isObj = function(thing)
 {
-	return typeof thing === 'object' &&
+  return typeof thing === 'object' &&
     !Array.isArray(thing) &&
     thing !== null
 };
 
 let splitFieldListIntoColsAndRelations = module.exports.splitFieldListIntoColsAndRelations = function(field_list)
 {
-	const cols = [];
-	const rel = [];
+  const cols = [];
+  const rel = [];
   const relation = {}; // this is what we send to Fluxx
   // populate the columns/relations
   if (field_list === undefined) {
-  	cols.push("id");
+    cols.push("id");
   } else {
     // first, isolate any requested fields with a "."
-  	field_list.forEach(field => {
-  		if (field.includes(".")) {
-  			rel.push(field);
-  		} else {
-  			cols.push(field);
-  		}
-  	});
-  	if (rel.length > 0) {          
+    field_list.forEach(field => {
+      if (field.includes(".")) {
+        rel.push(field);
+      } else {
+        cols.push(field);
+      }
+    });
+    if (rel.length > 0) {          
       rel.sort();
       let item;
       rel.forEach(item => {
@@ -408,7 +408,7 @@ let splitFieldListIntoColsAndRelations = module.exports.splitFieldListIntoColsAn
         }
       });
       
-  	}
+    }
   }
   return {cols:cols, relation:relation};
 };
@@ -515,66 +515,72 @@ const processSingleItemResponse = module.exports.processSingleItemResponse = fun
     const val = item[field];
     if (Array.isArray(val) && val.length > 0 && isObj(val[0])) {
       // it was a relation. show_mavs sections contain further arrays.
-    	const foreign_fields = Object.keys(val[0]);
-    	foreign_fields.forEach(foreign_field => {
+      const foreign_fields = Object.keys(val[0]);
+      foreign_fields.forEach(foreign_field => {
         // need to allow for MAVs here, too.
         const inner_val = val[0][foreign_field];
         if (Array.isArray(inner_val) && inner_val.length > 0 && Array.isArray(inner_val[0]) ) { // mav on relation
         
-        	out.fields[field + "." + foreign_field] = [];
-        	out.fields[field + "." + foreign_field + ".add_list"] = "";
-        	out.fields[field + "." + foreign_field + ".add_list_by_id"] = "";
+          out.fields[field + "." + foreign_field] = [];
+          out.fields[field + "." + foreign_field + ".add_list"] = "";
+          out.fields[field + "." + foreign_field + ".add_list_by_id"] = "";
 
           out.fields[field + "." + foreign_field + `.line_items`] = [];
 
           let max_depth = 0;
           // find the max depth of breadcrumbs for the set of results, so we can null-fill missing items
-        	inner_val.forEach(mav => {
+          inner_val.forEach(mav => {
             (mav.length > max_depth) && (max_depth = mav.length);
           });
       
           // run through all the MAVs, and make out.fields[field] an array of these MAVs.
-        	inner_val.forEach(mav => {
+          inner_val.forEach(mav => {
             let line_item = {};
         
-        		// ignore 0-length arrays that sneak in
-        		if (!(Array.isArray(mav) && mav.length === 0)) {
-        			let single_selection = {}; // one selection of the multi-select
-        			single_selection.breadcrumbs_rev = {};
+            // ignore 0-length arrays that sneak in
+            if (!(Array.isArray(mav) && mav.length === 0)) {
+              let single_selection = {}; // one selection of the multi-select
+              single_selection.breadcrumbs     = {};
+              single_selection.breadcrumbs_rev = {};
 
-        			// now within each (array) segment there is 1 or more
-        			// objects holding path segment info.
-        			let percentage = -1;
-        			let segments = [];
+              // now within each (array) segment there is 1 or more
+              // objects holding path segment info.
+              let percentage = -1;
+              let segments = [];
               let i = max_depth;
           
               // blank out some breadcrumbs for any items that have less breadcrumbs than the maximum
               if (mav.length < max_depth) {
                 for (i; i > mav.length; i--) {
+                  single_selection.breadcrumbs[i]     = " ";
                   single_selection.breadcrumbs_rev[i] = " ";
                 }
               }
+              // at this point, i = mav.length
           
               // create back-to-front breadcrumbs, so the first item is always the "final" segment
               let ez_path = "";
-        			mav.forEach(segment => {
+              mav.forEach(segment => {
+                // from index 1 up...
+                single_selection.breadcrumbs[mav.length - i + 1] = segment.desc;
+                // from index mav.length down...
                 single_selection.breadcrumbs_rev[i--] = segment.desc;
-        				segments.push(segment.desc);
+                segments.push(segment.desc);
                 ez_path = `${ez_path}§${segment.val}`
                 // all segments of the MAV show the same percentage, even though only the final one is really "chosen"
-        				if (segment.amount_value === undefined) {
+                if (segment.amount_value === undefined) {
                   percentage = null;
                 } else {
-        					percentage = segment.amount_value;
-        				}
-        			});
+                  percentage = segment.amount_value;
+                }
+              });
           
-        			single_selection.value = segments.join(' / ');
-        			single_selection.breadcrumbs = segments;
-        			if (percentage != -1) {
-        				single_selection.percent = percentage;
-        			}
-        			out.fields[field + "." + foreign_field].push(single_selection);
+              single_selection.value = segments.join(' / ');
+              //single_selection.breadcrumbs = segments;
+              if (percentage != -1) {
+                single_selection.percent = percentage;
+              }
+              out.fields[field + "." + foreign_field].push(single_selection);
               if (percentage !== null && percentage != -1) {
                 out.fields[field + "." + foreign_field + `.add_list_by_id`] += (`§add_by_id/${percentage}§${mav[mav.length - 1].id}` + "\n");
                 out.fields[field + "." + foreign_field + `.add_list`] += (`§add/${percentage}${ez_path.replace(",","||COMMA||")}` + "\n");
@@ -590,72 +596,76 @@ const processSingleItemResponse = module.exports.processSingleItemResponse = fun
               // the retired value does not get transferred when doing a show_mavs request.
               out.fields[field + "." + foreign_field + `.line_items`].push(line_item);
           
-        		}
-        	});        
-        
-        
+            }
+          });
         
         } else {
-    		  out.fields[field + "." + foreign_field] = val[0][foreign_field];
+          out.fields[field + "." + foreign_field] = val[0][foreign_field];
         }
-    	});
+      });
       
     } else if (Array.isArray(val) && val.length > 0 && (Array.isArray(val[0]) || Array.isArray(val[1]))) {
       // show_mavs section
-    	out.fields[field] = [];
-    	out.fields[field + ".add_list"] = "";
-    	out.fields[field + ".add_list_by_id"] = "";
+      out.fields[field] = [];
+      out.fields[field + ".add_list"] = "";
+      out.fields[field + ".add_list_by_id"] = "";
 
       out.fields[field + `.line_items`] = [];
 
       let max_depth = 0;
       // find the max depth of breadcrumbs for the set of results, so we can null-fill missing items
-    	val.forEach(mav => {
+      val.forEach(mav => {
         (mav.length > max_depth) && (max_depth = mav.length);
       });
       
       // run through all the MAVs, and make out.fields[field] an array of these MAVs.
-    	val.forEach(mav => {
+      val.forEach(mav => {
         let line_item = {};
         
-    		// ignore 0-length arrays that sneak in
-    		if (!(Array.isArray(mav) && mav.length === 0)) {
-    			let single_selection = {}; // one selection of the multi-select
-    			single_selection.breadcrumbs_rev = {};
+        // ignore 0-length arrays that sneak in
+        if (!(Array.isArray(mav) && mav.length === 0)) {
+          let single_selection = {}; // one selection of the multi-select
+          single_selection.breadcrumbs     = {};
+          single_selection.breadcrumbs_rev = {};
 
-    			// now within each (array) segment there is 1 or more
-    			// objects holding path segment info.
-    			let percentage = -1;
-    			let segments = [];
+          // now within each (array) segment there is 1 or more
+          // objects holding path segment info.
+          let percentage = -1;
+          let segments = [];
           let i = max_depth;
           
           // blank out some breadcrumbs for any items that have less breadcrumbs than the maximum
           if (mav.length < max_depth) {
             for (i; i > mav.length; i--) {
+              single_selection.breadcrumbs[i]     = " ";
               single_selection.breadcrumbs_rev[i] = " ";
             }
           }
+          // at this point, i = mav.length
           
           // create back-to-front breadcrumbs, so the first item is always the "final" segment
           let ez_path = "";
-    			mav.forEach(segment => {
+          mav.forEach(segment => {
+            // from index 1 up...
+            single_selection.breadcrumbs[mav.length - i + 1] = segment.desc;
+            // from index mav.length down...
             single_selection.breadcrumbs_rev[i--] = segment.desc;
-    				segments.push(segment.desc);
+            segments.push(segment.desc);
             ez_path = `${ez_path}§${segment.val}`
             // all segments of the MAV show the same percentage, even though only the final one is really "chosen"
-    				if (segment.amount_value === undefined) {
+            if (segment.amount_value === undefined) {
               percentage = null;
             } else {
-    					percentage = segment.amount_value;
-    				}
-    			});
+              percentage = segment.amount_value;
+            }
+          });
           
-    			single_selection.value = segments.join(' / ');
-    			single_selection.breadcrumbs = segments;
-    			if (percentage != -1) {
-    				single_selection.percent = percentage;
-    			}
-    			out.fields[field].push(single_selection);
+          single_selection.value = segments.join(' / ');
+          //single_selection.breadcrumbs = segments;
+          if (percentage != -1) {
+            single_selection.percent = percentage;
+          }
+          out.fields[field].push(single_selection);
           if (percentage !== null && percentage != -1) {
             out.fields[field + `.add_list_by_id`] += (`§add_by_id/${percentage}§${mav[mav.length - 1].id}` + "\n");
             out.fields[field + `.add_list`] += (`§add/${percentage}${ez_path.replace(",","||COMMA||")}` + "\n");
@@ -671,17 +681,17 @@ const processSingleItemResponse = module.exports.processSingleItemResponse = fun
           // the retired value does not get transferred when doing a show_mavs request.
           out.fields[field + `.line_items`].push(line_item);
           
-    		}
-    	});
+        }
+      });
     } else if (Array.isArray(val) && val.length > 0 && (val[0] === null || typeof val[0] === 'string')) { // plain old multi select values
-    	out.fields[field] = [];
-    	val.forEach(mav => {
-    		if (mav !== null) {
-    			out.fields[field].push(mav);
-    		}
-    	});
+      out.fields[field] = [];
+      val.forEach(mav => {
+        if (mav !== null) {
+          out.fields[field].push(mav);
+        }
+      });
     } else {
-    	out.fields[field] = item[field];
+      out.fields[field] = item[field];
       if (Array.isArray(item[field])) {
         out.fields[field+"_json"] = JSON.stringify(item[field]);
       }

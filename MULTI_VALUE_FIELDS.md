@@ -84,7 +84,6 @@ Add Dallas and Houston to whatever was there before:
 Add Los Angeles at 50%, and change the percentage to 50% if Los Angeles was already present with a different percentage:
 
 ```
-#remove_all
 #add/50#California#Los Angeles
 ```
 

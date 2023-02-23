@@ -15,7 +15,6 @@ const perform = async (z, bundle) => {
   let ret = [];
   let response;
   let errors = 0;
-  let api_queue = "";
   let results;
 
   do {
@@ -27,7 +26,6 @@ const perform = async (z, bundle) => {
 
     if (results.data !== undefined) {
       ret = results.data;
-      api_queue = results.api_queue;
       
       ret.forEach(function (item) {
         // make a unique id that will be different every time the
@@ -54,7 +52,7 @@ const perform = async (z, bundle) => {
   if (final_list.length > 0) {
     const options_finished = {
       url:
-        `https://${bundle.authData.client_domain}/poll/client/:client_id/uuid/queue_finished/${api_queue}/${results.job_uuid}`,
+        `https://${bundle.authData.client_domain}/poll/client/:client_id/uuid/queue_finished/${bundle.inputData.api_queue}/${results.job_uuid}`,
       method: 'GET',
       headers: {
         Accept: 'application/json',
@@ -64,6 +62,9 @@ const perform = async (z, bundle) => {
     response = await z.request(options_finished);
     response.throwForStatus();
     FluxxAPI.fn.handleFluxxAPIReturnErrors(z, response);
+  }
+  if (bundle.inputData.force_line_items == 1) {
+    return [{id: Date.now(), line_items: final_list}];
   }
   return final_list;
 };
@@ -84,12 +85,19 @@ module.exports = {
       {
         key: 'api_queue',
         type: 'string',
-        label: 'API Queue Id',
+        label: 'API Queue UUID',
         helpText:
-          'The id of the queue inside Fluxx to retrieve. This should be the one that detects state change to initial_review, or whatever stage where you want some fields to be changed.',
+          'The UUID of the API Queue to retrieve from Fluxx. In Fluxx, go to Admin Panel => Card Documents => (Model Type) => API Alerts to find the Queue UUID, set the queue criteria, and to choose the fields to return to Zapier.',
         required: true,
         list: false,
         altersDynamicFields: false,
+      },
+      {
+        key: 'force_line_items',
+        label: 'Force Line Items?',
+        choices: {1:"True"},
+        type: 'string',
+        required: false,
       },
     ],
     canPaginate: false,

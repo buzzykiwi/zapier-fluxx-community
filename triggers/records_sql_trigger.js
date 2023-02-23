@@ -13,7 +13,11 @@ const perform = async (z, bundle) => {
   if (options !== null && options !== undefined) {
     options.body.show_mavs = 'true';
     const response = await FluxxAPI.fn.paginated_fetch(z, bundle, options, p.model_type, p.limit);
-    return FluxxAPI.fn.preProcessFluxxResponse(z, p.cols, response, p.model_type);
+    if (bundle.inputData.force_line_items == 1) {
+      return [{id: Date.now(), line_items: FluxxAPI.fn.preProcessFluxxResponse(z, p.cols, response, p.model_type)}];
+    } else {
+      return FluxxAPI.fn.preProcessFluxxResponse(z, p.cols, response, p.model_type);
+    }
   }
 
 };
@@ -41,6 +45,13 @@ module.exports = {
         altersDynamicFields: true,
       },
       FluxxAPI.fn.sql_descriptions,
+      {
+        key: 'force_line_items',
+        label: 'Force Line Items?',
+        choices: {1:"True"},
+        type: 'string',
+        required: false,
+      },
     ],
     perform: perform,
     canPaginate: false,

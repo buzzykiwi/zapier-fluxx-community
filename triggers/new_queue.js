@@ -63,6 +63,7 @@ const perform = async (z, bundle) => {
     response.throwForStatus();
     FluxxAPI.fn.handleFluxxAPIReturnErrors(z, response);
   }
+  (bundle.inputData.reverse == 1) && (final_list = final_list.reverse());
   if (bundle.inputData.force_line_items == 1) {
     return [{id: Date.now(), line_items: final_list}];
   }
@@ -99,6 +100,13 @@ module.exports = {
         type: 'string',
         required: false,
       },
+      {
+        key: 'reverse',
+        label: 'Reverse Results Order?',
+        choices: {1:"True"},
+        type: 'string',
+        required: false,
+      },
     ],
     canPaginate: false,
     type: 'polling',
@@ -109,48 +117,14 @@ module.exports = {
       ModelType: 'requests',
       fields: {
         id: 815,
-        a2_stage_grant_type: null,
-        amount_approved: '0',
-        amount_recommended: null,
-        amount_requested: 3255.8,
-        base_request_id: '7273',
-        board_meeting_link: null,
-        boardmeetingdate: '2018-04-26',
-        expensetotal: 391447,
-        focus_of_grant: null,
-        funding_sector: null,
-        grant_agreement_at: null,
-        grant_approved_at: null,
-        grant_begins_at: null,
-        grant_closed_at: null,
-        granted: false,
-        multi_year: null,
-        netincome: -93939,
       },
     },
     outputFields: [
       { key: 'timestamp', type: 'integer' },
       { key: 'id', type: 'integer' },
       { key: 'model_id', type: 'integer' },
-      { key: 'ModelType' },
+      { key: 'ModelType', type: 'string' },
       { key: 'fields__id', type: 'integer' },
-      { key: 'fields__a2_stage_grant_type' },
-      { key: 'fields__amount_approved', type: 'number' },
-      { key: 'fields__amount_recommended', type: 'number' },
-      { key: 'fields__amount_requested', type: 'number' },
-      { key: 'fields__base_request_id' },
-      { key: 'fields__board_meeting_link' },
-      { key: 'fields__boardmeetingdate', type: 'datetime' },
-      { key: 'fields__expensetotal', type: 'number' },
-      { key: 'fields__focus_of_grant' },
-      { key: 'fields__funding_sector' },
-      { key: 'fields__grant_agreement_at', type: 'datetime' },
-      { key: 'fields__grant_approved_at', type: 'datetime' },
-      { key: 'fields__grant_begins_at', type: 'datetime' },
-      { key: 'fields__grant_closed_at', type: 'datetime' },
-      { key: 'fields__granted' },
-      { key: 'fields__multi_year', type: 'boolean' },
-      { key: 'fields__netincome', type: 'number' },
     ],
   },
 };

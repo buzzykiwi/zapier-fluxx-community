@@ -15,8 +15,11 @@ const perform = async (z, bundle) => {
     const response = await FluxxAPI.fn.paginated_fetch(z, bundle, options, options.model_type, p.limit);
     
     // return as line items: have to return a single object, but it can return an array via an object key
+    let items = FluxxAPI.fn.preProcessFluxxResponse(z, p.cols, response, options.model_type);
+    (bundle.inputData.reverse == 1) && (items = items.reverse());
+    
     return {
-      results: FluxxAPI.fn.preProcessFluxxResponse(z, p.cols, response, options.model_type),
+      results: items,
     }; 
   }
 };
@@ -44,6 +47,13 @@ module.exports = {
         altersDynamicFields: true,
       },
       FluxxAPI.fn.sql_descriptions,
+      {
+        key: 'reverse',
+        label: 'Reverse Results Order?',
+        choices: {1:"True"},
+        type: 'string',
+        required: false,
+      },
     ],
     perform: perform,
     sample: { id: 30444, name: 'default' },

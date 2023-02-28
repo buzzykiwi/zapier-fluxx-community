@@ -236,21 +236,22 @@ const getInputFieldsForUpdateCreate = async (z, bundle) => {
     model_type = 'GrantRequest';
   }
 
-  if (model_type === undefined || model_type === '') {
-    return;
+  if (model_type === undefined || model_type === null) {
+    return [];
   }
-  let r = await FluxxAPI.fn.fields_for_model(z, bundle, bundle.inputData.model_type, FluxxAPI.c.CORE_MODELS, true);
+  z.console.log("model type: " , model_type);
+  let r = await FluxxAPI.fn.fields_for_model(z, bundle, model_type, FluxxAPI.c.CORE_MODELS, true);
   
   return {
     key: 'fields',
-    label: 'Field List for Update/Create',
+    label: 'Extra Field List for Update/Create',
     choices: r,
     type: 'string',
-    required: true,
+    required: false,
     list: true,
     placeholder: 'Select a field to assign a value to…',
     helpText:
-      'Enter the list of fields you want to update (or create in a new record). Use one per box. The list of field options depends on which Model Type is chosen.',
+      'Enter the list of additional fields you want to update (or create in a new record). Use one per box. The list of field options depends on which Model Type is chosen. YOU CANNOT USE LINE ITEMS HERE.',
     altersDynamicFields: true,
   };
 };
@@ -259,8 +260,8 @@ const getInputFieldsForReturnFields = async (z, bundle) => {
   // Fields to return from new/updated model
   const model_type = bundle.inputData.model_type;
 
-  if (model_type === undefined || model_type === '') {
-    return;
+  if (model_type === undefined || model_type === null) {
+    return [];
   }
 
   let r = await FluxxAPI.fn.fields_for_model(z, bundle, model_type, FluxxAPI.c.CORE_MODELS);
@@ -280,13 +281,18 @@ const getInputFieldsForReturnFields = async (z, bundle) => {
 
 async function show_field(z, bundle, n)
 {
+  // never show if there is no model type
+  if (bundle.inputData.model_type === undefined || bundle.inputData.model_type == null) {
+    return [];
+  }
   let f = bundle.inputData[`field${n}`];
   let r;
+  // Show this way if it is populated
   if (f !== undefined && f !== null && f !== "") {
     r = await FluxxAPI.fn.fields_for_model(z, bundle, bundle.inputData.model_type, FluxxAPI.c.CORE_MODELS, true);
     return {
       key: `field${n}`,
-      label: `Input Field ${n}`,
+      label: `Input Field Name ${n}`,
       type: "string",
       altersDynamicFields: true,
       choices: r,
@@ -304,7 +310,7 @@ async function show_field(z, bundle, n)
   r = await FluxxAPI.fn.fields_for_model(z, bundle, bundle.inputData.model_type, FluxxAPI.c.CORE_MODELS, true);
   return {
     key: `field${i}`,
-    label: `Input Field ${i}`,
+    label: `Input Field Name ${i}`,
     type: "string",
     altersDynamicFields: true,
     choices: r,
@@ -312,10 +318,13 @@ async function show_field(z, bundle, n)
 }
 
 async function show_field_1(z, bundle) {
+  if (bundle.inputData.model_type === undefined || bundle.inputData.model_type == null) {
+    return [];
+  }
   let r = await FluxxAPI.fn.fields_for_model(z, bundle, bundle.inputData.model_type, FluxxAPI.c.CORE_MODELS, true);
   return {
     key: `field1`,
-    label: `Input Field 1`,
+    label: `Input Field Name 1`,
     type: "string",
     altersDynamicFields: true,
     choices: r,
@@ -346,6 +355,11 @@ module.exports = {
   operation: {
     inputFields: [
       {
+        key: 'desc_step_1',
+        type: 'copy',
+        helpText: '**Step 1** Select Model Group, then Type',
+      },
+      {
         key: 'model_group',
         label: 'Model Group',
         type: 'string',
@@ -358,7 +372,11 @@ module.exports = {
         altersDynamicFields: true,
       },
       getInputFieldsForModelTypes,
-
+      {
+        key: 'desc_step_2',
+        type: 'copy',
+        helpText: '**Step 2** Choose up to 10 fields to populate with Line Item values',
+      },
       show_field_1,
       show_field_2,
       show_field_3,
@@ -370,9 +388,19 @@ module.exports = {
       show_field_9,
       show_field_10,
       {
+        key: 'desc_step_3',
+        type: 'copy',
+        helpText: '**Step 3** Populate the fields with Line Item values',
+      },
+      {
         key: 'line_items',
         label: 'Line Items',
         children: [
+          {
+            key: 'desc_step_3a',
+            type: 'copy',
+            helpText: '**Step 3a** Choose a line item of the record id (for editing) or leave blank to create a new record',
+          },
           {
             key: 'id',
             label: 'Record ID',
@@ -382,70 +410,100 @@ module.exports = {
             required: false,
           },
           {
+            key: 'desc_step_3b',
+            type: 'copy',
+            helpText: '**Step 3b** Choose values for any fields chosen above',
+          },
+          {
             key: 'value1',
             label: 'Input Value 1',
             type: 'text',
+            helpText: 'Value for field 1',
           },
           /* sadly, child items can't use functions like we did for the field names above */
           {
             key: 'value2',
             label: 'Input Value 2',
             type: 'text',
+            helpText: 'Value for field 2',
           },
           {
             key: 'value3',
             label: 'Input Value 3',
             type: 'text',
+            helpText: 'Value for field 3',
           },
           {
             key: 'value4',
             label: 'Input Value 4',
             type: 'text',
+            helpText: 'Value for field 4',
           },
           {
             key: 'value5',
             label: 'Input Value 5',
             type: 'text',
+            helpText: 'Value for field 5',
           },
           {
             key: 'value6',
             label: 'Input Value 6',
             type: 'text',
+            helpText: 'Value for field 6',
           },
           {
             key: 'value7',
             label: 'Input Value 7',
             type: 'text',
+            helpText: 'Value for field 7',
           },
           {
             key: 'value8',
             label: 'Input Value 8',
             type: 'text',
+            helpText: 'Value for field 8',
           },
           {
             key: 'value9',
             label: 'Input Value 9',
             type: 'text',
+            helpText: 'Value for field 9',
           },
           {
             key: 'value10',
             label: 'Input Value 10',
             type: 'text',
+            helpText: 'Value for field 10',
           },
         ],
       },
+      {
+        key: 'desc_step_4',
+        type: 'copy',
+        helpText: '**Step 4** Choose any extra fields you want to populate (non-line item), e.g. *updated_by_id*',
+      },
       getInputFieldsForUpdateCreate,
       FluxxAPI.fn.getReturnFieldDescriptions,
+      {
+        key: 'desc_step_5',
+        type: 'copy',
+        helpText: '**Step 5** Choose values for the extra fields',
+      },
       {
         key: 'values',
         label: 'Value List',
         type: 'text',
         helpText:
           'Enter a value corresponding to each Field from the previous form control. Use one per box.\nThe first Field will be set to the first Value, the second Field to the second Value, etc.',
-        required: true,
+        required: false,
         list: true,
         placeholder: 'Enter value to create/update for its corresponding Field above',
         altersDynamicFields: false,
+      },
+      {
+        key: 'desc_step_6',
+        type: 'copy',
+        helpText: '**Step 6** Choose the fields you want to return to Zapier',
       },
       getInputFieldsForReturnFields,
     ],

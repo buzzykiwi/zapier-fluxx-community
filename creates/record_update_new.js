@@ -188,8 +188,8 @@ const getInputFieldsForUpdateCreate = async (z, bundle) => {
     model_type = 'GrantRequest';
   }
 
-  if (model_type === undefined || model_type === '') {
-    return;
+  if (model_type === undefined || model_type === null) {
+    return [];
   }
   const r = await FluxxAPI.fn.fields_for_model(z, bundle, model_type, FluxxAPI.c.CORE_MODELS, true);
   return {
@@ -210,8 +210,8 @@ const getInputFieldsForReturnFields = async (z, bundle) => {
   // Fields to return from new/updated model
   const model_type = bundle.inputData.model_type;
 
-  if (model_type === undefined || model_type === '') {
-    return;
+  if (model_type === undefined || model_type === null) {
+    return [];
   }
   const r = await FluxxAPI.fn.fields_for_model(z, bundle, model_type, FluxxAPI.c.CORE_MODELS);
   return {

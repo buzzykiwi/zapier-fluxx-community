@@ -441,10 +441,14 @@ module.exports.preProcessFluxxResponse = function(z, cols, response, model_type)
   handleFluxxAPIReturnErrors(z, response);
 
   let data;
+  let snake = modelToSnake(model_type);
+  if (snake.startsWith("mac_model")) {
+    snake = "machine_model";
+  }
   if (response.data.records === undefined) {
-    data = response.data[modelToSnake(model_type)]; // gets dict of single result;
+    data = response.data[snake]; // gets dict of single result;
   } else {
-    data = response.data.records[modelToSnake(model_type)]; // gets array of dicts of results;
+    data = response.data.records[snake]; // gets array of dicts of results;
   }
   let ordered_response;
   let item;
@@ -729,7 +733,6 @@ module.exports.optionsForSingleItemFetch = function(z, bundle, p)
 */
 module.exports.determine_mas = async function(z, model_type, field_list)
 {
-  
   const sma_options = {
     url: `https://${bundle.authData.client_domain}/api/rest/v2/model_attribute/list`,
     method: 'POST',
@@ -1374,7 +1377,7 @@ module.exports.getReturnFieldDescriptions = async function (z, bundle) {
   let fields = bundle.inputData.fields;
   let core_models = c.CORE_MODELS;
   let field;
-  
+    
   if (fields !== null && 
     fields !== undefined && 
     fields.length > 0 && 
@@ -1515,6 +1518,9 @@ let paginated_fetch = module.exports.paginated_fetch = async (z, bundle, options
   let ret; // used for getting the array of results from each request. We will add these to the final array.
   let first_response = null;
   var snakey = modelToSnake(model_type);
+  if (snakey.startsWith("mac_model")) {
+    snakey = "machine_model";
+  }
   let finish_now = false;
   if (limit === undefined || limit === null || limit === "") {
     limit = 0;

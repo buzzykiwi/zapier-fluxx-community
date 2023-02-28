@@ -13,10 +13,18 @@ const perform = async (z, bundle) => {
   if (options !== null && options !== undefined) {
     options.body.show_mavs = 'true';
     const response = await FluxxAPI.fn.paginated_fetch(z, bundle, options, p.model_type, p.limit);
+
+    let items = FluxxAPI.fn.preProcessFluxxResponse(z, p.cols, response, p.model_type);
+    (bundle.inputData.reverse == 1) && (items = items.reverse());
+    if (bundle.inputData.disable_dedupe == 1) {
+      items.forEach(item => {
+        item.id = "" + Date.now() + "-" + item.id
+      });
+    }
     if (bundle.inputData.force_line_items == 1) {
-      return [{id: Date.now(), line_items: FluxxAPI.fn.preProcessFluxxResponse(z, p.cols, response, p.model_type)}];
+      return [{id: Date.now(), line_items: items}];
     } else {
-      return FluxxAPI.fn.preProcessFluxxResponse(z, p.cols, response, p.model_type);
+      return items;
     }
   }
 
@@ -48,6 +56,20 @@ module.exports = {
       {
         key: 'force_line_items',
         label: 'Force Line Items?',
+        choices: {1:"True"},
+        type: 'string',
+        required: false,
+      },
+      {
+        key: 'reverse',
+        label: 'Reverse Results Order?',
+        choices: {1:"True"},
+        type: 'string',
+        required: false,
+      },
+      {
+        key: 'disable_dedupe',
+        label: 'Disable De-Dupe?',
         choices: {1:"True"},
         type: 'string',
         required: false,

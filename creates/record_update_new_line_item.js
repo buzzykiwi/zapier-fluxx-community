@@ -348,7 +348,7 @@ module.exports = {
   display: {
     label: 'Create/Update Fluxx Records (Line Item Support)',
     description:
-      'Create or update a Fluxx record of any model type. Provide the name of the model, a list of fields and a list of their corresponding values and this action will create a new record. If you include an existing id, the action updates an existing record. The first six pairs of field and value are Line Item enabled; further static values can be add later.',
+      'Create or update a set of Fluxx records of any model type. Provide the name of the model, a list of fields and Line Items containing their corresponding values, and this action will create a set of new record. If you specify a set of existing ids, the action updates the existing records. The first ten pairs of field and value are Line Item enabled; any number of static values can be added later.',
     hidden: false,
     important: true,
   },

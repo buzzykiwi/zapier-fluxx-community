@@ -206,28 +206,6 @@ const getInputFieldsForUpdateCreate = async (z, bundle) => {
   };
 };
 
-const getInputFieldsForReturnFields = async (z, bundle) => {
-  // Fields to return from new/updated model
-  const model_type = bundle.inputData.model_type;
-
-  if (model_type === undefined || model_type === null) {
-    return [];
-  }
-  const r = await FluxxAPI.fn.fields_for_model(z, bundle, model_type, FluxxAPI.c.CORE_MODELS);
-  return {
-    key: 'cols',
-    label: 'Fields to Return',
-    choices: r,
-    type: 'string',
-    required: true,
-    list: true,
-    placeholder: 'Choose return field…',
-    helpText:
-      'Enter the list of fields you want to return from the updated or created record. Use one per box. The list of fields depends on which Model Type is chosen.',
-  };
-};
-
-
 module.exports = {
   key: 'create_update_record',
   noun: 'Fluxx Record',
@@ -263,7 +241,22 @@ module.exports = {
         altersDynamicFields: true,
       },
       getInputFieldsForModelTypes,
-      getInputFieldsForUpdateCreate,
+      // getInputFieldsForUpdateCreate,
+      {
+        key: 'fields',
+        label: 'Field List for Update/Create',
+        type: 'string',
+        required: true,
+        list: true,
+        // dynamic: first the key of the component to use (usually a trigger)
+        // then the field in the returned item representing the ID - this is the value that will be saved.
+        // then the field in the returned item representing the NAME (for display purposes)
+        dynamic: 'writeable_fields_for_model.value.label',
+        placeholder: 'Select a field to assign a value to…',
+        helpText:
+          'Enter the list of fields you want to update (or create in a new record). Use one per box. The list of field options depends on which Model Type is chosen.',
+        altersDynamicFields: true,
+      },
       FluxxAPI.fn.getReturnFieldDescriptions,
       {
         key: 'values',
@@ -276,7 +269,21 @@ module.exports = {
         placeholder: 'Enter value to create/update for its corresponding Field above',
         altersDynamicFields: false,
       },
-      getInputFieldsForReturnFields,
+      {
+        key: 'cols',
+        required: true,
+        label: 'Fields to Return',
+        list: true,
+        type: 'string',
+        // dynamic: first the key of the component to use (usually a trigger)
+        // then the field in the returned item representing the ID - this is the value that will be saved.
+        // then the field in the returned item representing the NAME (for display purposes)
+        dynamic: 'all_fields_for_model.value.label',
+      //  search: 'search_for_user.id',
+        placeholder: 'Choose return field…',
+        helpText:
+          'Enter the list of fields you want to return from the updated or created record. Use one per box. The list of fields depends on which Model Type is chosen.',
+      },
     ],
     sample: {
       model_type: 'grant_request',

@@ -7,7 +7,11 @@ const perform = async (z, bundle) => {
 
   let p = FluxxAPI.fn.parseSelectStatement(z, bundle.inputData.in);
   // p = {select: cols, from: model_type, where: filter, order_by: order_by, limit: limit};
-  
+
+  if (bundle.inputData.disable_dedupe == 2 && !p.cols.includes('updated_at')) {
+    p.cols.push("updated_at");
+  }
+    
   let options = FluxxAPI.fn.optionsFromParsedSelectStatement(z, bundle, p);
   
   if (options !== null && options !== undefined) {
@@ -16,9 +20,15 @@ const perform = async (z, bundle) => {
 
     let items = FluxxAPI.fn.preProcessFluxxResponse(z, p.cols, response, p.model_type);
     (bundle.inputData.reverse == 1) && (items = items.reverse());
-    if (bundle.inputData.disable_dedupe == 1) {
+    if (bundle.inputData.disable_dedupe > 0) {
+      let dd = bundle.inputData.disable_dedupe;
+      z.console.log(z.JSON.stringify(items));
       items.forEach(item => {
-        item.id = "" + Date.now() + "-" + item.id
+        if (dd == 1) {
+          item.id = "" + Date.now() + "-" + item.id;
+        } else if (dd == 2) {
+          item.id = "" + item.fields.updated_at + "-" + item.id;
+        }
       });
     }
     if (bundle.inputData.force_line_items == 1) {
@@ -69,16 +79,17 @@ module.exports = {
       },
       {
         key: 'disable_dedupe',
-        label: 'Disable De-Dupe?',
-        choices: {1:"True"},
+        label: 'De-Duplication',
+        choices: {1:"Disable de-duplication completely", 2: "Don't de-duplicate updated fields"},
         type: 'string',
         required: false,
+        helpText: "De-duplication helps Zapier to ignore items that it has already processed. If you disable de-duplication, ensure that the processed record will be changed in such a way that it won't re-trigger the Zap.\n\nThe second option allows updated items to still trigger the Zap. If not set, Zapier's de-duplication will think that the updated field has been seen before, and ignore it."
       },
     ],
     perform: perform,
     canPaginate: false,
     type: 'polling',
     sample: { id: 30444, name: 'default' },
-    outputFields: [{ key: 'id', type: 'integer' }, { key: 'name' }],
+    outputFields: [{ key: 'id', type: 'integer' },{ key: 'fields.id', type: 'integer' }],
   },
 };

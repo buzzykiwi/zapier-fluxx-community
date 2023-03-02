@@ -784,7 +784,7 @@ let dynamic_fields_for_dynamic_model = module.exports.dynamic_fields_for_dynamic
  * returns an array suitable as a dropdown with all the fields for a given model
  * model_type: the model whose fields will be returned
  * fields: the total array of all core fields
- * write_access: if true, remove any "id" and r-o fields from the list: use this if looking for fields to update
+ * write_access: if true, remove the "id" and any r-o fields from the list: use this if looking for fields to update
  * or add to a new record, as you should never have to write to the id field.
  */
 let fields_for_model = module.exports.fields_for_model = async function(z, bundle, model_type, fields, write_access = false, multi_value_only = false)
@@ -802,7 +802,7 @@ let fields_for_model = module.exports.fields_for_model = async function(z, bundl
     headers: c.STANDARD_HEADERS(bundle),
     params: {},
     body: {
-      cols: z.JSON.stringify(['id', 'name', 'attribute_type', 'multi_allowed']),
+      cols: z.JSON.stringify(['name', 'id', 'attribute_type', 'multi_allowed']),
       sort_attribute: 'name',
       sort_order: 'asc',
       filter: z.JSON.stringify({

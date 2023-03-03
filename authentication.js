@@ -74,8 +74,6 @@ const includeBearerToken = (request, z, bundle) => {
   return request;
 };
 
-
-
 module.exports = {
   config: {
     type: 'oauth2',
@@ -114,6 +112,12 @@ module.exports = {
         helpText:
           "This is the domain name of the Fluxx installation.\n\ne.g. **mysite.fluxx.io**   (live site)\n\ne.g. **mysite.preprod.fluxxlabs.com**  (preprod)\n\n**Don't include https:// or any leading or trailing slashes.**",
         inputFormat: 'https://{{input}}/',
+        altersDynamicFields: false,
+      },
+      {
+        key: 'bogus',
+        type: 'copy',
+        helpText: 'Click [here to set up API keys on your server](https://ENTER-YOUR-FLUXX-DOMAIN-HERE/oauth/applications). You will need to edit the URL to include your Fluxx domain. You may need to follow the link twice: once to log in to Fluxx, and once to go to the API keys page.',
       },
       {
         computed: false,

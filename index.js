@@ -13,7 +13,6 @@ const {
 
 // Triggers
 const newQueueTrigger = require('./triggers/new_queue.js');
-const downloadFluxxFileTrigger = require('./triggers/download_fluxx_file.js');
 const machineModelListTrigger = require('./triggers/machine_model_list.js');
 const getUserList = require("./triggers/user_list");
 const getModelDocumentType = require("./triggers/model_document_type");
@@ -53,7 +52,6 @@ module.exports = {
 
   triggers: {
     [newQueueTrigger.key]: newQueueTrigger,
-    [downloadFluxxFileTrigger.key]: downloadFluxxFileTrigger,
     [machineModelListTrigger.key]: machineModelListTrigger,
     [getUserList.key]: getUserList,
     [getModelDocumentType.key]: getModelDocumentType,

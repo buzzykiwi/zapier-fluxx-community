@@ -54,6 +54,40 @@ module.exports = {
         type: 'string',
         required: false,
       },
+      {
+        key: 'help',
+        type: 'copy',
+        helpText: '**Model and Field Explorer**\n\nUse the following controls to explore available models and their fields, for use in the SQL query. The contents of these fields are ignored while the Zap is running.',
+      },
+      {
+        key: 'model_group',
+        label: 'Model Group',
+        type: 'string',
+        choices: ['Basic', 'Intermediate', 'Dynamic Models only', 'All'],
+        helpText:
+          'Filter the Model Types displayed in the selector below, by choosing a different option here.',
+        default: 'Basic',
+        required: false,
+        list: false,
+        altersDynamicFields: true,
+      },
+      FluxxAPI.fn.getInputFieldsForModelTypesNotRequired,
+      {
+        key: 'fields',
+        label: 'Available Fields',
+        type: 'string',
+        required: false,
+        list: true,
+        // dynamic: first the key of the component to use (usually a trigger)
+        // then the field in the returned item representing the ID - this is the value that will be saved.
+        // then the field in the returned item representing the NAME (for display purposes)
+        dynamic: 'all_fields_for_model.value.label',
+        placeholder: 'Select a field',
+        helpText:
+          'Use the dropdown to identify field names to use in the SQL statement',
+        altersDynamicFields: true,
+      },
+      FluxxAPI.fn.getReturnFieldDescriptions,
     ],
     perform: perform,
     sample: { id: 30444, name: 'default' },

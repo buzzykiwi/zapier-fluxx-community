@@ -3,8 +3,6 @@ const FluxxAPI = require('../fluxx_api');
 
 const perform = async (z, bundle) => {
 
-  const FluxxAPI = require('../fluxx_api');
-
   let p = FluxxAPI.fn.parseSelectStatement(z, bundle.inputData.in);
   // p = {select: cols, from: model_type, where: filter, order_by: order_by, limit: limit};
 
@@ -22,7 +20,6 @@ const perform = async (z, bundle) => {
     (bundle.inputData.reverse == 1) && (items = items.reverse());
     if (bundle.inputData.disable_dedupe > 0) {
       let dd = bundle.inputData.disable_dedupe;
-      z.console.log(z.JSON.stringify(items));
       items.forEach(item => {
         if (dd == 1) {
           item.id = "" + Date.now() + "-" + item.id;
@@ -85,6 +82,40 @@ module.exports = {
         required: false,
         helpText: "De-duplication helps Zapier to ignore items that it has already processed. If you disable de-duplication, ensure that the processed record will be changed in such a way that it won't re-trigger the Zap.\n\nThe second option allows updated items to still trigger the Zap. If not set, Zapier's de-duplication will think that the updated field has been seen before, and ignore it."
       },
+      {
+        key: 'help',
+        type: 'copy',
+        helpText: '**Model and Field Explorer**\n\nUse the following controls to explore available models and their fields, for use in the SQL query. The contents of these fields are ignored while the Zap is running.',
+      },
+      {
+        key: 'model_group',
+        label: 'Model Group',
+        type: 'string',
+        choices: ['Basic', 'Intermediate', 'Dynamic Models only', 'All'],
+        helpText:
+          'Filter the Model Types displayed in the selector below, by choosing a different option here.',
+        default: 'Basic',
+        required: false,
+        list: false,
+        altersDynamicFields: true,
+      },
+      FluxxAPI.fn.getInputFieldsForModelTypesNotRequired,
+      {
+        key: 'fields',
+        label: 'Available Fields',
+        type: 'string',
+        required: false,
+        list: true,
+        // dynamic: first the key of the component to use (usually a trigger)
+        // then the field in the returned item representing the ID - this is the value that will be saved.
+        // then the field in the returned item representing the NAME (for display purposes)
+        dynamic: 'all_fields_for_model.value.label',
+        placeholder: 'Select a field',
+        helpText:
+          'Use the dropdown to identify field names to use in the SQL statement',
+        altersDynamicFields: true,
+      },
+      FluxxAPI.fn.getReturnFieldDescriptions,
     ],
     perform: perform,
     canPaginate: false,

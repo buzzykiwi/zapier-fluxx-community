@@ -110,14 +110,9 @@ module.exports = {
         label: 'Fluxx client domain',
         type: 'string',
         helpText:
-          "This is the domain name of the Fluxx installation.\n\ne.g. **mysite.fluxx.io**   (live site)\n\ne.g. **mysite.preprod.fluxxlabs.com**  (preprod)\n\n**Don't include https:// or any leading or trailing slashes.**",
+          "This is the domain name of the Fluxx installation.\n\ne.g. **mysite.fluxx.io**   (live site)\n\ne.g. **mysite.preprod.fluxxlabs.com**  (preprod)\n\n**Don't include https:// or any leading or trailing slashes.**\n\nClick [here to set up API keys on your server](https://ENTER_YOUR_FLUXX_DOMAIN_HERE/oauth/applications). You will need to edit the URL to include your Fluxx domain. You may need to follow the link twice: once to log in to Fluxx, and once to go to the API keys page.",
         inputFormat: 'https://{{input}}/',
         altersDynamicFields: false,
-      },
-      {
-        key: 'bogus',
-        type: 'copy',
-        helpText: 'Click [here to set up API keys on your server](https://ENTER-YOUR-FLUXX-DOMAIN-HERE/oauth/applications). You will need to edit the URL to include your Fluxx domain. You may need to follow the link twice: once to log in to Fluxx, and once to go to the API keys page.',
       },
       {
         computed: false,

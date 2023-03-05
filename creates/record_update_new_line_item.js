@@ -305,7 +305,7 @@ module.exports = {
         list: false,
         altersDynamicFields: true,
       },
-      getInputFieldsForModelTypes,
+      FluxxAPI.fn.getInputFieldsForModelTypes,
       {
         key: 'desc_step_2',
         type: 'copy',

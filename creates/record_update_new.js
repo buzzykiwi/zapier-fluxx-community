@@ -198,7 +198,7 @@ module.exports = {
         list: false,
         altersDynamicFields: true,
       },
-      getInputFieldsForModelTypes,
+      FluxxAPI.fn.getInputFieldsForModelTypes,
       {
         key: 'fields',
         label: 'Field List for Update/Create',

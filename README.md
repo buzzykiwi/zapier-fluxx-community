@@ -91,12 +91,6 @@ FCE includes two Triggers: Trigger on Queued Records, and Trigger on New Records
 * Configuration of which records to return (i.e. which list of records will be regularly downloaded to check for additions) is done via FCE's [_SQL Support_](./SQL_SUPPORT.md).
 
 
-### Download File
-
-* Deprecated, and will likely be removed in future releases.
-* It takes one parameter, the ModelDocument Id, and returns parameters id, document_content_type, document_file_name, created_at, created_by_id.full_name, updated_by_id.full_name, updated_at, doc_label, document_file_size, document_updated_at, original_file_name, model_document_type_id.name, document_type, document_text, documentable_type, documentable_id, model_document_template_id.description as well as "file", a url that holds the file. This url can be used for input to apps such as gmail/Exchange mail as a file attachment.
-
-
 ## Actions
 
 ### File Download

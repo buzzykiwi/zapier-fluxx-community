@@ -164,48 +164,6 @@ output =
 
 };
 
-const getInputFieldsForModelTypes = async (z, bundle) => {
-  // Generate a list of Model Types
-  // based on the "group" e.g. Basic, All.
-
-  const r = await FluxxAPI.fn.fetch_core_and_machine_model_list(z, bundle, bundle.inputData.model_group);
-  return {
-    key: 'model_type',
-    label: 'Model Type',
-    choices: r,
-    type: 'string',
-    required: true,
-    placeholder: 'Choose model…',
-    altersDynamicFields: true,
-  };
-
-};
-
-const getInputFieldsForUpdateCreate = async (z, bundle) => {
-  // Fields to Update/Create
-  var model_type = bundle.inputData.model_type;
-  if (model_type == '') {
-    model_type = 'GrantRequest';
-  }
-
-  if (model_type === undefined || model_type === null) {
-    return [];
-  }
-  const r = await FluxxAPI.fn.fields_for_model(z, bundle, model_type, FluxxAPI.c.CORE_MODELS, true);
-  return {
-    key: 'fields',
-    label: 'Field List for Update/Create',
-    choices: r,
-    type: 'string',
-    required: true,
-    list: true,
-    placeholder: 'Select a field to assign a value to…',
-    helpText:
-      'Enter the list of fields you want to update (or create in a new record). Use one per box. The list of field options depends on which Model Type is chosen.',
-    altersDynamicFields: true,
-  };
-};
-
 module.exports = {
   key: 'create_update_record',
   noun: 'Fluxx Record',
@@ -241,7 +199,6 @@ module.exports = {
         altersDynamicFields: true,
       },
       getInputFieldsForModelTypes,
-      // getInputFieldsForUpdateCreate,
       {
         key: 'fields',
         label: 'Field List for Update/Create',

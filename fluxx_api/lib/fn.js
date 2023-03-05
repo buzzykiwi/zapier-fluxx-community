@@ -1561,6 +1561,21 @@ let paginated_fetch = module.exports.paginated_fetch = async (z, bundle, options
   return first_response !== null ? first_response : [];
 }
 
+module.exports.getInputFieldsForModelTypes = async (z, bundle) => {
+  // Generate a list of Model Types
+  // based on the "group" e.g. Basic, All.
+  const r = await FluxxAPI.fn.fetch_core_and_machine_model_list(z, bundle, bundle.inputData.model_group);
+  return {
+    key: 'model_type',
+    label: 'Model Type',
+    choices: r,
+    type: 'string',
+    required: true,
+    placeholder: 'Choose model…',
+    altersDynamicFields: true,
+  };
+}
+
 module.exports.sql_descriptions = async (z, bundle) => {
   let desc = "";
   try {

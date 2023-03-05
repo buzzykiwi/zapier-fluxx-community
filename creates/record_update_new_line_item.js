@@ -213,49 +213,6 @@ output =
 
 };
 
-const getInputFieldsForModelTypes = async (z, bundle) => {
-  // Generate a list of Model Types
-  // based on the "group" e.g. Basic, All.
-  let r = await FluxxAPI.fn.fetch_core_and_machine_model_list(z, bundle, bundle.inputData.model_group);
-  return {
-    key: 'model_type',
-    label: 'Model Type',
-    choices: r,
-    type: 'string',
-    required: true,
-    placeholder: 'Choose model…',
-    altersDynamicFields: true,
-  };
-
-};
-
-const getInputFieldsForUpdateCreate = async (z, bundle) => {
-  // Fields to Update/Create
-  var model_type = bundle.inputData.model_type;
-  if (model_type == '') {
-    model_type = 'GrantRequest';
-  }
-
-  if (model_type === undefined || model_type === null) {
-    return [];
-  }
-  z.console.log("model type: " , model_type);
-  let r = await FluxxAPI.fn.fields_for_model(z, bundle, model_type, FluxxAPI.c.CORE_MODELS, true);
-  
-  return {
-    key: 'fields',
-    label: 'Extra Field List for Update/Create',
-    choices: r,
-    type: 'string',
-    required: false,
-    list: true,
-    placeholder: 'Select a field to assign a value to…',
-    helpText:
-      'Enter the list of additional fields you want to update (or create in a new record). Use one per box. The list of field options depends on which Model Type is chosen. YOU CANNOT USE LINE ITEMS HERE.',
-    altersDynamicFields: true,
-  };
-};
-
 async function show_field(z, bundle, n)
 {
   // never show if there is no model type
@@ -459,7 +416,6 @@ module.exports = {
         type: 'copy',
         helpText: '**Step 4** Choose any extra fields you want to populate (non-line item), e.g. *updated_by_id*',
       },
-      // getInputFieldsForUpdateCreate,
       {
         key: 'fields',
         label: 'Field List for Update/Create',

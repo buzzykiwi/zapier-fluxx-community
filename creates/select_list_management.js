@@ -403,23 +403,6 @@ const perform = async (z, bundle) => {
 
 };
 
-const getInputFieldsForModelTypes = async (z, bundle) => {
-  // Generate a list of Model Types
-  // based on the "group" e.g. Basic, All.
-  const r = await FluxxAPI.fn.fetch_core_and_machine_model_list(z, bundle, bundle.inputData.model_group);
-  return {
-    key: 'model_type',
-    label: 'Model Type',
-    choices: r,
-    type: 'string',
-    required: true,
-    placeholder: 'Choose model…',
-    altersDynamicFields: true,
-  };
-
-};
-
-
 module.exports = {
   key: 'select_list_management',
   noun: 'Select List Items',
@@ -444,7 +427,7 @@ module.exports = {
         list: false,
         altersDynamicFields: true,
       },
-      getInputFieldsForModelTypes,
+      FluxxAPI.fn.getInputFieldsForModelTypes,
       {
         key: 'field_id',
         required: true,

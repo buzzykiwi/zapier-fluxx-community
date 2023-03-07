@@ -23,7 +23,6 @@ const allFieldsForModel = require("./triggers/all_fields_for_model.js");
 const writeableFieldsForModel = require("./triggers/writeable_fields_for_model.js");
 
 // Creates
-const recordSqlSearch = require('./creates/record_sql_search.js');
 const recordsSqlSearch = require('./creates/records_sql_search.js');
 const updateFluxxRecordCreate = require('./creates/record_update_new.js');
 const updateFluxxRecordLineItemCreate = require('./creates/record_update_new_line_item.js');
@@ -39,6 +38,7 @@ const hydrators = require('./hydrators');
 // Searches
 const searchUser = require("./searches/user");
 const searchRecord = require('./searches/record.js');
+const recordSqlSearch = require('./searches/record_sql_search.js');
 
 
 module.exports = {
@@ -64,7 +64,6 @@ module.exports = {
   creates: {
     [updateFluxxRecordCreate.key]: updateFluxxRecordCreate,
     [updateFluxxRecordLineItemCreate.key]: updateFluxxRecordLineItemCreate,
-    [recordSqlSearch.key]: recordSqlSearch,
     [recordsSqlSearch.key]: recordsSqlSearch,
     [uploadFileCreate.key]: uploadFileCreate,
     [downloadFileCreate.key]: downloadFileCreate,
@@ -75,5 +74,6 @@ module.exports = {
   searches: {
     [searchUser.key]: searchUser,
     [searchRecord.key]: searchRecord,
+    [recordSqlSearch.key]: recordSqlSearch,
   },
 };

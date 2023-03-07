@@ -14,8 +14,8 @@ const perform = async (z, bundle) => {
     const response = await FluxxAPI.fn.paginated_fetch(z, bundle, options, p.model_type, 1);
     const ret = FluxxAPI.fn.preProcessFluxxResponse(z, p.cols, response, p.model_type);
     
-    if (ret.length === 0) return {};
-    return ret[0]; // the first one in the list
+    if (ret.length === 0) return [];
+    return [ret[0]]; // the first one in the list
   }
 
 };
@@ -63,7 +63,7 @@ module.exports = {
       FluxxAPI.fn.getInputFieldsForModelTypesNotRequired,
       {
         key: 'fields',
-        label: 'Field List for Update/Create',
+        label: 'Available Fields',
         type: 'string',
         required: false,
         list: true,

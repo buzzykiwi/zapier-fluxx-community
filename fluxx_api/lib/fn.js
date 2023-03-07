@@ -669,12 +669,15 @@ module.exports.optionsFromParsedSelectStatement = function(z, bundle, p)
     headers: c.STANDARD_HEADERS(bundle),
     params: {},
     body: {
-      filter: z.JSON.stringify(p.filter),
       cols: z.JSON.stringify(parsed_cols.cols),
+      // we add the filter below
       // we add sorting below
     },
     model_type: modelToCamel(p.model_type),
   };
+  if (p.filter !== null && p.filter !== undefined && !(Array.isArray(p.filter) && p.filter.length == 0)) {
+    options.body.filter = z.JSON.stringify(p.filter);
+  }
   if (Object.keys(parsed_cols.relation).length > 0) {
     options.body['relation'] = z.JSON.stringify(parsed_cols.relation);
   } 

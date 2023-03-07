@@ -2,8 +2,8 @@
 
 const perform = async (z, bundle) => {
   const FluxxAPI = require('../fluxx_api');
-  // true, false: means include read-only attributes, and don't restrict to multi-value attributes.
-  return await FluxxAPI.fn.fields_for_model(z, bundle, bundle.inputData.model_type, FluxxAPI.c.CORE_MODELS, true, false);
+  // false, false: means don't remove read-only attributes, and don't restrict to multi-value attributes.
+  return await FluxxAPI.fn.fields_for_model(z, bundle, bundle.inputData.model_type, FluxxAPI.c.CORE_MODELS, false, false);
 };
 
 module.exports = {

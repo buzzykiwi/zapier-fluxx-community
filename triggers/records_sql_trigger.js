@@ -9,7 +9,9 @@ const perform = async (z, bundle) => {
   if (bundle.inputData.disable_dedupe == 2 && !p.cols.includes('updated_at')) {
     p.cols.push("updated_at");
   }
-    
+  if (bundle.inputData.disable_dedupe == 3) {
+    p.cols = p.cols.concat(bundle.inputData.dedupe_fields); // add the fields we are going to dedupe with.
+  }
   let options = FluxxAPI.fn.optionsFromParsedSelectStatement(z, bundle, p);
   
   if (options !== null && options !== undefined) {
@@ -21,10 +23,22 @@ const perform = async (z, bundle) => {
     if (bundle.inputData.disable_dedupe > 0) {
       let dd = bundle.inputData.disable_dedupe;
       items.forEach(item => {
-        if (dd == 1) {
+        switch(dd) {
+        case 1:
           item.id = "" + Date.now() + "-" + item.id;
-        } else if (dd == 2) {
+          break;
+        case 2:
           item.id = "" + item.fields.updated_at + "-" + item.id;
+          break;
+        case 3:
+          let hashString = '';
+          let field;
+          if (Array.isArray(bundle.inputData.dedupe_fields)) {
+            bundle.inputData.dedupe_fields.forEach(field => {
+              hashString = hashString + item.fields[field] + "||";
+            });
+            item.id = z.hash('md5', hashString) + '-' + item.id;
+          }
         }
       });
     }
@@ -36,6 +50,32 @@ const perform = async (z, bundle) => {
   }
 
 };
+
+const customDedupe = async (z, bundle) => {
+  if (bundle.inputData.disable_dedupe != 3) {
+    return '[]';
+  }
+  return {
+    key: 'Custom:_Allow_Changes_in_These_Fields',
+    children: [
+      {
+        key: 'dedupe_fields',
+        label: 'Field List',
+        type: 'string',
+        required: false,
+        list: true,
+        // dynamic: first the key of the component to use (usually a trigger)
+        // then the field in the returned item representing the ID - this is the value that will be saved.
+        // then the field in the returned item representing the NAME (for display purposes)
+        dynamic: 'all_fields_for_sql_model.value.label',
+        placeholder: 'Select a field',
+        helpText:
+          'A record will get through the de-dupe process and be available if it has changes in any of the fields listed here.',
+        altersDynamicFields: false,
+      },
+    ],
+  }
+}
 
 module.exports = {
   key: 'records_sql_trigger',
@@ -75,13 +115,31 @@ module.exports = {
         required: false,
       },
       {
+        key: 'dedupe_help',
+        type: 'copy',
+        helpText: `### De-Duping
+
+**Default:** Zapier will only allow each record to trigger the Zap once, by keeping a record of the ids. Only new records (or records it has never seen before) will trigger the Zap.
+
+**Option 1:** _All_ records selected by the SQL query will trigger the Zap, every time the timed trigger runs. If you choose this option, ensure that the processed record will be saved in such a way that it won't re-trigger the Zap the next time it runs.
+
+**Option 2:** Updated records can trigger the Zap in addition to new records. By default, Zapier's de-duper will think that updated records have been seen before, so this option is useful if you need the Zap to operate on both new _and_ updated records.
+
+**Option 3:** This advanced option allows you to specify which fields Zapier will check for changes. Any record with a change in one of these fields will trigger the Zap. Note, that the SQL query will need to return enough items for this trigger to identify some that have those changes.`,
+      },
+      {
         key: 'disable_dedupe',
         label: 'De-Duplication',
-        choices: {1:"Disable de-duplication completely", 2: "Don't de-duplicate updated fields"},
+        choices: {
+          1: "1. Disable de-duplication completely", 
+          2: "2. Allow updated records in addition to new records",
+          3: '3. Custom',
+        },
         type: 'string',
         required: false,
-        helpText: "De-duplication helps Zapier to ignore items that it has already processed. If you disable de-duplication, ensure that the processed record will be changed in such a way that it won't re-trigger the Zap.\n\nThe second option allows updated items to still trigger the Zap. If not set, Zapier's de-duplication will think that the updated field has been seen before, and ignore it."
+        altersDynamicFields: true,
       },
+      customDedupe,
       {
         key: 'help',
         type: 'copy',

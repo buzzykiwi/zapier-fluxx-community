@@ -1564,12 +1564,12 @@ let paginated_fetch = module.exports.paginated_fetch = async (z, bundle, options
   return first_response !== null ? first_response : [];
 }
 
-let getInputFieldsForModelTypes = module.exports.getInputFieldsForModelTypes = async (z, bundle, required=true) => {
+let getInputFieldsForModelTypes = module.exports.getInputFieldsForModelTypes = async (z, bundle, required=true, model_group_input_name='model_group', model_type_key='model_type') => {
   // Generate a list of Model Types
   // based on the "group" e.g. Basic, All.
-  const r = await fetch_core_and_machine_model_list(z, bundle, bundle.inputData.model_group);
+  const r = await fetch_core_and_machine_model_list(z, bundle, bundle.inputData[model_group_input_name]);
   return {
-    key: 'model_type',
+    key: model_type_key,
     label: 'Model Type',
     choices: r,
     type: 'string',
@@ -1580,6 +1580,9 @@ let getInputFieldsForModelTypes = module.exports.getInputFieldsForModelTypes = a
 }
 module.exports.getInputFieldsForModelTypesNotRequired = async (z, bundle) => {
   return await getInputFieldsForModelTypes(z, bundle, false);
+}
+module.exports.getInputFieldsForModelTypesForDedupe = async (z, bundle) => {
+  return await getInputFieldsForModelTypes(z, bundle, false, 'dedupe_model_group', 'dedupe_model_type');
 }
 
 module.exports.sql_descriptions = async (z, bundle) => {

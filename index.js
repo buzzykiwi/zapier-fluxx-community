@@ -20,6 +20,7 @@ const getModelDocumentSubType = require("./triggers/model_document_sub_type");
 const recordsSqlTrigger = require("./triggers/records_sql_trigger");
 const multiFieldsForModel = require("./triggers/multi_fields_for_model.js");
 const allFieldsForModel = require("./triggers/all_fields_for_model.js");
+const allFieldsForSQLModel = require("./triggers/all_fields_for_sql_model.js");
 const writeableFieldsForModel = require("./triggers/writeable_fields_for_model.js");
 
 // Creates
@@ -59,6 +60,7 @@ module.exports = {
     [recordsSqlTrigger.key]: recordsSqlTrigger,
     [multiFieldsForModel.key]: multiFieldsForModel,
     [allFieldsForModel.key]: allFieldsForModel,
+    [allFieldsForSQLModel.key]: allFieldsForSQLModel,
     [writeableFieldsForModel.key]: writeableFieldsForModel,
   },
   creates: {

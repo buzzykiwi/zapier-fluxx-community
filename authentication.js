@@ -107,10 +107,10 @@ module.exports = {
         computed: false,
         key: 'client_domain',
         required: true,
-        label: 'Fluxx client domain',
+        label: ' ',
         type: 'string',
         helpText:
-          "This is the domain name of the Fluxx installation.\n\ne.g. **mysite.fluxx.io**   (live site)\n\ne.g. **mysite.preprod.fluxxlabs.com**  (preprod)\n\n**Don't include https:// or any leading or trailing slashes.**\n\nClick [here to set up API keys on your server](https://ENTER_YOUR_FLUXX_DOMAIN_HERE/oauth/applications). You will need to edit the URL to include your Fluxx domain. You may need to follow the link twice: once to log in to Fluxx, and once to go to the API keys page.",
+          "Click [here to set up API keys on your server or to retrieve existing keys](https://ENTER_YOUR_FLUXX_DOMAIN_HERE/oauth/applications). Edit the URL to include your Fluxx domain.\n\n**Hint:** Log in to Fluxx in another browser tab before clicking the link. Otherwise, you may need to follow the link twice.\n\n### Setting up a new pair of keys\n\n1. Follow the link above, replacing enter_your_fluxx_domain_here with your Fluxx domain\n2. Click New Application\n* Give the connection a name (e.g. Zapier Keys)\n3. Paste the following URL into the Redirect URI box: `https://zapier.com/dashboard/auth/oauth/return/App171896CLIAPI/`\n4. Scopes: leave blank\n* Click Submit\n5. The Application ID and Secret are displayed; copy and paste these into the fields below. Remove any trailing spaces.\n\n**Fluxx Client Domain** (required)\n\nEnter the domain name of the Fluxx installation.\n\ne.g. **mysite.fluxx.io** (live)\n\ne.g. **mysite.preprod.fluxxlabs.com** (preprod)\n\n**Do not include https:// or a trailing slash.**",
         inputFormat: 'https://{{input}}/',
         altersDynamicFields: false,
       },
@@ -121,7 +121,7 @@ module.exports = {
         label: 'Fluxx Application Id',
         type: 'string',
         helpText:
-          "Create a application id and secret in Fluxx.",
+          "Copy and paste the Application Id from Fluxx. Remove any trailing spaces.",
       },
       {
         computed: false,
@@ -130,7 +130,7 @@ module.exports = {
         label: 'Fluxx Secret',
         type: 'string',
         helpText:
-          "Create a application id and client secret in Fluxx.",
+          "Copy and paste the Secret from Fluxx. Remove any trailing spaces.",
       }
     ],
     connectionLabel: '{{bundle.authData.client_domain}}',

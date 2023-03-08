@@ -38,7 +38,7 @@ module.exports = {
       {
         key: 'in',
         type: 'string',
-        label: 'SQL statement',
+        label: 'SQL input',
         required: true,
         altersDynamicFields: true,
       },

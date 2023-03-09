@@ -75,8 +75,8 @@ module.exports = {
   noun: 'Records in Fluxx API Queue',
   display: {
     label: 'Trigger on Queued Records',
-    description: 'Triggers when objects appear in a specified Fluxx API queue.',
-    directions: 'Should be triggered on a cron (timed) basis',
+    description: 'Triggers when objects appear in a specified Fluxx API queue. The queue is cleared after the records have been sent to Zapier. Optional Line Item Support. No de-duping is performed: If the same Fluxx record appears in the multiple runs of the same queue, it will trigger every time.',
+    directions: 'Triggered on a cron (timed) basis',
     hidden: false,
     important: true,
   },

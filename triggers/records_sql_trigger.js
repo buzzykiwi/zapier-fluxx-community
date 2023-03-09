@@ -20,8 +20,8 @@ const perform = async (z, bundle) => {
 
     let items = FluxxAPI.fn.preProcessFluxxResponse(z, p.cols, response, p.model_type);
     (bundle.inputData.reverse == 1) && (items = items.reverse());
-    if (bundle.inputData.disable_dedupe > 0) {
-      let dd = bundle.inputData.disable_dedupe;
+    let dd = bundle.inputData.disable_dedupe - 0; // convert to number
+    if (dd > 0) {
       items.forEach(item => {
         switch(dd) {
         case 1:
@@ -83,7 +83,7 @@ module.exports = {
   display: {
     label: 'Trigger on New Records',
     description:
-      "Triggers when new records are found via an SQL-like search. e.g. SELECT id, name FROM Organization WHERE city = 'Auckland' ORDER BY name asc LIMIT 400\nResults are de-duped and will not trigger for the same item twice unless the Zap is stopped and re-started.",
+      "Triggers when new records are found via an SQL-like search. e.g. SELECT id, name FROM Organization WHERE city = 'Auckland' ORDER BY name asc LIMIT 400. Optional Line Item Support, and several de-duping options are available.",
     hidden: false,
     important: true,
   },

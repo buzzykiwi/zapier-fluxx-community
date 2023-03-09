@@ -254,9 +254,9 @@ let parseOrderByClause = module.exports.parseOrderByClause = function(z,order_by
   let ret = {};
 
   if (typeof order_by == 'string') {
-    let order = order_by.split(/ *, */);
+    let order = order_by.split(/\s*,\s*/);
     order.forEach(o => {
-      pair = o.split(/ +/);
+      pair = o.split(/\s+/);
       if (pair.length == 1) {
         pair.push("asc");
       }
@@ -293,7 +293,7 @@ let parseOrderByClause = module.exports.parseOrderByClause = function(z,order_by
 // parseSelectStatement
 let parseSelectStatement = module.exports.parseSelectStatement = function(z, clause)
 {
-  let re = new RegExp(String.raw`^\s*SELECT\s+([a-z][\da-z_,. ]*)\s+FROM\s+(\w+)(?:\s+WHERE\s+(.*?))?(\s+ORDER\s*BY\s+([^ ].*?(?!LIMIT)))?(\s+LIMIT\s*(\d+))?\s*$`,"s");
+  let re = new RegExp(String.raw`^\s*SELECT\s+([a-z][\s\da-z_,.]*)\s+FROM\s+(\w+)(?:\s+WHERE\s+(.*?))?(\s+ORDER\s*BY\s+([^ ].*?(?!LIMIT)))?(\s+LIMIT\s*(\d+))?\s*$`,"s");
 
   // in Zapier, strings containing commas get sent to us as arrays which need a comma join.
   if (Array.isArray(clause)) {
@@ -308,7 +308,7 @@ let parseSelectStatement = module.exports.parseSelectStatement = function(z, cla
     // it looks like an SQL statement
     let model_type = m[2];          // the FROM model
     return {
-      cols: m[1].split(/ *, */), // from comma-separated string to Array
+      cols: m[1].trim().split(/\s*,\s*/), // from comma-separated string to Array
       model_type: model_type,
       filter: parseWhereClause(z, m[3], model_type),
       order_by: parseOrderByClause(z, m[5], model_type), // model_type needed as some models have different format for order_by

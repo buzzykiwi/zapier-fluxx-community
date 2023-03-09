@@ -92,14 +92,14 @@ var fluxx_operators_detailed_o = null;
 var fluxx_operators_detailed_regex = module.exports.fluxx_operators_detailed_regex = function() {
   if (fluxx_operators_detailed === null) {
     let operator_regex_string = fluxx_operator_regex(true) // true to capture individual operators
-    fluxx_operators_detailed = new RegExp("^ *([_a-z0-9]+) *(?:" +operator_regex_string+") *(.*)"); // non capturing group surrounds the set of options
+    fluxx_operators_detailed = new RegExp("^\\s*([_a-z0-9]+)\\s*(?:" +operator_regex_string+")\\s*(.*)"); // non capturing group surrounds the set of options
   }
   return fluxx_operators_detailed;
 };
 module.exports.fluxx_operators_basic_regex = function() {
   if (fluxx_operators_basic === null) {
     let operator_regex_string = fluxx_operator_regex(false);
-    let re_string = `((?:[a-z0-9_]+) *(?:${operator_regex_string}))|(AND|OR|NOT)|([()])`;
+    let re_string = `((?:[a-z0-9_]+)\\s*(?:${operator_regex_string}))|(AND|OR|NOT)|([()])`;
     fluxx_operators_basic = new RegExp(re_string,"g");
   }
   return fluxx_operators_basic;
@@ -126,9 +126,9 @@ var fluxx_operator_regex = module.exports.fluxx_operator_regex = function(detail
     count = count + (op.use_second_capture === true ? 2 : 1);
 
     if (detailed_parse) {
-      operand_regex = (op.needs_operand === true) ? ` *(${raw_operand_regex})`: "";
+      operand_regex = (op.needs_operand === true) ? `\\s*(${raw_operand_regex})`: "";
     } else {
-      operand_regex = (op.needs_operand === true) ? ` *(?:${raw_operand_regex})`: "";
+      operand_regex = (op.needs_operand === true) ? `\\s*(?:${raw_operand_regex})`: "";
     }
     if (i > 0) {
       operator_regex = operator_regex + "|";

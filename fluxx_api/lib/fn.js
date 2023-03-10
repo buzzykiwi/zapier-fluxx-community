@@ -1589,25 +1589,25 @@ module.exports.sql_descriptions = async (z, bundle) => {
   let desc = "";
   try {
     if (bundle.inputData.in === undefined || bundle.inputData.in === null || bundle.inputData.in.trim() == "") {
-      throw "blank SQL statement";
+      throw "blank SQL statement [_see documentation_](https://github.com/buzzykiwi/zapier-fluxx-community/blob/main/SQL_SUPPORT.md)";
     }
     let p = parseSelectStatement(z, bundle.inputData.in);
     if (p == false) {
-      throw "invalid SQL";
+      throw "__Invalid SQL__ Please check to ensure that the SQL parser has accurately represented your SQL statement. Common errors include forgetting to capitalise SELECT, FROM, WHERE, AND, OR, NOT, ORDER BY, or LIMIT. [_see documentation_](https://github.com/buzzykiwi/zapier-fluxx-community/blob/main/SQL_SUPPORT.md)";
     }
     // p = {select: cols, from: model_type, where: filter, order_by: order_by, limit: limit};
     let parsed_cols = splitFieldListIntoColsAndRelations(p.cols);  
 
     desc += `- Model Type: ${modelToCamel(p.model_type)}\n`; 
-    (Object.keys(parsed_cols.cols).length > 0)      && (desc += `- Cols: ${z.JSON.stringify(parsed_cols.cols)}\n`);
+    (Object.keys(parsed_cols.cols).length > 0)      && (desc += `- Cols: ${z.JSON.stringify(parsed_cols.cols).replace('","','", "')}\n`);
     (Object.keys(parsed_cols.relation).length > 0)  && (desc += `- Relation: ${z.JSON.stringify(parsed_cols.relation)}\n`);
-    desc += `- Filter: ${_internal.unescapeSlashes(z.JSON.stringify(p.filter))}\n`;
+    desc += `- Filter: ${_internal.unescapeSlashes(z.JSON.stringify(p.filter)).replace('","','", "')}\n`;
     (p.order_by !== undefined) && (p.order_by !== "") && (desc += `- Order By: ${z.JSON.stringify(p.order_by).replace(',"style":"ELASTIC"', "") }\n`);
     (p.limit !== undefined)     && (desc += `- Limit: ${z.JSON.stringify(p.limit)}\n`);
     
-    desc += `\nPlease check to ensure that the SQL parser has accurately represented your SQL statement. Common errors include forgetting to capitalise SELECT, FROM, WHERE, AND, OR, NOT, ORDER BY, LIMIT.`;
+    desc += `\nPlease check to ensure that the SQL parser has accurately represented your SQL statement. Common errors include forgetting to capitalise SELECT, FROM, WHERE, AND, OR, NOT, ORDER BY, or LIMIT. [_see documentation_](https://github.com/buzzykiwi/zapier-fluxx-community/blob/main/SQL_SUPPORT.md)`;
   } catch (e) {
-    desc = z.JSON.stringify(e);
+    desc = z.JSON.stringify(e).replace(/^"|"$/g, '');
   }
   return {
     key: 'help_text',

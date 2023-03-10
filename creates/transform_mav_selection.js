@@ -12,9 +12,9 @@ module.exports = {
   key: 'transform_mav_selection',
   noun: 'Transformation',
   display: {
-    label: 'Transform a Multi-Item Selection',
+    label: 'Transform a Multi-Item Selection (With Line Item Support)',
     description:
-      "Transform the list of selections for a multi-item field, by path or id. (line item enabled).",
+      "Transform the list of selections for a multi-item field, by path or id. __not yet implemented__",
     hidden: false,
     important: true,
   },

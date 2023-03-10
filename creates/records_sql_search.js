@@ -28,9 +28,9 @@ module.exports = {
   key: 'records_sql_search',
   noun: 'SQL Records Search',
   display: {
-    label: 'Search for a List of Fluxx Records With Line Item Support',
+    label: 'Search for a List of Fluxx Records (With Line Item Support)',
     description:
-      "Structure this like a SQL statement e.g. SELECT id, name FROM Organization WHERE city = 'Auckland' ORDER BY name asc LIMIT 10",
+      "Structure this like a SQL statement e.g. SELECT id, name FROM Organization WHERE city = 'Auckland' ORDER BY name asc LIMIT 10. Output is in the form of Line Items — use Loop by Zapier to convert to individual records if required for subsequent actions.",
     hidden: false,
     important: true,
   },

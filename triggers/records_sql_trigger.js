@@ -43,7 +43,10 @@ const perform = async (z, bundle) => {
       });
     }
     if (bundle.inputData.force_line_items == 1) {
-      return [{id: Date.now(), line_items: items}];
+      if (items === undefined || items === null || (Array.isArray(items) && items.length == 0)) {
+        return [];
+      }
+      return [{id: Date.now(), count: items.length, line_items: items}];
     } else {
       return items;
     }

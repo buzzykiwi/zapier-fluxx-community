@@ -402,7 +402,7 @@ module.exports.CORE_MODELS =
     },
     "to_s": {
       "description": "To S",
-      "plural": "plural",
+      "plural": "",
       "permission": "[]",
       "data_type": "method",
       "type": "string"
@@ -914,7 +914,7 @@ module.exports.CORE_MODELS =
     },
     "to_s": {
       "description": "To S",
-      "plural": "plural",
+      "plural": "",
       "permission": "[]",
       "data_type": "method",
       "type": "string"
@@ -2758,7 +2758,7 @@ module.exports.CORE_MODELS =
     },
     "to_s": {
       "description": "To S",
-      "plural": "plural",
+      "plural": "",
       "permission": "[]",
       "data_type": "method",
       "type": "string"
@@ -3070,7 +3070,7 @@ module.exports.CORE_MODELS =
     },
     "to_s": {
       "description": "To S",
-      "plural": "plural",
+      "plural": "",
       "permission": "[]",
       "data_type": "method",
       "type": "string"
@@ -3880,7 +3880,7 @@ module.exports.CORE_MODELS =
     },
     "to_s": {
       "description": "To S",
-      "plural": "plural",
+      "plural": "",
       "permission": "[]",
       "data_type": "method",
       "type": "string"
@@ -5938,7 +5938,7 @@ module.exports.CORE_MODELS =
     },
     "to_s": {
       "description": "To S",
-      "plural": "plural",
+      "plural": "",
       "permission": "[]",
       "data_type": "method",
       "type": "string"
@@ -11439,7 +11439,7 @@ module.exports.CORE_MODELS =
     },
     "to_s": {
       "description": "To S",
-      "plural": "plural",
+      "plural": "",
       "permission": "[]",
       "data_type": "method",
       "type": "string"
@@ -11772,7 +11772,7 @@ module.exports.CORE_MODELS =
     },
     "to_s": {
       "description": "To S",
-      "plural": "plural",
+      "plural": "",
       "permission": "[]",
       "data_type": "method",
       "type": "string"
@@ -12474,7 +12474,7 @@ module.exports.CORE_MODELS =
     },
     "to_s": {
       "description": "To S",
-      "plural": "plural",
+      "plural": "",
       "permission": "[]",
       "data_type": "method",
       "type": "string"
@@ -13449,7 +13449,7 @@ module.exports.CORE_MODELS =
     },
     "to_s": {
       "description": "To S",
-      "plural": "plural",
+      "plural": "",
       "permission": "[]",
       "data_type": "method",
       "type": "string"
@@ -17775,7 +17775,7 @@ module.exports.CORE_MODELS =
     },
     "to_s": {
       "description": "To S",
-      "plural": "plural",
+      "plural": "",
       "permission": "[]",
       "data_type": "method",
       "type": "string"
@@ -18409,7 +18409,7 @@ module.exports.CORE_MODELS =
     },
     "to_s": {
       "description": "To S",
-      "plural": "plural",
+      "plural": "",
       "permission": "[]",
       "data_type": "method",
       "type": "string"
@@ -19250,7 +19250,7 @@ module.exports.CORE_MODELS =
     },
     "to_s": {
       "description": "To S",
-      "plural": "plural",
+      "plural": "",
       "permission": "[]",
       "data_type": "method",
       "type": "string"
@@ -20501,7 +20501,7 @@ module.exports.CORE_MODELS =
     },
     "to_s": {
       "description": "To S",
-      "plural": "plural",
+      "plural": "",
       "permission": "[]",
       "data_type": "method",
       "type": "string"
@@ -20904,7 +20904,7 @@ module.exports.CORE_MODELS =
     },
     "to_s": {
       "description": "To S",
-      "plural": "plural",
+      "plural": "",
       "permission": "[]",
       "data_type": "method",
       "type": "string"
@@ -22402,7 +22402,7 @@ module.exports.CORE_MODELS =
     },
     "to_s": {
       "description": "To S",
-      "plural": "plural",
+      "plural": "",
       "permission": "[]",
       "data_type": "method",
       "type": "string"
@@ -24347,7 +24347,7 @@ module.exports.CORE_MODELS =
     },
     "to_s": {
       "description": "To S",
-      "plural": "plural",
+      "plural": "",
       "permission": "[]",
       "data_type": "method",
       "type": "string"
@@ -24652,7 +24652,7 @@ module.exports.CORE_MODELS =
     },
     "to_s": {
       "description": "To S",
-      "plural": "plural",
+      "plural": "",
       "permission": "[]",
       "data_type": "method",
       "type": "string"
@@ -24908,7 +24908,7 @@ module.exports.CORE_MODELS =
     },
     "to_s": {
       "description": "To S",
-      "plural": "plural",
+      "plural": "",
       "permission": "[]",
       "data_type": "method",
       "type": "string"
@@ -27674,7 +27674,7 @@ module.exports.CORE_MODELS =
     },
     "to_s": {
       "description": "To S",
-      "plural": "plural",
+      "plural": "",
       "permission": "[]",
       "data_type": "method",
       "type": "string"
@@ -28412,7 +28412,7 @@ module.exports.CORE_MODELS =
     },
     "to_s": {
       "description": "To S",
-      "plural": "plural",
+      "plural": "",
       "permission": "[]",
       "data_type": "method",
       "type": "string"
@@ -29128,7 +29128,7 @@ module.exports.CORE_MODELS =
     },
     "to_s": {
       "description": "To S",
-      "plural": "plural",
+      "plural": "",
       "permission": "[]",
       "data_type": "method",
       "type": "string"
@@ -32519,7 +32519,7 @@ module.exports.CORE_MODELS =
     },
     "to_s": {
       "description": "To S",
-      "plural": "plural",
+      "plural": "",
       "permission": "[]",
       "data_type": "method",
       "type": "string"
@@ -33004,7 +33004,7 @@ module.exports.CORE_MODELS =
     },
     "to_s": {
       "description": "To S",
-      "plural": "plural",
+      "plural": "",
       "permission": "[]",
       "data_type": "method",
       "type": "string"
@@ -34685,7 +34685,7 @@ module.exports.CORE_MODELS =
     },
     "to_s": {
       "description": "To S",
-      "plural": "plural",
+      "plural": "",
       "permission": "[]",
       "data_type": "method",
       "type": "string"
@@ -35352,7 +35352,7 @@ module.exports.CORE_MODELS =
     },
     "to_s": {
       "description": "To S",
-      "plural": "plural",
+      "plural": "",
       "permission": "[]",
       "data_type": "method",
       "type": "string"
@@ -36801,7 +36801,7 @@ module.exports.CORE_MODELS =
     },
     "to_s": {
       "description": "To S",
-      "plural": "plural",
+      "plural": "",
       "permission": "[]",
       "data_type": "method",
       "type": "string"
@@ -40764,7 +40764,7 @@ module.exports.CORE_MODELS =
     },
     "to_s": {
       "description": "To S",
-      "plural": "plural",
+      "plural": "",
       "permission": "[]",
       "data_type": "method",
       "type": "string"
@@ -41797,7 +41797,7 @@ module.exports.CORE_MODELS =
     },
     "to_s": {
       "description": "To S",
-      "plural": "plural",
+      "plural": "",
       "permission": "[]",
       "data_type": "method",
       "type": "string"
@@ -42550,7 +42550,7 @@ module.exports.CORE_MODELS =
     },
     "to_s": {
       "description": "To S",
-      "plural": "plural",
+      "plural": "",
       "permission": "[]",
       "data_type": "method",
       "type": "string"
@@ -44264,7 +44264,7 @@ module.exports.CORE_MODELS =
     },
     "to_s": {
       "description": "To S",
-      "plural": "plural",
+      "plural": "",
       "permission": "[]",
       "data_type": "method",
       "type": "string"
@@ -47028,7 +47028,7 @@ module.exports.CORE_MODELS =
     },
     "to_s": {
       "description": "To S",
-      "plural": "plural",
+      "plural": "",
       "permission": "[]",
       "data_type": "method",
       "type": "string"
@@ -47455,7 +47455,7 @@ module.exports.CORE_MODELS =
     },
     "to_s": {
       "description": "To S",
-      "plural": "plural",
+      "plural": "",
       "permission": "[]",
       "data_type": "method",
       "type": "string"
@@ -49675,7 +49675,7 @@ module.exports.CORE_MODELS =
     },
     "to_s": {
       "description": "To S",
-      "plural": "plural",
+      "plural": "",
       "permission": "[]",
       "data_type": "method",
       "type": "string"
@@ -51750,7 +51750,7 @@ module.exports.CORE_MODELS =
     },
     "to_s": {
       "description": "To S",
-      "plural": "plural",
+      "plural": "",
       "permission": "[]",
       "data_type": "method",
       "type": "string"
@@ -52053,6 +52053,13 @@ module.exports.CORE_MODELS =
       "data_type": "string",
       "type": "column"
     },
+    "new_state_as_english": {
+      "description": "Workflow state the record is transitioning TO, external name.",
+      "plural": "",
+      "permission": "[]",
+      "data_type": "method",
+      "type": "string"
+    },
     "notes": {
       "description": "Notes",
       "plural": "plural",
@@ -52061,11 +52068,18 @@ module.exports.CORE_MODELS =
       "type": "relation"
     },
     "old_state": {
-      "description": "Workflow state the record is transitioning FROM.",
+      "description": "Workflow state the record is transitioning FROM, internal name.",
       "plural": "",
       "permission": "[:create, :update]",
       "data_type": "string",
       "type": "column"
+    },
+    "old_state_as_english": {
+      "description": "Workflow state the record is transitioning FROM, external name.",
+      "plural": "",
+      "permission": "[]",
+      "data_type": "method",
+      "type": "string"
     },
     "organization_id": {
       "description": "Organization",

@@ -84,7 +84,7 @@ module.exports = {
   key: 'records_sql_trigger',
   noun: 'SQL Records Search Results',
   display: {
-    label: 'Trigger on New Records',
+    label: 'Trigger on New/Updated Records',
     description:
       "Triggers when new records are found via an SQL-like search. e.g. SELECT id, name FROM Organization WHERE city = 'Auckland' ORDER BY name asc LIMIT 400. Optional Line Item Support, and several de-duping options are available.",
     hidden: false,
@@ -181,7 +181,7 @@ module.exports = {
     perform: perform,
     canPaginate: false,
     type: 'polling',
-    sample: { id: 30444, name: 'default' },
-    outputFields: [{ key: 'id', type: 'integer' },{ key: 'fields.id', type: 'integer' }],
+    sample: { id: 30444 },
+    outputFields: [{ key: 'id', type: 'string' }],
   },
 };

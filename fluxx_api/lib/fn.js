@@ -308,7 +308,7 @@ let parseSelectStatement = module.exports.parseSelectStatement = function(z, cla
     // it looks like an SQL statement
     let model_type = m[2];          // the FROM model
     return {
-      cols: m[1].trim().split(/\s*,\s*/), // from comma-separated string to Array
+      cols: m[1].trim().split(/\s*,\s*/).filter((i) => i.trim() !== ""), // from comma-separated string to Array
       model_type: model_type,
       filter: parseWhereClause(z, m[3], model_type),
       order_by: parseOrderByClause(z, m[5], model_type), // model_type needed as some models have different format for order_by

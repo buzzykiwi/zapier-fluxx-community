@@ -134,7 +134,7 @@ module.exports = {
         key: 'disable_dedupe',
         label: 'De-Duplication',
         choices: {
-          1: "1. Disable de-duplication completely", 
+          1: "1. Disable de-duplication", 
           2: "2. Allow updated records in addition to new records",
           3: '3. Custom',
         },

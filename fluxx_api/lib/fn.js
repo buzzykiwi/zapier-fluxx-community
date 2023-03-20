@@ -1589,11 +1589,11 @@ module.exports.sql_descriptions = async (z, bundle) => {
   let desc = "";
   try {
     if (bundle.inputData.in === undefined || bundle.inputData.in === null || bundle.inputData.in.trim() == "") {
-      throw "blank SQL statement [_see documentation_](https://github.com/buzzykiwi/zapier-fluxx-community/blob/main/SQL_SUPPORT.md)";
+      throw "blank SQL statement [_see documentation_](https://github.com/buzzykiwi/fce-docs/blob/main/docs/Special/SQL_Support.md)";
     }
     let p = parseSelectStatement(z, bundle.inputData.in);
     if (p == false) {
-      throw "__Invalid SQL__ Please check to ensure that the SQL parser has accurately represented your SQL statement. Common errors include forgetting to capitalise SELECT, FROM, WHERE, AND, OR, NOT, ORDER BY, or LIMIT. [_see documentation_](https://github.com/buzzykiwi/zapier-fluxx-community/blob/main/SQL_SUPPORT.md)";
+      throw "__Invalid SQL__ Please check to ensure that the SQL parser has accurately represented your SQL statement. Common errors include forgetting to capitalise SELECT, FROM, WHERE, AND, OR, NOT, ORDER BY, or LIMIT. [_see documentation_](https://github.com/buzzykiwi/fce-docs/blob/main/docs/Special/SQL_Support.md)";
     }
     // p = {select: cols, from: model_type, where: filter, order_by: order_by, limit: limit};
     let parsed_cols = splitFieldListIntoColsAndRelations(p.cols);  
@@ -1605,7 +1605,7 @@ module.exports.sql_descriptions = async (z, bundle) => {
     (p.order_by !== undefined) && (p.order_by !== "") && (desc += `- Order By: ${z.JSON.stringify(p.order_by).replace(',"style":"ELASTIC"', "") }\n`);
     (p.limit !== undefined)     && (desc += `- Limit: ${z.JSON.stringify(p.limit)}\n`);
     
-    desc += `\nPlease check to ensure that the SQL parser has accurately represented your SQL statement. Common errors include forgetting to capitalise SELECT, FROM, WHERE, AND, OR, NOT, ORDER BY, or LIMIT. [_see documentation_](https://github.com/buzzykiwi/zapier-fluxx-community/blob/main/SQL_SUPPORT.md)`;
+    desc += `\nPlease check to ensure that the SQL parser has accurately represented your SQL statement. Common errors include forgetting to capitalise SELECT, FROM, WHERE, AND, OR, NOT, ORDER BY, or LIMIT. [_see documentation_](https://github.com/buzzykiwi/fce-docs/blob/main/docs/Special/SQL_Support.md)`;
   } catch (e) {
     desc = z.JSON.stringify(e).replace(/^"|"$/g, '');
   }

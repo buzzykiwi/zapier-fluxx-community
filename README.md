@@ -24,5 +24,6 @@ FCE is provided free of charge. You may use it in three ways:
 - Developers may wish to download the source from Github, make modifications, and use it as a private integration. See the Zapier CLI documentation for how to set up a developer environment for a custom integration.
 - You may use the software in any other way consistent with the MIT licence.
 
+### Documentation
 
 - [Click Here for documentation](https://github.com/buzzykiwi/fce-docs/)

@@ -20,19 +20,23 @@ Zapier has two levels of integrations/apps. Public integrations are "first-class
 
 FCE is provided free of charge. You may use it in three ways:
 
-- The most up-to-date version of the software is available within Zapier once you have used the invitation link (see above).
-- Developers may wish to download the source from Github, make modifications, and use it as a private integration. See the Zapier CLI documentation for how to set up a developer environment for a custom integration.
-- You may use the software in any other way consistent with the MIT licence.
+* The most up-to-date version of the software is available within Zapier once you have used the invitation link (see above).
+* Developers may wish to download the source from Github, make modifications, and use it as a private integration. See the Zapier CLI documentation for how to set up a developer environment for a custom integration.
+* You may use the software in any other way consistent with the MIT licence.
 
 ### Documentation
 
-- [Click Here for documentation](https://github.com/buzzykiwi/fce-docs/)
+* [Click Here for documentation](https://github.com/buzzykiwi/fce-docs/)
+
+### Quick Start
+
+* Click [here](https://zapier.com/developer/public-invite/171896/79f0f6177294d5882a4e1eb79aa80fef/) to gain permanent access to FCE for your Zapier login.
+* [Quick Start Guide](https://github.com/buzzykiwi/fce-docs/blob/main/docs/Getting_Started/Getting_Started.md)
 
 ### Support
 
 * Please don't contact Fluxx Support for help using this software. Fluxx didn't create it.
 * Because this is a Private Integration, Zapier Support can provide only limited assistance. Of course, if your Zap interfaces with other, public applications, Zapier support will be happy to assist.
-
 
 Support options:
 

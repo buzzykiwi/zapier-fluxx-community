@@ -8,7 +8,7 @@
 
 > Fluxx Community Edition (FCE) is a Zapier integration that allows Zapier to connect to your [Fluxx](https://www.fluxx.io) installation, and integrate Fluxx with any of the hundreds of other web applications to which Zapier can connect.
 
-> FCE is third-party, open source software. As it is not provided or endorsed by Fluxx, the Zapier integration is a Private rather than Public integration. i.e. you will not find FCE in Zapier's standard list of integrations. To use it, go to [Getting Started](https://github.com/buzzykiwi/fce-docs/blob/main/docs/Getting_Started/Getting_Started.md) to find the invitation link.
+> FCE is third-party, open source software. As it is not provided or endorsed by Fluxx, the Zapier integration is a Private rather than Public integration. i.e. you will not find FCE in Zapier's standard list of integrations. To use it, go to [Getting Started](https://github.com/buzzykiwi/fce-docs/blob/main/docs/Getting_Started/Getting_Started.md#add-the-api-keys-from-fluxx-to-zapier) to find the invitation link.
 
 
 ### Public vs Private Zapier Integrations

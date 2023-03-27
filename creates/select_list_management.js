@@ -29,19 +29,18 @@ const perform = async (z, bundle) => {
 
   /*
   1. create a multi-level structure with all the line items we have been given.
-  2. 
   
-  
+  This is what we get as input:
   
 {
   model_group: 'Basic',
   action: 'add',
   remove_all: 'no',
   model_type: 'GrantRequest',
-  li_value_path: '#foo#bar1,#foo#wombat1,#foo1, goo#bar1,#foo2\n goo#bar2',
+  li_value_path: '#foo#bar1,#foo#wombat1,#foo1||COMMA|| goo#bar1,#foo2\n goo#bar2',
   li_description: '#FOO#BAR1,#FOO#WOMBAT,#FOO2#BAR2',
   li_retired: 'False,False,False,False',
-  li_action: '#foo#bar1,#foo#wombat1,#foo1, goo#bar1,#foo2\n goo#bar2',
+  li_action: 'add,delete,add,delete',
   field: 'boardmeeting',
   values: '12345',
   line_items: [
@@ -49,28 +48,43 @@ const perform = async (z, bundle) => {
       li_value_path: '#foo#bar1',
       li_description: 'BAR1',
       li_retired: false,
-      li_action: '#foo#bar1'
+      li_order: 1,
+      li_action: 'add'
     },
     {
       li_value_path: '#foo#wombat1',
       li_description: 'WOMBAT',
       li_retired: false,
-      li_action: '#foo#wombat1'
+      li_order: 2,
+      li_action: 'delete'
     },
     {
-      li_value_path: '#foo1, goo#bar1',
+      li_value_path: '#foo1||COMMA| goo#bar1',
       li_retired: false,
-      li_action: '#foo1, goo#bar1'
+      li_order: 3,
+      li_action: 'add'
     },
     {
       li_value_path: '#foo2\n goo#bar2',
       li_description: 'BAR2',
       li_retired: false,
-      li_action: '#foo2\n goo#bar2'
+      li_order: 4,
+      li_action: 'delete'
     }
   ]
 }
   
+  */
+  
+  // in inputData.line_items, create a new array in each that holds the deconstructed path.
+  /*
+    {
+      li_value_path: '#foo#bar1',
+      path: ["foo","bar1"],   // <--- this one
+      li_description: 'BAR1',
+      li_retired: false,
+      li_action: 'add'
+    }
   */
   let item;
   
@@ -92,13 +106,13 @@ const perform = async (z, bundle) => {
     return 0;
   });
   
-  // make a hierarchy.
+  // make a hierarchy from the input data; call it line_items_by_path
   let path_element;
   let line_items_by_path = {};
   
   const hierarchy = {children:{}};
   inputData.line_items.forEach(item => {
-    let hierarchy_pointer = hierarchy;
+    let hierarchy_pointer = hierarchy; // the pointer moves through the hierarchy, level by level
     let constructed_path = "";
     let parent_path = "";
     for (let i = 0; i < item.path.length; i++) {
@@ -110,11 +124,13 @@ const perform = async (z, bundle) => {
       //hierarchy_pointer.children[item.path[i]].description = item.description_path[i]; // may be valid, "" or undefined
       hierarchy_pointer.children[item.path[i]].constructed_path = constructed_path;
       hierarchy_pointer = hierarchy_pointer.children[item.path[i]];
-      line_items_by_path[constructed_path] = {
-        value: item.path[i], 
-       //  description: item.description_path[i],
-        parent_path: parent_path,
-      }; // later, we will add ids for pre-existing ones
+      if (line_items_by_path[constructed_path] === undefined) {
+        line_items_by_path[constructed_path] = {};
+      }
+      line_items_by_path[constructed_path].value = item.path[i];
+      line_items_by_path[constructed_path].parent_path = parent_path;
+      //  description: item.description_path[i],
+      // later, we will add ids for pre-existing ones
     }
     // add the extra items that only go on the *final* path segment, not its sub-paths.
     line_items_by_path[constructed_path].retired = item.li_retired;
@@ -122,6 +138,40 @@ const perform = async (z, bundle) => {
     line_items_by_path[constructed_path].action = item.li_action;
     line_items_by_path[constructed_path].description = item.li_description;
   });
+  /*
+  // hierarchy does not seem to be used - but it was useful, above, for traversing each branch and creating children, etc.
+  
+  hierarchy = {
+    children: {
+      "foo": {
+        constructed_path: "§foo",
+        children: {
+          "bar": {
+            constructed_path: "§foo§bar1"
+          }
+        }
+      }
+    }
+  }
+  
+  // line_items_by_path, though, is used.
+  
+  line_items_by_path = {
+    "§foo": {
+      value: "foo",
+      parent_path: undefined,
+    },
+    "§foo§bar1": {
+      value: ,
+      parent_path: "§foo",
+      retired: ,
+      order: ,
+      action: ,
+      description: ,
+    }
+  
+  }
+  */
   
   // get our MA id
   let ma_id = inputData.field_id;
@@ -188,39 +238,42 @@ const perform = async (z, bundle) => {
   });
   
   /* EXAMPLE of the tree of items already attached:
-[{
-    "id": 9972972,
-    "description": "",
-    "value": "aaa",
-    "retired": 1,
-    "children": {
-      "a1": {
-        "id": 10083629,
-        "description": "a1",
-        "value": "a1",
-        "dependent_model_attribute_value_id": 9972972,
-        "retired": 1,
-        "children": {
-          "a1-1": {
-            "id": 10262319,
-            "description": "a1-1 desc",
-            "value": "a1-1",
-            "dependent_model_attribute_value_id": 10083629,
-            "retired": 0,
-            "children": {}
+  mavs_by_id = {
+    9972972: {
+      "id": 9972972,
+      "description": "",
+      "value": "aaa",
+      "retired": 1,
+      "children": {
+        "a1": {
+          "id": 10083629,
+          "description": "a1",
+          "value": "a1",
+          "dependent_model_attribute_value_id": 9972972,
+          "retired": 1,
+          "children": {
+            "a1-1": {
+              "id": 10262319,
+              "description": "a1-1 desc",
+              "value": "a1-1",
+              "dependent_model_attribute_value_id": 10083629,
+              "retired": 0,
+              "children": {}
+            }
           }
+        },
+        "a2": {
+          "id": 10083630,
+          "description": "a2",
+          "value": "a2",
+          "dependent_model_attribute_value_id": 9972972,
+          "retired": 1,
+          "children": {}
         }
-      },
-      "a2": {
-        "id": 10083630,
-        "description": "a2",
-        "value": "a2",
-        "dependent_model_attribute_value_id": 9972972,
-        "retired": 1,
-        "children": {}
       }
-    }
-  }, {
+    },
+    {...}
+  }
   */
   
   
@@ -292,6 +345,7 @@ const perform = async (z, bundle) => {
         continue;
       }
     } else {
+      
       // since there's no id, need to create new item
       let parent_id = (item.parent_path === undefined) ? undefined : line_items_by_path[item.parent_path].id;      
       let rr = await FluxxAPI.fn.create_fluxx_record(

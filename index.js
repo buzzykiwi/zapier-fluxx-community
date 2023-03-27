@@ -32,6 +32,7 @@ const downloadFileCreate = require('./creates/file_download.js');
 const selectListManagement = require('./creates/select_list_management.js');
 const transactionCreate = require('./creates/transaction_new.js');
 const transformMavSelection = require('./creates/transform_mav_selection.js');
+const selectListOptions = require('./creates/select_list_options.js');
 
 // Other
 const hydrators = require('./hydrators');
@@ -72,6 +73,7 @@ module.exports = {
     [selectListManagement.key]: selectListManagement,
     [transactionCreate.key]: transactionCreate,
     [transformMavSelection.key]: transformMavSelection,
+    [selectListOptions.key]: selectListOptions,
   },
   searches: {
     [searchUser.key]: searchUser,

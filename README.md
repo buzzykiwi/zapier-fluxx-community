@@ -26,7 +26,7 @@ FCE is provided free of charge. You may use it in three ways:
 
 ### Quick Start
 
-* Click [here](https://zapier.com/developer/public-invite/171896/79f0f6177294d5882a4e1eb79aa80fef/) to gain permanent access to FCE for your Zapier login.
+* INVITATION LINK: Click [here](https://zapier.com/developer/public-invite/171896/79f0f6177294d5882a4e1eb79aa80fef/) to gain permanent access to FCE for your Zapier login.
 * [Quick Start Guide](https://github.com/buzzykiwi/fce-docs/blob/main/docs/Getting_Started/Getting_Started.md)
 
 ### Documentation

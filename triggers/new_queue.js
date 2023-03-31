@@ -30,9 +30,11 @@ const perform = async (z, bundle) => {
       ret.forEach(function (item) {
         // make a unique id that will be different every time the
         // item is put into a different queue.
-        item.id = `${item.identity}-${results.job_uuid}`;
+        const hashString = `${item.identity}-${results.job_uuid}` + z.JSON.stringify(item.key);
+        item.id = z.hash('md5', hashString);
+        
         item.model_id = item.identity;
-        item.ModelType = item.key.table;
+        item.model_type = item.key.table;
         item.fields = {};
         delete item.identity;
         delete item.key;
@@ -123,7 +125,7 @@ module.exports = {
       { key: 'timestamp', type: 'integer' },
       { key: 'id', type: 'integer' },
       { key: 'model_id', type: 'integer' },
-      { key: 'ModelType', type: 'string' },
+      { key: 'model_type', type: 'string' },
       { key: 'fields__id', type: 'integer' },
     ],
   },
